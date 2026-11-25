@@ -98,10 +98,12 @@
 </section>
 
 <section id="verification" class="page-section" hidden="">
-  <div class="page-heading"><div><h1>人员查验</h1><p>录入人员信息，查验身份状态并保留查验记录。</p></div><div class="heading-actions"><button class="btn" data-demo="查验记录导出功能待补充">导出记录</button></div></div>
-  <div class="verify-layout"><div class="panel"><div class="panel-head"><div><h2>身份信息查验</h2><p>请填写需要查验的人员信息</p></div></div><form class="panel-body" id="verifyForm"><div class="form-grid"><div class="field"><label for="verifyName">人员姓名</label><input id="verifyName" placeholder="请输入姓名" required=""></div><div class="field"><label for="verifyType">证件类型</label><select id="verifyType"><option>居民身份证</option><option>护照</option><option>其他证件</option></select></div><div class="field full"><label for="verifyNumber">证件号码 / 手机号码</label><input id="verifyNumber" placeholder="请输入用于查验的号码" required=""></div><div class="field full"><label for="verifyReason">查验事由</label><select id="verifyReason"><option>活动入场核验</option><option>会员身份确认</option><option>会议人员审核</option></select></div></div><div class="form-actions"><button class="btn" type="reset" id="verifyReset">清空</button><button class="btn btn-primary" type="submit">开始查验</button></div></form></div>
-  <div class="panel"><div class="panel-head"><h2>查验结果</h2></div><div class="verify-result" id="verifyEmpty"><div><div class="empty-icon"><svg width="26" height="26"><use href="#i-verify"></use></svg></div><div class="empty-text">输入人员信息后开始查验<br>结果将在这里展示</div></div></div><div class="verify-result" id="verifyResult" hidden=""><div style="width:100%"><div class="result-badge"><svg width="29" height="29"><use href="#i-verify"></use></svg></div><h3>查验通过</h3><p>演示结果 · 人员状态正常</p><div class="result-details"><div><span>人员姓名</span><b id="resultName">—</b></div><div><span>身份状态</span><b style="color:var(--green)">已核验</b></div><div><span>查验时间</span><b id="resultTime">—</b></div></div></div></div></div></div>
-  <div class="panel"><div class="panel-head"><h2>最近查验记录</h2></div><div class="table-wrap"><table><thead><tr><th>人员姓名</th><th>查验事由</th><th>查验时间</th><th>操作人</th><th>结果</th></tr></thead><tbody><tr><td><strong>张先生</strong></td><td>活动入场核验</td><td>今天 10:32</td><td>系统管理员</td><td><span class="status status-green">通过</span></td></tr><tr><td><strong>刘女士</strong></td><td>会员身份确认</td><td>今天 09:48</td><td>系统管理员</td><td><span class="status status-orange">待复核</span></td></tr></tbody></table></div></div>
+  <div class="page-heading"><div><h1>人员查验</h1><p>与内部人员档案比对并保留查验记录，结果不作为第三方实名认证证明。</p></div><div class="heading-actions"><button class="btn" id="registryManageOpen" type="button">档案管理</button><button class="btn" id="verifyExport" type="button">导出记录</button></div></div>
+  <div class="verify-layout">
+    <div class="panel"><div class="panel-head"><div><h2>身份信息查验</h2><p>请填写需要查验的人员信息</p></div></div><form class="panel-body" id="verifyForm"><div class="form-grid"><div class="field"><label for="verifyName">人员姓名</label><input id="verifyName" maxlength="50" placeholder="请输入姓名" required=""></div><div class="field"><label for="verifyType">证件类型</label><select id="verifyType"><option value="id_card">居民身份证</option><option value="passport">护照</option><option value="mobile">手机号码</option><option value="other">其他证件</option></select></div><div class="field full"><label for="verifyNumber">证件号码 / 手机号码</label><input id="verifyNumber" maxlength="64" autocomplete="off" placeholder="请输入用于查验的号码" required=""></div><div class="field full"><label for="verifyReason">查验事由</label><select id="verifyReason"><option>活动入场核验</option><option>会员身份确认</option><option>会议人员审核</option></select></div></div><div class="form-actions"><button class="btn" type="reset" id="verifyReset">清空</button><button class="btn btn-primary" type="submit" id="verifySubmit">开始查验</button></div></form></div>
+    <div class="panel"><div class="panel-head"><h2>查验结果</h2></div><div class="verify-result" id="verifyEmpty"><div><div class="empty-icon"><svg width="26" height="26"><use href="#i-verify"></use></svg></div><div class="empty-text">输入人员信息后开始查验<br>结果将在这里展示</div></div></div><div class="verify-result" id="verifyResult" hidden=""><div style="width:100%"><div class="result-badge" id="resultBadge"><svg width="29" height="29"><use href="#i-verify"></use></svg></div><h3 id="resultTitle">—</h3><p id="resultDescription">—</p><div class="result-details"><div><span>人员姓名</span><b id="resultName">—</b></div><div><span>证件号码</span><b id="resultCredential">—</b></div><div><span>比对状态</span><b id="resultStatus">—</b></div><div><span>操作人</span><b id="resultOperator">—</b></div><div><span>查验时间</span><b id="resultTime">—</b></div></div></div></div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><h2>最近查验记录</h2></div><div class="table-wrap"><table><thead><tr><th>人员姓名</th><th>查验事由</th><th>查验时间</th><th>操作人</th><th>结果</th></tr></thead><tbody id="verifyRecordBody"><tr><td colspan="5" style="text-align:center;padding:30px">暂无查验记录</td></tr></tbody></table></div></div>
 </section>
 
 <section id="members" class="page-section" hidden="">
@@ -111,6 +113,16 @@
 </main></div>
 
 <dialog class="dialog" id="agentDialog"><div class="dialog-head"><h2 id="agentDialogTitle">新增客服</h2><button class="icon-btn" id="closeAgentDialog" type="button" aria-label="关闭">✕</button></div><form id="agentForm"><div class="form-grid"><div class="field"><label for="agentNameInput">客服姓名</label><input id="agentNameInput" maxlength="20" required=""></div><div class="field"><label for="agentAccountInput">登录账号</label><input id="agentAccountInput" pattern="[A-Za-z0-9_]{3,20}" placeholder="3-20 位字母、数字或下划线" required=""></div><div class="field"><label for="agentRoleInput">客服角色</label><select id="agentRoleInput"><option>在线客服</option><option>资深客服</option><option>客服主管</option></select></div><div class="field"><label for="agentStatusInput">在线状态</label><select id="agentStatusInput"><option>在线</option><option>离线</option></select></div></div><div class="form-actions"><button class="btn" id="cancelAgent" type="button">取消</button><button class="btn btn-primary" type="submit">保存客服</button></div></form></dialog>
+<dialog class="dialog dialog-wide" id="registryDialog">
+  <div class="dialog-head"><h2>人员档案管理</h2><button class="icon-btn" id="registryManageClose" type="button" aria-label="关闭档案管理">✕</button></div>
+  <form id="registryForm" class="registry-form">
+    <input id="registryID" type="hidden">
+    <h3 id="registryFormTitle">新增人员档案</h3>
+    <div class="form-grid"><div class="field"><label for="registryName">人员姓名</label><input id="registryName" maxlength="50" required=""></div><div class="field"><label for="registryType">证件类型</label><select id="registryType"><option value="id_card">居民身份证</option><option value="passport">护照</option><option value="mobile">手机号码</option><option value="other">其他证件</option></select></div><div class="field full"><label for="registryNumber">证件号码</label><input id="registryNumber" maxlength="64" autocomplete="off" placeholder="新增档案时必填"><small class="field-help" id="registryNumberHelp">完整证件号仅用于后端匹配，列表只显示脱敏号码。</small></div><div class="field"><label for="registryStatus">档案状态</label><select id="registryStatus"><option value="active">启用</option><option value="disabled">停用</option></select></div></div>
+    <div class="form-actions"><button class="btn" id="registryCancelEdit" type="button" hidden="">取消编辑</button><button class="btn btn-primary" id="registrySave" type="submit">保存档案</button></div>
+  </form>
+  <div class="registry-list"><div class="registry-list-head"><h3>档案列表</h3><span id="registryCount">共 0 条</span></div><div class="table-wrap"><table><thead><tr><th>人员姓名</th><th>证件类型</th><th>脱敏证件号</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody id="registryListBody"><tr><td colspan="6" style="text-align:center;padding:28px">暂无人员档案</td></tr></tbody></table></div></div>
+</dialog>
 <dialog class="dialog" id="memberPhoneDialog">
   <div class="dialog-head"><h2>手机号核验</h2><button class="icon-btn" id="memberPhoneClose" type="button" aria-label="关闭手机号核验">✕</button></div>
   <form id="memberPhoneForm">
@@ -133,8 +145,8 @@
   function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
   const titles={dashboard:'仪表盘',meeting:'办公应用配置',service:'在线客服',agents:'客服管理',verification:'人员查验',members:'会员查询'};
   function showSection(id){if(!titles[id])id='meeting';$$('.page-section').forEach(section=>section.hidden=section.id!==id);$$('.nav-item').forEach(item=>{const active=item.dataset.target===id;item.classList.toggle('active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current')});$('#breadcrumbCurrent').textContent=titles[id];history.replaceState(null,'','#'+id)}
-  $$('.nav-item').forEach(item=>item.addEventListener('click',()=>showSection(item.dataset.target)));
-  $$('[data-dashboard-target]').forEach(button=>button.addEventListener('click',()=>showSection(button.dataset.dashboardTarget)));
+  $$('.nav-item').forEach(item=>item.addEventListener('click',()=>{showSection(item.dataset.target);if(item.dataset.target==='verification')loadVerifyRecords()}));
+  $$('[data-dashboard-target]').forEach(button=>button.addEventListener('click',()=>{showSection(button.dataset.dashboardTarget);if(button.dataset.dashboardTarget==='verification')loadVerifyRecords()}));
   showSection(location.hash.slice(1));
   document.addEventListener('click',event=>{const button=event.target.closest('[data-demo]');if(button)toast(button.dataset.demo)});
   const OFFICE_CONFIG_KEY='douyin.officeApp.config.v1';
@@ -268,8 +280,129 @@
   $('#agentFilterReset').addEventListener('click',()=>{$('#agentKeyword').value='';$('#agentStatusFilter').value='';renderAgents()});
   renderAgents();
   $('#dashboardRefresh').addEventListener('click',()=>{renderDashboard();toast('仪表盘数据已刷新')});
-  $('#verifyForm').addEventListener('submit',event=>{event.preventDefault();$('#verifyEmpty').hidden=true;$('#verifyResult').hidden=false;$('#resultName').textContent=$('#verifyName').value;$('#resultTime').textContent=new Date().toLocaleString('zh-CN',{hour12:false});toast('查验完成，当前为演示结果')});
-  $('#verifyReset').addEventListener('click',()=>{$('#verifyEmpty').hidden=false;$('#verifyResult').hidden=true});
+  let personLoginTimer;
+  function personLoginRedirect(){
+    toast('登录状态失效，请重新登录');clearTimeout(personLoginTimer);
+    personLoginTimer=setTimeout(()=>{location.href='/login'},800);
+  }
+  async function personFetch(url,options={}){
+    const token=localStorage.getItem('token')||'';
+    if(!token){personLoginRedirect();throw new Error('请先登录客服账号')}
+    const headers={...(options.headers||{}),token};
+    if(options.body&&!headers['Content-Type'])headers['Content-Type']='application/json';
+    let response;
+    try{response=await fetch(url,{...options,headers})}catch(error){throw new Error('无法连接人员查验服务')}
+    const contentType=response.headers.get('content-type')||'';
+    const payload=contentType.includes('application/json')?await response.json().catch(()=>({})):null;
+    if(response.status===401||(payload&&(payload.code===401||payload.msg==='验证失败'||payload.msg==='token失效'))){
+      personLoginRedirect();throw new Error('登录状态失效，请重新登录');
+    }
+    if(!response.ok||(payload&&payload.code!==200))throw new Error((payload&&payload.msg)||'人员查验服务请求失败');
+    return {response,payload};
+  }
+  async function personData(url,options={}){
+    const {payload}=await personFetch(url,options);
+    if(!payload)throw new Error('人员查验接口未连接');
+    return payload.result;
+  }
+  const personTypeLabels={id_card:'居民身份证',passport:'护照',mobile:'手机号码',other:'其他证件'};
+  const personOutcomes={
+    matched:{title:'内部档案一致',description:'姓名与启用的内部人员档案匹配',status:'档案一致',className:'status-green',badge:'',color:'var(--green)'},
+    not_found:{title:'未找到内部档案',description:'内部人员档案中没有该证件记录',status:'未匹配',className:'status-gray',badge:'not-found',color:'var(--muted)'},
+    review_required:{title:'待人工复核',description:'姓名不一致或人员档案已停用',status:'待复核',className:'status-orange',badge:'review',color:'var(--orange)'}
+  };
+  function personOutcome(value){return personOutcomes[value]||{title:'查验完成',description:'请核对返回结果',status:'未知',className:'status-gray',badge:'not-found',color:'var(--muted)'}}
+  function formatPersonTime(value){if(!value)return '—';const date=new Date(value);return Number.isNaN(date.getTime())?'—':date.toLocaleString('zh-CN',{hour12:false})}
+  async function loadVerifyRecords(){
+    const body=$('#verifyRecordBody');
+    body.innerHTML='<tr><td colspan="5" style="text-align:center;padding:30px">正在加载查验记录…</td></tr>';
+    try{
+      const result=await personData('/person_verify_records');
+      const records=Array.isArray(result)?result:[];
+      body.innerHTML=records.map(record=>{const outcome=personOutcome(record.result);return '<tr><td><strong>'+escapeHtml(record.name||'—')+'</strong></td><td>'+escapeHtml(record.reason||'—')+'</td><td>'+escapeHtml(formatPersonTime(record.created_at))+'</td><td>'+escapeHtml(record.operator_name||'—')+'</td><td><span class="status '+outcome.className+'">'+escapeHtml(outcome.status)+'</span></td></tr>'}).join('')||'<tr><td colspan="5" style="text-align:center;padding:30px">暂无查验记录</td></tr>';
+    }catch(error){
+      body.innerHTML='<tr><td colspan="5" style="text-align:center;padding:26px">'+escapeHtml(error.message)+' <button class="text-btn" type="button" data-verify-retry>重新加载</button></td></tr>';
+    }
+  }
+  $('#verifyRecordBody').addEventListener('click',event=>{if(event.target.closest('[data-verify-retry]'))loadVerifyRecords()});
+  $('#verifyForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const submit=$('#verifySubmit');submit.disabled=true;submit.textContent='查验中…';
+    try{
+      const result=await personData('/person_verify',{method:'POST',body:JSON.stringify({name:$('#verifyName').value,credential_type:$('#verifyType').value,credential_number:$('#verifyNumber').value,reason:$('#verifyReason').value})});
+      const record=result||{},outcome=personOutcome(record.result);
+      $('#verifyEmpty').hidden=true;$('#verifyResult').hidden=false;
+      $('#resultBadge').className='result-badge'+(outcome.badge?' '+outcome.badge:'');
+      $('#resultTitle').textContent=outcome.title;$('#resultDescription').textContent=outcome.description;
+      $('#resultName').textContent=record.name||'—';$('#resultCredential').textContent=record.credential_masked||'—';
+      $('#resultStatus').textContent=outcome.status;$('#resultStatus').style.color=outcome.color;
+      $('#resultOperator').textContent=record.operator_name||'—';$('#resultTime').textContent=formatPersonTime(record.created_at);
+      toast('人员查验已完成');await loadVerifyRecords();
+    }catch(error){toast(error.message)}finally{submit.disabled=false;submit.textContent='开始查验'}
+  });
+  $('#verifyForm').addEventListener('reset',()=>{$('#verifyEmpty').hidden=false;$('#verifyResult').hidden=true});
+
+  const registryDialog=$('#registryDialog');
+  let personRegistries=[];
+  function resetRegistryForm(){
+    $('#registryForm').reset();$('#registryID').value='';$('#registryNumber').value='';
+    $('#registryFormTitle').textContent='新增人员档案';$('#registryNumber').placeholder='新增档案时必填';
+    $('#registryNumberHelp').textContent='完整证件号仅用于后端匹配，列表只显示脱敏号码。';
+    $('#registryCancelEdit').hidden=true;$('#registrySave').textContent='保存档案';
+  }
+  function renderPersonRegistries(){
+    $('#registryCount').textContent='共 '+personRegistries.length+' 条';
+    $('#registryListBody').innerHTML=personRegistries.map(registry=>{
+      const id=Number(registry.id),active=registry.status==='active';
+      return '<tr><td><strong>'+escapeHtml(registry.name||'—')+'</strong></td><td>'+escapeHtml(personTypeLabels[registry.credential_type]||registry.credential_type||'—')+'</td><td>'+escapeHtml(registry.credential_masked||'—')+'</td><td><span class="status '+(active?'status-green':'status-gray')+'">'+(active?'启用':'停用')+'</span></td><td>'+escapeHtml(formatPersonTime(registry.updated_at||registry.created_at))+'</td><td><button class="text-btn" type="button" data-registry-edit="'+id+'">编辑</button><button class="text-btn" type="button" data-registry-toggle="'+id+'">'+(active?'停用':'启用')+'</button></td></tr>';
+    }).join('')||'<tr><td colspan="6" style="text-align:center;padding:28px">暂无人员档案</td></tr>';
+  }
+  async function loadPersonRegistries(){
+    $('#registryListBody').innerHTML='<tr><td colspan="6" style="text-align:center;padding:28px">正在加载人员档案…</td></tr>';
+    try{const result=await personData('/person_registries');personRegistries=Array.isArray(result)?result:[];renderPersonRegistries()}
+    catch(error){personRegistries=[];$('#registryCount').textContent='共 0 条';$('#registryListBody').innerHTML='<tr><td colspan="6" style="text-align:center;padding:26px">'+escapeHtml(error.message)+' <button class="text-btn" type="button" data-registry-retry>重新加载</button></td></tr>'}
+  }
+  $('#registryManageOpen').addEventListener('click',()=>{registryDialog.showModal();resetRegistryForm();loadPersonRegistries()});
+  $('#registryManageClose').addEventListener('click',()=>registryDialog.close());
+  $('#registryCancelEdit').addEventListener('click',resetRegistryForm);
+  $('#registryForm').addEventListener('submit',async event=>{
+    event.preventDefault();
+    const id=$('#registryID').value,number=$('#registryNumber').value.trim();
+    if(!id&&!number){toast('新增档案请输入证件号码');return}
+    const save=$('#registrySave');save.disabled=true;save.textContent='保存中…';
+    try{
+      await personData(id?'/person_registries/'+encodeURIComponent(id):'/person_registries',{method:id?'PUT':'POST',body:JSON.stringify({name:$('#registryName').value,credential_type:$('#registryType').value,credential_number:number,status:$('#registryStatus').value})});
+      toast(id?'人员档案已更新':'人员档案已新增');resetRegistryForm();await loadPersonRegistries();
+    }catch(error){toast(error.message)}finally{save.disabled=false;save.textContent='保存档案'}
+  });
+  $('#registryListBody').addEventListener('click',async event=>{
+    if(event.target.closest('[data-registry-retry]')){loadPersonRegistries();return}
+    const edit=event.target.closest('[data-registry-edit]');
+    if(edit){
+      const registry=personRegistries.find(item=>item.id===Number(edit.dataset.registryEdit));if(!registry)return;
+      $('#registryID').value=registry.id;$('#registryName').value=registry.name||'';$('#registryType').value=registry.credential_type||'id_card';$('#registryStatus').value=registry.status||'active';$('#registryNumber').value='';
+      $('#registryFormTitle').textContent='编辑人员档案';$('#registryNumber').placeholder='留空则保留原证件';
+      $('#registryNumberHelp').textContent='留空保留原证件；变更证件类型时必须重新输入证件号码。';$('#registryCancelEdit').hidden=false;
+      registryDialog.scrollTop=0;$('#registryName').focus();return;
+    }
+    const toggle=event.target.closest('[data-registry-toggle]');
+    if(toggle){
+      const registry=personRegistries.find(item=>item.id===Number(toggle.dataset.registryToggle));if(!registry)return;
+      const status=registry.status==='active'?'disabled':'active';toggle.disabled=true;
+      try{await personData('/person_registries/'+encodeURIComponent(registry.id),{method:'PUT',body:JSON.stringify({name:registry.name,credential_type:registry.credential_type,credential_number:'',status})});toast(status==='active'?'人员档案已启用':'人员档案已停用');await loadPersonRegistries()}
+      catch(error){toast(error.message)}finally{toggle.disabled=false}
+    }
+  });
+  $('#verifyExport').addEventListener('click',async()=>{
+    const button=$('#verifyExport');button.disabled=true;button.textContent='导出中…';
+    try{
+      const {response}=await personFetch('/person_verify_export');
+      if(!(response.headers.get('content-type')||'').includes('text/csv'))throw new Error('查验记录导出接口未连接');
+      const blob=await response.blob(),url=URL.createObjectURL(blob),link=document.createElement('a');
+      link.href=url;link.download='人员查验记录.csv';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('查验记录已导出');
+    }catch(error){toast(error.message)}finally{button.disabled=false;button.textContent='导出记录'}
+  });
+  if(location.hash==='#verification')loadVerifyRecords();
   const memberPhoneDialog=$('#memberPhoneDialog'),memberPhoneInput=$('#memberPhoneInput');
   function normalizeMemberPhone(value){return String(value||'').replace(/[\s\-()]/g,'').replace(/^\+?86/,'').replace(/\D/g,'')}
   function setMemberPhoneStatus(type,message){const status=$('#memberPhoneStatus');status.className='member-phone-status'+(type?' '+type:'');status.textContent=message}

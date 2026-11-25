@@ -47,13 +47,14 @@ func CreatePersonRegistry(registry *PersonRegistry) error {
 }
 
 func UpdatePersonRegistry(registry *PersonRegistry) error {
+	registry.UpdatedAt = time.Now()
 	return DB.Model(&PersonRegistry{}).Where("id = ?", registry.ID).Updates(map[string]interface{}{
 		"name":              registry.Name,
 		"credential_type":   registry.CredentialType,
 		"credential_hash":   registry.CredentialHash,
 		"credential_masked": registry.CredentialMasked,
 		"status":            registry.Status,
-		"updated_at":        time.Now(),
+		"updated_at":        registry.UpdatedAt,
 	}).Error
 }
 
