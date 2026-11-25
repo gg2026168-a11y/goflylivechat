@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>抖音支付 · 账户安全保障</title>
+<title>抖音直播会员中心</title>
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
@@ -21,6 +21,7 @@
     margin:0 auto;
     min-height:100vh;
     min-height:100dvh;
+    padding-top:calc(env(safe-area-inset-top, 0px) + 10px);
     overflow-x:hidden;
     background:
       radial-gradient(115% 42% at 50% 0%, rgba(255,255,255,.30) 0%, rgba(255,255,255,0) 60%),
@@ -38,25 +39,6 @@
     body{background:#b8c7db}
     .app{box-shadow:0 0 70px rgba(22,48,92,.25); min-height:100vh}
   }
-
-  /* ---------- status bar ---------- */
-  .statusbar{
-    position:relative;
-    height:46px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 12px 0 44px;
-    color:#fff;
-  }
-  .sb-left{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;letter-spacing:.2px}
-  .sb-left svg{display:block;margin-top:1px}
-  .island{
-    position:absolute;left:50%;top:11px;transform:translateX(-50%);
-    width:108px;height:29px;background:#000;border-radius:16px;
-  }
-  .sb-right{display:flex;align-items:center;gap:6px}
-  .sb-right svg{display:block}
 
   /* ---------- nav ---------- */
   .nav{
@@ -77,57 +59,16 @@
     width:32px;height:32px;display:flex;align-items:center;justify-content:center;
     background:none;border:0;padding:0;cursor:pointer;color:#16223c;
   }
-  .free-badge{
-    position:absolute;right:26px;top:17px;
-    padding:7px 9px 8px;
-    background:linear-gradient(180deg,#79aaf9 0%,#5f95f4 100%);
-    color:#fff;font-size:13px;font-weight:600;line-height:1;
-    letter-spacing:.5px;
-    border-radius:7px;
-    box-shadow:0 2px 6px rgba(58,110,210,.18);
-  }
-  .free-badge::after{
-    content:"";position:absolute;left:5px;bottom:-5px;
-    width:10px;height:10px;
-    background:#6599f4;
-    clip-path:polygon(0 0,100% 0,0 100%);
-    border-radius:0 0 0 2px;
-  }
 
   /* ---------- page head ---------- */
-  .page-head{
-    position:relative;
-    padding:6px 18px 0;
+  .page-heading{
+    padding:4px 18px 2px;
     text-align:center;
+    font-size:23px;font-weight:700;letter-spacing:.2px;
+    color:#0b0c0f;
+    line-height:1.35;
     z-index:2;
   }
-  .page-title{
-    margin:0;
-    display:flex;align-items:center;justify-content:center;gap:2px;
-    font-size:23px;font-weight:700;letter-spacing:-.1px;
-    color:#0b0c0f;
-    line-height:1.3;
-  }
-  .page-title svg{display:block;flex:0 0 auto}
-  .pledge{
-    margin:14px auto 0;
-    display:inline-flex;align-items:center;gap:9px;
-    max-width:100%;
-    padding:8px 14px;
-    border-radius:999px;
-    background:rgba(255,255,255,.50);
-    -webkit-backdrop-filter:blur(6px);
-    backdrop-filter:blur(6px);
-    font-size:13px;color:#48536a;
-    line-height:1.2;
-    white-space:nowrap;
-  }
-  .pledge .sep{width:1px;height:12px;background:rgba(70,85,110,.28);flex:0 0 auto}
-  .pledge a{
-    display:inline-flex;align-items:center;gap:1px;
-    color:#3b78f4;text-decoration:none;font-weight:500;
-  }
-  .pledge a svg{display:block}
 
   /* ---------- hero ---------- */
   .hero{
@@ -170,19 +111,6 @@
   .f-month .orb{width:30px;height:30px;background:rgba(232,255,252,.55)}
 
   /* ---------- banner ---------- */
-  .banner{
-    margin:2px 18px 0;
-    padding:5px 8px;
-    text-align:center;
-    font-size:15px;
-    line-height:1.47;
-    letter-spacing:.2px;
-    color:#fff;
-    border-radius:10px;
-    background:linear-gradient(93deg,#2f7bf7 0%,#2a77f3 55%,#2270ee 100%);
-    box-shadow:0 6px 14px rgba(43,116,240,.18);
-  }
-
   /* ---------- cards ---------- */
   .card{
     margin:10px 18px 0;
@@ -191,7 +119,6 @@
     border-radius:14px;
     box-shadow:0 1px 2px rgba(24,60,120,.03),0 8px 22px rgba(40,85,170,.045);
   }
-  .banner + .card{margin-top:4px}
   .card h2{
     margin:0 0 12px;
     font-size:18px;font-weight:700;letter-spacing:.2px;
@@ -205,36 +132,10 @@
   }
   .tile{
     position:relative;
-    display:flex;align-items:center;
     min-height:74px;
-    padding:10px 12px;
-    border:0;border-radius:8px;
-    text-align:left;
-    background:#f5faf8;
-    font-family:inherit;color:inherit;
-    cursor:pointer;
-    transition:transform .15s ease;
+    border-radius:8px;
     overflow:hidden;
   }
-  .tile:active{transform:scale(.985)}
-  .tile .txt{padding-right:36px;min-width:0}
-  .tile b{
-    display:block;
-    font-size:15px;font-weight:700;color:#141519;
-    letter-spacing:.1px;line-height:1.3;
-  }
-  .tile p{
-    margin:4px 0 0;
-    font-size:12.5px;line-height:1.25;color:#717b8c;
-  }
-  .tile .ico{
-    position:absolute;right:8px;top:50%;
-    transform:translateY(-50%);
-    width:38px;height:38px;
-    display:grid;place-items:center;
-    filter:drop-shadow(0 4px 7px rgba(30,80,140,.16));
-  }
-  .tile .ico svg{display:block;width:100%;height:100%}
   .t-green{background:linear-gradient(140deg,#f5fdfa 0%,#ecfaf4 100%)}
   .t-pink{background:linear-gradient(140deg,#fdf6f7 0%,#fbf0f2 100%)}
   .t-blue{background:linear-gradient(140deg,#f3f9ff 0%,#ecf5ff 100%)}
@@ -301,37 +202,6 @@
 <body>
 <div class="app">
 
-  <!-- status bar -->
-  <div class="statusbar">
-    <div class="sb-left">
-      <span>13:43</span>
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
-        <path d="M3.4 6.4a4.7 4.7 0 0 1 9.2 0c0 2 .45 3.15.95 3.85H2.45c.5-.7.95-1.85.95-3.85Z"/>
-        <path d="M6.4 12.4a1.8 1.8 0 0 0 3.2 0"/>
-        <path d="M1.9 14.3 14.1 1.7"/>
-      </svg>
-    </div>
-    <div class="island"></div>
-    <div class="sb-right">
-      <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor" aria-hidden="true">
-        <rect x="0" y="7.4" width="3" height="4.6" rx="1"/>
-        <rect x="5" y="5" width="3" height="7" rx="1"/>
-        <rect x="10" y="2.4" width="3" height="9.6" rx="1"/>
-        <rect x="15" y="0" width="3" height="12" rx="1"/>
-      </svg>
-      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
-        <path d="M1.2 4.1a10.8 10.8 0 0 1 14.6 0"/>
-        <path d="M4 7.1a6.6 6.6 0 0 1 9 0"/>
-        <path d="M7.3 10.1a2.3 2.3 0 0 1 2.4 0" fill="currentColor" stroke="none"/>
-      </svg>
-      <svg width="27" height="13" viewBox="0 0 27 13" fill="none" aria-hidden="true">
-        <rect x="1" y="1.1" width="21.5" height="10.8" rx="3.2" stroke="currentColor" stroke-opacity=".9"/>
-        <rect x="2.7" y="2.8" width="18.1" height="7.4" rx="1.8" fill="currentColor"/>
-        <path d="M24.6 4.4v4.2a2.3 2.3 0 0 0 0-4.2Z" fill="currentColor" opacity=".75"/>
-      </svg>
-    </div>
-  </div>
-
   <!-- nav -->
   <div class="nav">
     <button class="back" aria-label="返回">
@@ -340,7 +210,6 @@
       </svg>
     </button>
     <div class="nav-right">
-      <div class="free-badge">免费</div>
       <button class="service" aria-label="在线客服">
         <svg width="25" height="25" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true">
           <path d="M4.6 16.2v-2.6a9.4 9.4 0 0 1 18.8 0v2.6"/>
@@ -352,26 +221,8 @@
     </div>
   </div>
 
-  <!-- title -->
-  <div class="page-head">
-    <h1 class="page-title">
-      <svg width="23" height="23" viewBox="0 0 24 24" fill="#0b0c0f" aria-hidden="true">
-        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
-      </svg>
-      <span>抖音支付·账户安全保障</span>
-    </h1>
-
-    <div class="pledge">
-      <span>保障额度100万，你敢付我敢赔</span>
-      <i class="sep"></i>
-      <a href="javascript:;">
-        去查看
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-  </div>
+  <!-- page title -->
+  <div class="page-heading">抖音直播会员中心</div>
 
   <!-- hero illustration -->
   <div class="hero">
@@ -505,101 +356,13 @@
     </div>
   </div>
 
-  <!-- banner -->
-  <div class="banner">本产品完全免费，谨防以续保为由的诈骗</div>
-
   <!-- account security -->
   <section class="card">
-    <h2>账户安全</h2>
     <div class="tiles">
-      <button class="tile t-green">
-        <div class="txt"><b>绑定手机号</b><p>安全信息及时送达</p></div>
-        <span class="ico">
-          <svg viewBox="0 0 40 40" aria-hidden="true">
-            <defs>
-              <linearGradient id="phoneGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#7df2d8"/>
-                <stop offset="1" stop-color="#10b78b"/>
-              </linearGradient>
-            </defs>
-            <g transform="rotate(-6 20 20)">
-              <rect x="10.5" y="4.6" width="18" height="27.5" rx="4.6" fill="url(#phoneGrad)"/>
-              <rect x="10.5" y="4.6" width="18" height="27.5" rx="4.6" fill="none" stroke="#eafff9" stroke-opacity=".65"/>
-              <rect x="10.5" y="4.6" width="18" height="10" rx="4.6" fill="#ffffff" opacity=".18"/>
-              <rect x="15.2" y="8.4" width="8.6" height="1.7" rx=".85" fill="#ffffff" opacity=".8"/>
-              <rect x="17" y="27.4" width="5" height="1.6" rx=".8" fill="#ffffff" opacity=".55"/>
-            </g>
-            <circle cx="28.6" cy="29" r="6.4" fill="#ffffff"/>
-            <circle cx="28.6" cy="29" r="5" fill="#12b98e"/>
-            <path d="M28.6 26.3v3.2" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round"/>
-            <circle cx="28.6" cy="31.8" r=".95" fill="#ffffff"/>
-          </svg>
-        </span>
-      </button>
-
-      <button class="tile t-pink">
-        <div class="txt"><b>开通面容支付</b><p>安全便捷</p></div>
-        <span class="ico">
-          <svg viewBox="0 0 40 40" aria-hidden="true">
-            <defs>
-              <linearGradient id="faceGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#ffaab6"/>
-                <stop offset="1" stop-color="#ef3c58"/>
-              </linearGradient>
-            </defs>
-            <circle cx="20" cy="20" r="14.4" fill="url(#faceGrad)"/>
-            <circle cx="20" cy="20" r="14.4" fill="none" stroke="#ffffff" stroke-opacity=".35"/>
-            <g fill="none" stroke="#ffffff" stroke-opacity=".85" stroke-width="2" stroke-linecap="round">
-              <path d="M12.6 16.2v-1.7a2 2 0 0 1 2-2h1.7"/>
-              <path d="M23.7 12.5h1.7a2 2 0 0 1 2 2v1.7"/>
-              <path d="M27.4 23.7v1.7a2 2 0 0 1-2 2h-1.7"/>
-              <path d="M16.3 27.4h-1.7a2 2 0 0 1-2-2v-1.7"/>
-            </g>
-            <circle cx="16.6" cy="18.8" r="1.5" fill="#ffffff"/>
-            <circle cx="23.4" cy="18.8" r="1.5" fill="#ffffff"/>
-            <path d="M16.9 23.4c1.8 1.7 4.4 1.7 6.2 0" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" fill="none"/>
-          </svg>
-        </span>
-      </button>
-
-      <button class="tile t-blue">
-        <div class="txt"><b>身份信息</b><p>管理个人资料</p></div>
-        <span class="ico">
-          <svg viewBox="0 0 40 40" aria-hidden="true">
-            <defs>
-              <linearGradient id="personGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#8fd1ff"/>
-                <stop offset="1" stop-color="#2f7df6"/>
-              </linearGradient>
-            </defs>
-            <circle cx="20" cy="20" r="14.2" fill="url(#personGrad)"/>
-            <circle cx="20" cy="16.2" r="4.9" fill="#ffffff" opacity=".95"/>
-            <path d="M10.6 30c1.4-5.6 5.1-8.5 9.4-8.5s8 2.9 9.4 8.5" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity=".95"/>
-            <circle cx="29.9" cy="28.4" r="6" fill="#3b86ff" stroke="#ffffff" stroke-width="2.1"/>
-            <path d="M27.2 28.4l1.9 1.9 3.4-3.7" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-      </button>
-
-      <button class="tile t-yellow">
-        <div class="txt"><b>升级客户端</b><p>享最新安全技术</p></div>
-        <span class="ico">
-          <svg viewBox="0 0 40 40" aria-hidden="true">
-            <defs>
-              <linearGradient id="upGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#ffe09b"/>
-                <stop offset="1" stop-color="#f5a41d"/>
-              </linearGradient>
-            </defs>
-            <path d="M20 6.4 32.6 13.8v12.8L20 34.2 7.4 26.6V13.8L20 6.4Z" fill="url(#upGrad)"/>
-            <path d="M20 11.6 27.8 16v9.4L20 29.8l-7.8-4.4V16L20 11.6Z" fill="#ffffff" opacity=".22"/>
-            <path d="M20 15.4v11.2M15.4 19.9l4.6-4.6 4.6 4.6" stroke="#ffffff" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="31" cy="29.6" r="5.6" fill="#ffffff"/>
-            <path d="M29 32.2a3.5 3.5 0 0 0 4.6-4" stroke="#efaa26" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-            <path d="M33.9 26.5l.1 2-2 .1" stroke="#efaa26" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-      </button>
+      <div class="tile t-green"></div>
+      <div class="tile t-pink"></div>
+      <div class="tile t-blue"></div>
+      <div class="tile t-yellow"></div>
     </div>
   </section>
 
@@ -607,15 +370,6 @@
   <section class="card">
     <h2>隐私及协议</h2>
     <div class="links">
-      <a href="javascript:;">
-        <span class="li-ico">
-          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
-            <path d="M6.6 6.6 10 10.4l3.4-3.8M10 10.4v4.4M7.4 11.7h5.2M7.4 13.8h5.2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
-        </span>
-        收支明细管理
-      </a>
       <a href="javascript:;">
         <span class="li-ico">
           <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
@@ -656,7 +410,7 @@
     <h2>安全课堂</h2>
     <div class="lessons">
       <a class="lesson" href="javascript:;">
-        <span class="lt"><i class="dot"></i><em>如何识别仿冒客服的诈骗套路</em></span>
+        <span class="lt"><i class="dot"></i><em>如何关闭抖音直播会员</em></span>
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
       </a>
       <a class="lesson" href="javascript:;">
@@ -666,7 +420,7 @@
     </div>
   </section>
 
-  <div class="foot">抖音支付 · 守护每一笔支付安全</div>
+  <div class="foot">抖音 ·记录分享美好生活</div>
 </div>
 
 <div class="home-bar"></div>
