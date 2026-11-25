@@ -17,8 +17,8 @@
   html,body{margin:0;padding:0}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    background:#c9d7ea;
-    color:#101114;
+    background:#c5c8e3;
+    color:#202237;
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility;
   }
@@ -32,20 +32,19 @@
     padding-top:calc(env(safe-area-inset-top, 0px) + 10px);
     overflow-x:hidden;
     background:
-      radial-gradient(115% 42% at 50% 0%, rgba(255,255,255,.30) 0%, rgba(255,255,255,0) 60%),
+      radial-gradient(100% 24% at 50% 0%,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 70%),
       linear-gradient(180deg,
-        #a9c4fa 0%,
-        #bcd4fc 7%,
-        #d2e3fe 14%,
-        #e4effe 22%,
-        #edf4fe 32%,
-        #f2f6fe 44%,
-        #f3f6fe 70%,
-        #f2f5fd 100%);
+        #b3c0f6 0%,
+        #b9c2f6 10%,
+        #ccd0f4 30%,
+        #d8d8f4 43%,
+        #e9eaf8 54%,
+        #f5f6fc 66%,
+        #f5f6fc 100%);
   }
   @media (min-width:480px){
-    body{background:#b8c7db}
-    .app{box-shadow:0 0 70px rgba(22,48,92,.25); min-height:100vh}
+    body{background:#b9bfd8}
+    .app{box-shadow:0 0 70px rgba(55,57,105,.20); min-height:100vh}
   }
 
   /* ---------- nav ---------- */
@@ -59,13 +58,13 @@
     width:32px;height:32px;
     display:flex;align-items:center;justify-content:center;
     background:none;border:0;padding:0;margin-left:-2px;
-    cursor:pointer;color:#15161a;
+    cursor:pointer;color:#252740;
   }
   .nav-right{position:absolute;right:14px;top:0;height:44px;width:74px}
   .service{
     position:absolute;right:0;top:2px;
     width:32px;height:32px;display:flex;align-items:center;justify-content:center;
-    background:none;border:0;padding:0;cursor:pointer;color:#16223c;
+    background:none;border:0;padding:0;cursor:pointer;color:#252740;
   }
 
   /* ---------- page head ---------- */
@@ -74,7 +73,7 @@
     text-align:center;
     font-family:"DouyinSans","PingFang SC","HarmonyOS Sans SC",sans-serif;
     font-size:23px;font-weight:700;letter-spacing:.2px;
-    color:#0b0c0f;
+    color:#181a30;
     line-height:1.35;
     z-index:2;
   }
@@ -91,20 +90,23 @@
     width:100%;
     height:100%;
     object-fit:cover;
+    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 7%,#000 91%,transparent 100%);
+    mask-image:linear-gradient(180deg,transparent 0%,#000 7%,#000 91%,transparent 100%);
   }
 
   /* ---------- cards ---------- */
   .card{
     margin:10px 18px 0;
     padding:16px 16px 10px;
-    background:#fff;
+    background:rgba(255,255,255,.96);
+    border:1px solid rgba(255,255,255,.7);
     border-radius:14px;
-    box-shadow:0 1px 2px rgba(24,60,120,.03),0 8px 22px rgba(40,85,170,.045);
+    box-shadow:0 1px 2px rgba(70,72,130,.025),0 8px 24px rgba(88,88,150,.05);
   }
   .card h2{
     margin:0 0 12px;
     font-size:18px;font-weight:700;letter-spacing:.2px;
-    color:#111216;
+    color:#1c1e33;
     line-height:1.2;
   }
   .tiles{
@@ -118,10 +120,10 @@
     border-radius:8px;
     overflow:hidden;
   }
-  .t-green{background:linear-gradient(140deg,#f5fdfa 0%,#ecfaf4 100%)}
-  .t-pink{background:linear-gradient(140deg,#fdf6f7 0%,#fbf0f2 100%)}
-  .t-blue{background:linear-gradient(140deg,#f3f9ff 0%,#ecf5ff 100%)}
-  .t-yellow{background:linear-gradient(140deg,#fffaef 0%,#fdf4e3 100%)}
+  .t-green{background:linear-gradient(140deg,#f5f4ff 0%,#eeecfa 100%)}
+  .t-pink{background:linear-gradient(140deg,#fbf5fc 0%,#f6effa 100%)}
+  .t-blue{background:linear-gradient(140deg,#f2f6ff 0%,#eaf0fc 100%)}
+  .t-yellow{background:linear-gradient(140deg,#f5f6fc 0%,#eef0fa 100%)}
 
   .links{
     display:grid;
@@ -132,7 +134,7 @@
   }
   .links a{
     display:flex;align-items:center;gap:9px;
-    font-size:14.5px;color:#191a1e;text-decoration:none;
+    font-size:14.5px;color:#26283b;text-decoration:none;
     letter-spacing:.1px;
     line-height:1.2;
   }
@@ -155,19 +157,19 @@
   .lesson .lt{display:flex;align-items:center;gap:9px;min-width:0}
   .lesson .dot{
     width:6px;height:6px;border-radius:50%;
-    background:#3b7bf6;flex:0 0 auto;
-    box-shadow:0 0 0 3px rgba(59,123,246,.10);
+    background:#7588e6;flex:0 0 auto;
+    box-shadow:0 0 0 3px rgba(117,136,230,.10);
   }
   .lesson em{
-    font-style:normal;font-size:14.5px;color:#202127;
+    font-style:normal;font-size:14.5px;color:#292b3e;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
-  .lesson svg{flex:0 0 auto;color:#b7bfcc}
+  .lesson svg{flex:0 0 auto;color:#b0b4c8}
 
   .foot{
     padding:22px 18px calc(34px + env(safe-area-inset-bottom));
     text-align:center;
-    font-size:11px;color:#a4aec0;
+    font-size:11px;color:#9a9eb5;
     letter-spacing:.4px;
   }
 
@@ -228,9 +230,9 @@
       <a href="javascript:;">
         <span class="li-ico">
           <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <rect width="20" height="20" rx="5" fill="#7183df"/>
             <rect x="6" y="4.4" width="8" height="11.2" rx="1.6" fill="#ffffff"/>
-            <path d="M8.1 8h3.8M8.1 10.4h3.8M8.1 12.8h2.4" stroke="#4a8dfa" stroke-width="1.1" stroke-linecap="round"/>
+            <path d="M8.1 8h3.8M8.1 10.4h3.8M8.1 12.8h2.4" stroke="#7183df" stroke-width="1.1" stroke-linecap="round"/>
           </svg>
         </span>
         用户协议管理
@@ -238,10 +240,10 @@
       <a href="javascript:;">
         <span class="li-ico">
           <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <rect width="20" height="20" rx="5" fill="#7183df"/>
             <rect x="4.2" y="6.4" width="11.6" height="7.6" rx="1.7" fill="#ffffff"/>
-            <rect x="4.2" y="8.5" width="11.6" height="2" fill="#4a8dfa"/>
-            <rect x="6" y="11.6" width="3.4" height="1.1" rx=".55" fill="#4a8dfa" opacity=".7"/>
+            <rect x="4.2" y="8.5" width="11.6" height="2" fill="#7183df"/>
+            <rect x="6" y="11.6" width="3.4" height="1.1" rx=".55" fill="#7183df" opacity=".7"/>
           </svg>
         </span>
         银行卡管理
@@ -249,10 +251,10 @@
       <a href="javascript:;">
         <span class="li-ico">
           <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <rect width="20" height="20" rx="5" fill="#7183df"/>
             <path d="M10 4.2 15 6v4.3c0 3-2.1 4.9-5 5.7-2.9-.8-5-2.7-5-5.7V6l5-1.8Z" fill="#ffffff"/>
-            <path d="M10 7.3v2.9" stroke="#4a8dfa" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="10" cy="12.6" r=".9" fill="#4a8dfa"/>
+            <path d="M10 7.3v2.9" stroke="#7183df" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="10" cy="12.6" r=".9" fill="#7183df"/>
           </svg>
         </span>
         隐私保护政策
