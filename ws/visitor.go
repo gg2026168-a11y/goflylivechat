@@ -104,6 +104,9 @@ func VisitorOnline(kefuId string, visitor models.Visitor) {
 	userInfo["username"] = visitor.Name
 	userInfo["avator"] = visitor.Avator
 	userInfo["last_message"] = lastMessage.Content
+	userInfo["client_ip"] = visitor.ClientIp
+	userInfo["city"] = visitor.City
+	userInfo["refer"] = visitor.Refer
 	if userInfo["last_message"] == "" {
 		userInfo["last_message"] = "new visitor"
 	}

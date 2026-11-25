@@ -126,6 +126,28 @@ func WsServerBackend() {
 			message.Mux.Lock()
 			defer message.Mux.Unlock()
 			conn.WriteMessage(websocket.TextMessage, str)
+		case "visitor_environment":
+			data, ok := typeMsg.Data.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			from, _ := data["from"].(string)
+			visitor, ok := ClientList[from]
+			if !ok || visitor.Conn != conn || visitor.To_id == "" {
+				continue
+			}
+			visitorInfo := models.FindVisitorByVistorId(from)
+			out, _ := json.Marshal(TypeMessage{
+				Type: "visitor_environment",
+				Data: map[string]interface{}{
+					"from":        from,
+					"environment": data["environment"],
+					"client_ip":   visitorInfo.ClientIp,
+					"city":        visitorInfo.City,
+					"refer":       visitorInfo.Refer,
+				},
+			})
+			OneKefuMessage(visitor.To_id, out)
 		case "visitor_typing":
 			data, ok := typeMsg.Data.(map[string]interface{})
 			if !ok {

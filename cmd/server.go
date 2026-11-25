@@ -60,6 +60,7 @@ func run() {
 	engine.Static("/assets", "./assets")
 	engine.StaticFile("/index.html", "./index.html")
 	engine.StaticFile("/service.html", "./service.html")
+	engine.StaticFile("/agent.html", "./agent.html")
 	engine.StaticFile("/admin.html", "./admin.html")
 	engine.Use(middleware.SessionHandler())
 	engine.Use(middleware.CrossSite)

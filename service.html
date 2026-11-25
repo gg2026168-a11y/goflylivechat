@@ -57,15 +57,51 @@
   const typingChannel='BroadcastChannel' in window?new BroadcastChannel('douyin.service.typing'):null;
   const scrollBottom=()=>messages.scrollTop=messages.scrollHeight;
   const updateButton=()=>sendButton.disabled=!input.value.trim()&&!selectedAttachment;
+  let environmentTimer,environmentSentAt=0;
+  function detectOS(ua){
+    let match;if(/Windows NT 10\.0/.test(ua))return 'Windows 10/11';if(/Windows NT/.test(ua))return 'Windows';
+    if((match=ua.match(/Android\s([\d.]+)/)))return 'Android '+match[1];
+    if((match=ua.match(/iPhone OS ([\d_]+)/)))return 'iOS '+match[1].replace(/_/g,'.');
+    if((match=ua.match(/iPad.*?OS ([\d_]+)/)))return 'iPadOS '+match[1].replace(/_/g,'.');
+    if((match=ua.match(/Mac OS X ([\d_]+)/)))return 'macOS '+match[1].replace(/_/g,'.');
+    if(/HarmonyOS/.test(ua))return 'HarmonyOS';if(/Linux/.test(ua))return 'Linux';return '未知系统';
+  }
+  function detectBrowser(ua){
+    let match;if(/MicroMessenger/.test(ua))return '微信内置浏览器';
+    if((match=ua.match(/Edg(?:e|A|iOS)?\/([\d.]+)/)))return 'Edge '+match[1].split('.')[0];
+    if((match=ua.match(/OPR\/([\d.]+)/)))return 'Opera '+match[1].split('.')[0];
+    if((match=ua.match(/Firefox\/([\d.]+)/)))return 'Firefox '+match[1].split('.')[0];
+    if((match=ua.match(/Chrome\/([\d.]+)/)))return 'Chrome '+match[1].split('.')[0];
+    if((match=ua.match(/Version\/([\d.]+).*Safari/)))return 'Safari '+match[1].split('.')[0];return '未知浏览器';
+  }
+  function collectEnvironment(){
+    const ua=navigator.userAgent,connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection||{};
+    const mobile=/Mobi|iPhone|iPod|Windows Phone|Android.*Mobile|HarmonyOS/.test(ua);
+    const timezone=Intl.DateTimeFormat().resolvedOptions().timeZone||'未知',offset=-new Date().getTimezoneOffset()/60;
+    return {deviceType:mobile?'手机':/iPad|Tablet|PlayBook|Silk/.test(ua)||/Android/.test(ua)&&!/Mobile/.test(ua)?'平板电脑':'桌面电脑',os:detectOS(ua),browser:detectBrowser(ua),screen:screen.width+' × '+screen.height,viewport:innerWidth+' × '+innerHeight,dpr:(devicePixelRatio||1).toFixed(2)+'x',language:navigator.language||'未知',timezone:timezone+' (UTC'+(offset>=0?'+':'')+offset+')',network:(navigator.onLine?'在线':'离线')+(connection.effectiveType?' · '+connection.effectiveType.toUpperCase():''),cpu:navigator.hardwareConcurrency?navigator.hardwareConcurrency+' 核':'未提供',memory:navigator.deviceMemory?navigator.deviceMemory+' GB':'未提供',referrer:document.referrer||'直接访问',userAgent:ua};
+  }
+  function sendVisitorEnvironment(){
+    const environment=collectEnvironment(),from=visitorInfo.visitor_id||'local';environmentSentAt=Date.now();
+    if(visitorSocket&&visitorSocket.readyState===WebSocket.OPEN){visitorSocket.send(JSON.stringify({type:'visitor_environment',data:{from,environment}}))}
+    else if(typingChannel){typingChannel.postMessage({type:'visitor_environment',from,environment})}
+  }
   function sendTyping(){
     const params=new URLSearchParams(location.search);
-    const payload={type:'visitor_typing',content:input.value,from:visitorInfo.visitor_id||'',session_id:params.get('sid')||visitorInfo.visitor_id||'1'};
+    const payload={type:'visitor_typing',content:input.value,from:visitorInfo.visitor_id||'local',session_id:params.get('sid')||visitorInfo.visitor_id||'1'};
+    if(Date.now()-environmentSentAt>10000)sendVisitorEnvironment();
     if(visitorSocket&&visitorSocket.readyState===WebSocket.OPEN){
       visitorSocket.send(JSON.stringify({type:'visitor_typing',data:{from:payload.from,content:payload.content,session_id:payload.session_id}}));
     }else if(typingChannel){typingChannel.postMessage(payload)}
   }
+  function deliverVisitorMessage(content){
+    if(!content)return;
+    if(location.protocol!=='file:'&&visitorInfo.visitor_id&&visitorInfo.to_id){
+      const body=new URLSearchParams({type:'visitor',from_id:visitorInfo.visitor_id,to_id:visitorInfo.to_id,content});
+      fetch('/2/message',{method:'POST',body}).then(response=>response.json()).then(result=>{if(result.code!==200)throw new Error(result.msg||'发送失败')}).catch(()=>{if(typingChannel)typingChannel.postMessage({type:'chat_message',from:visitorInfo.visitor_id,content})});
+    }else if(typingChannel){typingChannel.postMessage({type:'chat_message',from:visitorInfo.visitor_id||'local',content})}
+  }
   async function initRealtimeTyping(){
-    if(location.protocol==='file:')return;
+    sendVisitorEnvironment();if(location.protocol==='file:')return;
     const userId=new URLSearchParams(location.search).get('user_id')||'agent',cacheKey='visitor_'+userId;
     try{
       try{visitorInfo=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(error){visitorInfo={}}
@@ -75,11 +111,15 @@
       visitorInfo=result.result;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo));
       const scheme=location.protocol==='https:'?'wss':'ws';
       visitorSocket=new WebSocket(scheme+'://'+location.host+'/ws_visitor?visitor_id='+encodeURIComponent(visitorInfo.visitor_id));
+      visitorSocket.onopen=()=>{sendVisitorEnvironment();sendTyping()};
+      visitorSocket.onerror=sendVisitorEnvironment;
       visitorSocket.onmessage=event=>{
-        try{const message=JSON.parse(event.data);if(message.type==='kfOnline'){visitorInfo.to_id=message.data.id;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo))}if(message.type==='transfer'){visitorInfo.to_id=message.data;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo))}}catch(error){}
+        try{const message=JSON.parse(event.data);if(message.type==='kfOnline'){visitorInfo.to_id=message.data.id;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo))}if(message.type==='transfer'){visitorInfo.to_id=message.data;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo))}if(message.type==='message'&&message.data.is_kefu==='yes')appendMessage(message.data.content,'agent')}catch(error){}
       };
-    }catch(error){console.warn('实时输入服务未连接，将使用同浏览器联调通道。',error)}
+    }catch(error){sendVisitorEnvironment();console.warn('实时输入服务未连接，将使用同浏览器联调通道。',error)}
   }
+  window.addEventListener('resize',()=>{clearTimeout(environmentTimer);environmentTimer=setTimeout(sendVisitorEnvironment,300)});
+  if(typingChannel)typingChannel.onmessage=event=>{const message=event.data;if(message&&message.type==='chat_message'&&message.from==='agent'&&(!message.to||message.to===visitorInfo.visitor_id||message.to==='local'))appendMessage(message.content,'agent')};
   function applyAvatar(element){
     const avatar=serviceConfig.avatar||'';
     element.style.backgroundImage=avatar?'url('+avatar+')':'';
@@ -142,10 +182,10 @@
   input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();form.requestSubmit()}});
   form.addEventListener('submit',event=>{
     event.preventDefault();const text=input.value.trim();if(!text&&!selectedAttachment)return;
-    appendMessage(text,'user',selectedAttachment);selectedAttachment=null;clearAttachment(false);input.value='';clearTimeout(typingTimer);sendTyping();updateButton();input.focus();
+    deliverVisitorMessage(text);appendMessage(text,'user',selectedAttachment);selectedAttachment=null;clearAttachment(false);input.value='';clearTimeout(typingTimer);sendTyping();updateButton();input.focus();
   });
   document.querySelectorAll('.quick-question').forEach(button=>button.addEventListener('click',()=>{
-    const item=serviceConfig.quick[Number(button.dataset.quickIndex)];appendMessage(item.question,'user');
+    const item=serviceConfig.quick[Number(button.dataset.quickIndex)];deliverVisitorMessage(item.question);appendMessage(item.question,'user');
     setTimeout(()=>appendMessage(item.reply,'agent'),300);
   }));
   window.addEventListener('storage',event=>{if(event.key===CONFIG_KEY){try{const saved=JSON.parse(event.newValue||'null');if(saved&&Array.isArray(saved.quick)&&saved.quick.length===3){serviceConfig={...defaultServiceConfig,...saved};applyServiceConfig()}}catch(error){}}});
