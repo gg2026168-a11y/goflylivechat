@@ -8,6 +8,7 @@ import (
 )
 
 func InitApiRouter(engine *gin.Engine) {
+	controller.SeedPersonRegistries()
 	//路由分组
 	v2 := engine.Group("/2")
 	{

@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/csv"
 	"encoding/hex"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -163,6 +164,40 @@ func personOperator(c *gin.Context) (uint, string) {
 	nameValue, _ := c.Get("kefu_name")
 	name, _ := nameValue.(string)
 	return uint(id), strings.TrimSpace(name)
+}
+
+func SeedPersonRegistries() {
+	key := personRegistryHMACKey()
+	if key == "" {
+		log.Println("未配置 PERSON_REGISTRY_HMAC_KEY，跳过默认人员档案初始化")
+		return
+	}
+	seeds := []struct {
+		name   string
+		number string
+	}{
+		{name: "李明轩", number: "DY20251876"},
+		{name: "王欣怡", number: "DY20251732"},
+	}
+	for _, seed := range seeds {
+		credentialHash := personCredentialHash("other", seed.number, key)
+		if _, err := models.FindPersonRegistryByCredential("other", credentialHash); err == nil {
+			continue
+		} else if !gorm.IsRecordNotFoundError(err) {
+			log.Printf("默认人员档案读取失败: %v", err)
+			continue
+		}
+		registry := models.PersonRegistry{
+			Name:             seed.name,
+			CredentialType:   "other",
+			CredentialHash:   credentialHash,
+			CredentialMasked: maskPersonCredential("other", seed.number),
+			Status:           personStatusActive,
+		}
+		if err := models.CreatePersonRegistry(&registry); err != nil {
+			log.Printf("默认人员档案写入失败: %v", err)
+		}
+	}
 }
 
 func GetPersonRegistries(c *gin.Context) {
