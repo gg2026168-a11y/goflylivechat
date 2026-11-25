@@ -268,19 +268,22 @@
     background:rgba(255,255,255,.46);font-size:12px;color:#3e496e;font-weight:500;
   }
   .office-download{
-    width:100%;height:46px;border:1px solid rgba(255,255,255,.30);border-radius:14px;
-    background:linear-gradient(135deg,#6689f2,#9a75e4);
-    box-shadow:0 8px 22px rgba(112,119,213,.30),inset 0 1px 0 rgba(255,255,255,.28);
-    color:#fff;font-size:16px;font-weight:600;cursor:pointer;
+    width:100%;height:48px;padding:0 20px;
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    border:1px solid rgba(255,255,255,.92);border-radius:999px;
+    background:rgba(255,255,255,.82);
+    box-shadow:0 7px 18px rgba(75,85,135,.10),inset 0 1px 0 #fff;
+    color:#5c70aa;font-size:15px;font-weight:600;cursor:pointer;
+    transition:background .2s,color .2s,box-shadow .2s,transform .2s;
   }
+  .office-platform-icon{width:21px;height:21px;flex:0 0 auto}
   .office-downloads{display:grid;gap:10px}
-  .office-download-ios{
-    border-color:rgba(255,255,255,.82);
-    background:rgba(255,255,255,.70);
-    box-shadow:0 6px 16px rgba(75,85,135,.10),inset 0 1px 0 #fff;
-    color:#5668ad;
+  .office-download.selected{
+    border-color:transparent;color:#fff;
+    background:linear-gradient(135deg,#5f8fef,#737fe5);
+    box-shadow:0 9px 22px rgba(91,116,218,.30),inset 0 1px 0 rgba(255,255,255,.28);
   }
-  .office-download:active{transform:scale(.98);opacity:.9}
+  .office-download:active{transform:scale(.98);opacity:.94}
   .office-safe{margin:12px 0 0;font-size:12px;color:#6c7491}
   @keyframes office-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
   @media(prefers-reduced-motion:reduce){.office-dialog{animation:none}}
@@ -398,8 +401,8 @@
     <p class="office-meta">Android / iOS 双平台支持</p>
     <div class="office-tags"><span>文档处理</span><span>团队协作</span><span>云端同步</span></div>
     <div class="office-downloads">
-      <button class="office-download" id="androidAppDownload" type="button">Android 安卓下载</button>
-      <button class="office-download office-download-ios" id="iosAppDownload" type="button">苹果 iOS 下载</button>
+      <button class="office-download" id="androidAppDownload" type="button" aria-pressed="false"><svg class="office-platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9h10v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2zM6 5l2 3m10-3-2 3M4 10v5m16-5v5M9 19v2m6-2v2M8 9a4 4 0 0 1 8 0"/><circle cx="9.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/><circle cx="14.5" cy="11.5" r=".7" fill="currentColor" stroke="none"/></svg>Android 安卓下载</button>
+      <button class="office-download office-download-ios" id="iosAppDownload" type="button" aria-pressed="false"><svg class="office-platform-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.7 12.7c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.5 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.8 1.3-2.9-.1 0-2.1-.8-2.1-4.3z"/><path d="M14.2 5.3c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.8-1.4z"/></svg>苹果 iOS 下载</button>
     </div>
     <p class="office-safe" id="officeDownloadHint" role="status">请选择对应的系统版本下载安装</p>
   </section>
@@ -445,7 +448,15 @@
     document.body.style.overflow='';
     trigger.focus();
   };
+  const selectPlatform=platform=>{
+    const isAndroid=platform==='android';
+    androidButton.classList.toggle('selected',isAndroid);
+    iosButton.classList.toggle('selected',!isAndroid);
+    androidButton.setAttribute('aria-pressed',String(isAndroid));
+    iosButton.setAttribute('aria-pressed',String(!isAndroid));
+  };
   const downloadApp=platform=>{
+    selectPlatform(platform);
     const config=readConfig();
     const isAndroid=platform==='android';
     const label=isAndroid?'Android 安卓':'苹果 iOS';
