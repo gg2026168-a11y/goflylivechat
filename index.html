@@ -125,17 +125,52 @@
   .t-blue{background:linear-gradient(140deg,#f2f6ff 0%,#eaf0fc 100%)}
   .t-yellow{background:linear-gradient(140deg,#f5f6fc 0%,#eef0fa 100%)}
 
+  .member-card{
+    padding:16px 10px 10px;
+    background:#f5f5f9;
+  }
+  .member-card h2{margin-left:6px}
   .member-features{
-    display:flex;
-    flex-direction:column;
-    margin:0 -4px;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
   }
   .member-feature{
-    display:block;
-    width:100%;
-    height:auto;
-    border:0;
+    display:flex;
+    align-items:center;
+    gap:clamp(6px,2vw,8px);
+    min-width:0;
+    padding:13px 10px;
+    background:#fff;
     border-radius:10px;
+    text-decoration:none;
+  }
+  .member-feature:active{opacity:.72}
+  .member-feature img{
+    width:clamp(30px,8.7vw,36px);
+    height:clamp(30px,8.7vw,36px);
+    object-fit:contain;
+    flex:0 0 auto;
+  }
+  .feature-copy{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    min-width:0;
+  }
+  .feature-copy strong{
+    color:#242433;
+    font-size:clamp(13px,3.8vw,15px);
+    font-weight:600;
+    line-height:1.15;
+    white-space:nowrap;
+  }
+  .feature-copy small{
+    color:#9696a3;
+    font-size:clamp(9px,2.8vw,11px);
+    line-height:1.2;
+    letter-spacing:-.2px;
+    white-space:nowrap;
   }
 
   .lessons{margin-top:2px}
@@ -217,12 +252,25 @@
   </section>
 
   <!-- member features -->
-  <section class="card">
+  <section class="card member-card">
     <h2>会员功能</h2>
     <div class="member-features">
-      <img class="member-feature" src="assets/member-data.png" alt="数据中心、上热门">
-      <img class="member-feature" src="assets/member-plan.png" alt="精选计划：优质创作扶持激励">
-      <img class="member-feature" src="assets/member-verification.png" alt="官方认证：原创官方认证">
+      <a class="member-feature" href="javascript:;">
+        <img src="assets/icon-data.png" alt="">
+        <span class="feature-copy"><strong>数据中心</strong><small>查看数据优化创作</small></span>
+      </a>
+      <a class="member-feature" href="javascript:;">
+        <img src="assets/icon-hot.png" alt="">
+        <span class="feature-copy"><strong>上热门</strong><small>DOU+上热门</small></span>
+      </a>
+      <a class="member-feature" href="javascript:;">
+        <img src="assets/icon-plan.png" alt="">
+        <span class="feature-copy"><strong>精选计划</strong><small>优质创作扶持激励</small></span>
+      </a>
+      <a class="member-feature" href="javascript:;">
+        <img src="assets/icon-verified.png" alt="">
+        <span class="feature-copy"><strong>官方认证</strong><small>原创官方认证</small></span>
+      </a>
     </div>
   </section>
 
