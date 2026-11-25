@@ -22,6 +22,7 @@ func InitApiRouter(engine *gin.Engine) {
 	}
 	engine.GET("/captcha", controller.GetCaptcha)
 	engine.POST("/check", controller.LoginCheckPass)
+	engine.POST("/mobile_lookup", middleware.JwtApiMiddleware, controller.PostMobileLookup)
 
 	engine.GET("/userinfo", middleware.JwtApiMiddleware, controller.GetKefuInfoAll)
 	engine.POST("/register", middleware.Ipblack, controller.PostKefuRegister)
