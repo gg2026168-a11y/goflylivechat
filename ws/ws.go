@@ -126,6 +126,31 @@ func WsServerBackend() {
 			message.Mux.Lock()
 			defer message.Mux.Unlock()
 			conn.WriteMessage(websocket.TextMessage, str)
+		case "visitor_typing":
+			data, ok := typeMsg.Data.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			from, _ := data["from"].(string)
+			content, _ := data["content"].(string)
+			sessionID, _ := data["session_id"].(string)
+			visitor, ok := ClientList[from]
+			if !ok || visitor.Conn != conn || visitor.To_id == "" {
+				continue
+			}
+			contentRunes := []rune(content)
+			if len(contentRunes) > 500 {
+				content = string(contentRunes[:500])
+			}
+			out, _ := json.Marshal(TypeMessage{
+				Type: "visitor_typing",
+				Data: map[string]string{
+					"from":       from,
+					"content":    content,
+					"session_id": sessionID,
+				},
+			})
+			OneKefuMessage(visitor.To_id, out)
 		case "inputing":
 			data := typeMsg.Data.(map[string]interface{})
 			from := data["from"].(string)
