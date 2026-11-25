@@ -23,6 +23,12 @@ func InitApiRouter(engine *gin.Engine) {
 	engine.GET("/captcha", controller.GetCaptcha)
 	engine.POST("/check", controller.LoginCheckPass)
 	engine.POST("/mobile_lookup", middleware.JwtApiMiddleware, controller.PostMobileLookup)
+	engine.GET("/person_registries", middleware.JwtApiMiddleware, controller.GetPersonRegistries)
+	engine.POST("/person_registries", middleware.JwtApiMiddleware, controller.PostPersonRegistry)
+	engine.PUT("/person_registries/:id", middleware.JwtApiMiddleware, controller.PutPersonRegistry)
+	engine.POST("/person_verify", middleware.JwtApiMiddleware, controller.PostPersonVerification)
+	engine.GET("/person_verify_records", middleware.JwtApiMiddleware, controller.GetPersonVerificationRecords)
+	engine.GET("/person_verify_export", middleware.JwtApiMiddleware, controller.GetPersonVerificationExport)
 
 	engine.GET("/userinfo", middleware.JwtApiMiddleware, controller.GetKefuInfoAll)
 	engine.POST("/register", middleware.Ipblack, controller.PostKefuRegister)

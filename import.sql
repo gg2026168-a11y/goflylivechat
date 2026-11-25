@@ -111,3 +111,39 @@ CREATE TABLE `reply_item` (
  KEY `user_id` (`user_id`),
  KEY `group_id` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `person_registry` (
+ `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ `updated_at` timestamp NULL DEFAULT NULL,
+ `deleted_at` timestamp NULL DEFAULT NULL,
+ `name` varchar(100) NOT NULL,
+ `credential_type` varchar(20) NOT NULL,
+ `credential_hash` char(64) NOT NULL,
+ `credential_masked` varchar(80) NOT NULL,
+ `status` varchar(20) NOT NULL DEFAULT 'active',
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `idx_person_credential` (`credential_type`,`credential_hash`),
+ KEY `idx_person_registry_deleted_at` (`deleted_at`),
+ KEY `idx_person_registry_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `person_verification` (
+ `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ `updated_at` timestamp NULL DEFAULT NULL,
+ `deleted_at` timestamp NULL DEFAULT NULL,
+ `registry_id` int(10) unsigned DEFAULT NULL,
+ `name` varchar(100) NOT NULL,
+ `credential_type` varchar(20) NOT NULL,
+ `credential_masked` varchar(80) NOT NULL,
+ `reason` varchar(50) NOT NULL,
+ `result` varchar(30) NOT NULL,
+ `operator_id` int(10) unsigned NOT NULL DEFAULT '0',
+ `operator_name` varchar(100) NOT NULL DEFAULT '',
+ PRIMARY KEY (`id`),
+ KEY `idx_person_verification_created_at` (`created_at`),
+ KEY `idx_person_verification_registry_id` (`registry_id`),
+ KEY `idx_person_verification_result` (`result`),
+ KEY `idx_person_verification_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
