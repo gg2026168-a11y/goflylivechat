@@ -230,49 +230,51 @@
     position:fixed;inset:0;z-index:100;
     display:flex;align-items:center;justify-content:center;
     padding:24px;
-    background:rgba(27,33,67,.30);
-    -webkit-backdrop-filter:blur(9px);
-    backdrop-filter:blur(9px);
+    background:rgba(37,43,79,.22);
+    -webkit-backdrop-filter:blur(7px);
+    backdrop-filter:blur(7px);
   }
   .office-dialog{
     position:relative;width:min(100%,320px);
     padding:28px 24px 22px;
-    border:1px solid rgba(255,255,255,.68);
+    border:1px solid rgba(255,255,255,.88);
     border-radius:26px;
-    background:linear-gradient(145deg,rgba(255,255,255,.52),rgba(255,255,255,.22));
-    box-shadow:0 24px 70px rgba(45,48,98,.25),inset 0 1px 0 rgba(255,255,255,.65);
-    -webkit-backdrop-filter:blur(28px) saturate(150%);
-    backdrop-filter:blur(28px) saturate(150%);
-    text-align:center;color:#20233d;
+    background:linear-gradient(145deg,rgba(255,255,255,.80),rgba(255,255,255,.54));
+    box-shadow:0 24px 70px rgba(45,48,98,.20),inset 0 1px 0 rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(24px) saturate(160%) brightness(1.08);
+    backdrop-filter:blur(24px) saturate(160%) brightness(1.08);
+    text-align:center;color:#171c36;
     animation:office-in .22s ease-out;
   }
   .office-close{
     position:absolute;top:12px;right:12px;
     width:32px;height:32px;display:grid;place-items:center;
-    border:0;border-radius:50%;padding:0;
-    color:#555c7c;background:rgba(255,255,255,.34);cursor:pointer;
+    border:1px solid rgba(255,255,255,.70);border-radius:50%;padding:0;
+    color:#343c60;background:rgba(255,255,255,.64);cursor:pointer;
   }
-  .office-close:active{background:rgba(255,255,255,.58)}
+  .office-close:active{background:rgba(255,255,255,.88)}
   .office-app-icon{
-    display:block;width:74px;height:74px;margin:0 auto 14px;
-    border-radius:20px;box-shadow:0 10px 24px rgba(76,103,173,.20);
+    display:block;width:78px;height:78px;margin:0 auto 14px;
+    border:1px solid rgba(255,255,255,.78);border-radius:21px;
+    box-shadow:0 10px 26px rgba(76,103,173,.20),0 0 0 4px rgba(255,255,255,.20);
+    filter:brightness(1.10) saturate(1.12) contrast(1.06);
   }
-  .office-dialog h2{margin:0;font-size:23px;line-height:1.3;color:#20233d}
-  .office-subtitle{margin:8px 0 0;font-size:13px;color:#62677f;line-height:1.6}
-  .office-meta{margin:14px 0 0;font-size:12px;color:#8589a0}
+  .office-dialog h2{margin:0;font-size:24px;line-height:1.3;color:#141a35;font-weight:700}
+  .office-subtitle{margin:9px 0 0;font-size:14px;color:#454d6c;font-weight:500;line-height:1.65}
+  .office-meta{margin:14px 0 0;font-size:12px;color:#68708e;font-weight:500}
   .office-tags{display:flex;justify-content:center;gap:7px;margin:18px 0}
   .office-tags span{
-    padding:5px 9px;border:1px solid rgba(255,255,255,.45);border-radius:20px;
-    background:rgba(255,255,255,.25);font-size:11px;color:#565e80;
+    padding:5px 9px;border:1px solid rgba(255,255,255,.72);border-radius:20px;
+    background:rgba(255,255,255,.46);font-size:12px;color:#3e496e;font-weight:500;
   }
   .office-download{
-    width:100%;height:46px;border:0;border-radius:14px;
-    background:linear-gradient(135deg,#7189ed,#967bdc);
-    box-shadow:0 8px 20px rgba(112,119,213,.25);
+    width:100%;height:46px;border:1px solid rgba(255,255,255,.30);border-radius:14px;
+    background:linear-gradient(135deg,#6689f2,#9a75e4);
+    box-shadow:0 8px 22px rgba(112,119,213,.30),inset 0 1px 0 rgba(255,255,255,.28);
     color:#fff;font-size:16px;font-weight:600;cursor:pointer;
   }
   .office-download:active{transform:scale(.98);opacity:.9}
-  .office-safe{margin:12px 0 0;font-size:11px;color:#898da4}
+  .office-safe{margin:12px 0 0;font-size:12px;color:#6c7491}
   @keyframes office-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
   @media(prefers-reduced-motion:reduce){.office-dialog{animation:none}}
 
