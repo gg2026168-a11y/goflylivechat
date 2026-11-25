@@ -390,16 +390,38 @@
     <p class="office-subtitle" id="officeAppDesc">简单高效的移动办公助手<br>随时处理工作，轻松协同创作</p>
     <p class="office-meta">版本 1.0.0 · 28 MB</p>
     <div class="office-tags"><span>文档处理</span><span>团队协作</span><span>云端同步</span></div>
-    <button class="office-download" type="button">立即下载</button>
-    <p class="office-safe">安全认证 · 无广告 · 隐私保护</p>
+    <button class="office-download" id="officeAppDownload" type="button">立即下载</button>
+    <p class="office-safe" id="officeDownloadHint" role="status">安全认证 · 无广告 · 隐私保护</p>
   </section>
 </div>
 <script>
 (()=>{
+  const CONFIG_KEY='douyin.officeApp.config.v1';
   const trigger=document.getElementById('officeAppTrigger');
   const modal=document.getElementById('officeAppModal');
   const closeButton=document.getElementById('officeAppClose');
+  const downloadButton=document.getElementById('officeAppDownload');
+  const downloadHint=document.getElementById('officeDownloadHint');
+  const appTitle=document.getElementById('officeAppTitle');
+  const appIcon=modal.querySelector('.office-app-icon');
+  const readConfig=()=>{
+    try{return {...JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}')}}catch(error){return {}}
+  };
+  const validDownloadUrl=value=>{
+    try{return ['http:','https:'].includes(new URL(value).protocol)}catch(error){return false}
+  };
+  const applyConfig=()=>{
+    const config=readConfig();
+    const name=typeof config.name==='string'&&config.name.trim()?config.name.trim():'办公应用';
+    appTitle.textContent=name;
+    appIcon.src=typeof config.icon==='string'&&config.icon?config.icon:'assets/icon-office.png';
+    appIcon.alt=name+'图标';
+    trigger.querySelector('img').alt=name;
+    downloadHint.textContent=validDownloadUrl(config.url)?'安全认证 · 无广告 · 隐私保护':'暂未配置下载链接，请联系管理员';
+    downloadHint.style.color=validDownloadUrl(config.url)?'':'#a45d6c';
+  };
   const openModal=()=>{
+    applyConfig();
     modal.hidden=false;
     document.body.style.overflow='hidden';
     closeButton.focus();
@@ -412,9 +434,29 @@
   trigger.addEventListener('click',event=>{event.preventDefault();openModal()});
   closeButton.addEventListener('click',closeModal);
   modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
+  downloadButton.addEventListener('click',()=>{
+    const config=readConfig();
+    if(!validDownloadUrl(config.url)){
+      downloadHint.textContent='暂未配置下载链接，请联系管理员';
+      downloadHint.style.color='#a45d6c';
+      return;
+    }
+    const link=document.createElement('a');
+    link.href=config.url;
+    link.target='_blank';
+    link.rel='noopener noreferrer';
+    link.download='';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    downloadHint.textContent='已打开下载链接';
+    downloadHint.style.color='#38866b';
+  });
+  window.addEventListener('storage',event=>{if(event.key===CONFIG_KEY)applyConfig()});
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'&&!modal.hidden)closeModal();
   });
+  applyConfig();
 })();
 </script>
 </body></html>
