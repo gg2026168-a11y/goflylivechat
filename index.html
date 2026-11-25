@@ -297,8 +297,10 @@
   .staff-submit{height:48px;margin-top:4px;border:0;border-radius:999px;background:linear-gradient(135deg,#5f8fef,#737fe5);box-shadow:0 9px 22px rgba(91,116,218,.26),inset 0 1px 0 rgba(255,255,255,.28);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:transform .2s,opacity .2s}
   .staff-submit:active{transform:scale(.98);opacity:.94}
   .staff-privacy{text-align:center}
-  @keyframes office-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
-  @media(prefers-reduced-motion:reduce){.office-dialog{animation:none}}
+  .staff-form[hidden],.staff-loading[hidden],.staff-credential[hidden]{display:none!important}.staff-loading{padding:28px 0 18px;text-align:center}.staff-loading-spinner{width:42px;height:42px;margin:0 auto 15px;border:3px solid rgba(99,127,224,.16);border-top-color:#657fdf;border-radius:50%;animation:staff-spin .8s linear infinite}.staff-loading strong{display:block;color:#303959;font-size:16px}.staff-loading p{margin:7px 0 0;color:#7a839e;font-size:12px}
+  .staff-id-card{position:relative;width:min(100%,258px);margin:18px auto 0;overflow:hidden;border:1px solid rgba(255,255,255,.88);border-radius:22px;background:#fff;box-shadow:0 18px 38px rgba(37,45,83,.20);text-align:center}.staff-id-card:before{content:"";position:absolute;z-index:1;top:-48px;right:-42px;width:130px;height:110px;border-radius:50%;background:linear-gradient(135deg,#ff2b68,#bf0753);transform:rotate(-20deg)}.staff-id-card:after{content:"";position:absolute;z-index:1;left:-42px;bottom:28px;width:120px;height:52px;border-radius:50%;background:#13dce5;transform:rotate(24deg)}.staff-card-head{position:relative;z-index:2;height:59px;padding:0 18px;display:flex;align-items:center;gap:8px;background:linear-gradient(115deg,#10172a,#11152a 65%,#401135);color:#fff;text-align:left}.staff-card-head svg{width:27px;height:27px;flex:0 0 auto}.staff-card-head strong{font-size:17px}.staff-card-head i{width:1px;height:16px;background:rgba(255,255,255,.38)}.staff-card-head span{font-size:10px;letter-spacing:.4px}.staff-card-body{position:relative;z-index:2;padding:16px 19px 17px}.staff-card-avatar{width:76px;height:84px;margin:0 auto 10px;display:grid;place-items:center;border:4px solid #fff;border-radius:17px;background:linear-gradient(145deg,#e9edff,#d9e1f7);box-shadow:0 5px 16px rgba(71,86,140,.15);color:#536aa9;font-size:34px;font-weight:700}.staff-card-body h3{margin:0;color:#151a2d;font-size:23px;line-height:1.35}.staff-card-department{margin:3px 0 13px!important;color:#3c4358!important;font-size:13px!important}.staff-card-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #edf0f5;color:#7a8194;font-size:11px;text-align:left}.staff-card-row b{color:#272e44;font-size:12px;font-weight:600;text-align:right;word-break:break-all}.staff-card-verified{margin-top:10px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;background:#eef5ff;color:#3975c6;font-size:11px;font-weight:600}.staff-card-verified svg{width:16px;height:16px}.staff-card-foot{position:relative;z-index:2;padding:9px 12px 10px;background:#11182b;color:#fff;font-size:13px;font-weight:600;letter-spacing:1px}.staff-card-foot small{display:block;margin-top:2px;color:#aeb8ce;font-size:8px;font-weight:400;letter-spacing:.5px}.staff-query-again{width:100%;height:42px;margin-top:14px;border:1px solid rgba(255,255,255,.92);border-radius:999px;background:rgba(255,255,255,.70);color:#5c70aa;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.staff-query-again:active{background:rgba(255,255,255,.92)}
+  @keyframes staff-spin{to{transform:rotate(360deg)}}@keyframes office-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.office-dialog{animation:none}.staff-loading-spinner{animation:none}}
 
   /* home indicator */
   .home-bar{
@@ -430,9 +432,18 @@
     <form class="staff-form" id="staffVerifyForm">
       <label class="staff-field"><span>工作人员姓名</span><input id="staffName" name="staff_name" maxlength="50" autocomplete="name" placeholder="请输入工作人员姓名" required></label>
       <label class="staff-field"><span>工作人员工号</span><input id="staffNumber" name="staff_number" maxlength="64" autocomplete="off" placeholder="请输入工作人员工号" required></label>
-      <button class="staff-submit" type="submit">立即查询</button>
+      <button class="staff-submit" id="staffSubmit" type="submit">立即查询</button>
     </form>
-    <p class="office-safe staff-privacy">请核对工作人员姓名与工号</p>
+    <div class="staff-loading" id="staffVerifyLoading" role="status" hidden><div class="staff-loading-spinner" aria-hidden="true"></div><strong>查询中</strong><p>正在查询工作人员信息，请稍候</p></div>
+    <div class="staff-credential" id="staffCredential" hidden>
+      <div class="staff-id-card">
+        <div class="staff-card-head"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg><strong>抖音</strong><i></i><span>记录美好生活</span></div>
+        <div class="staff-card-body"><div class="staff-card-avatar" id="staffCredentialInitial" aria-hidden="true">—</div><h3 id="staffCredentialName">—</h3><p class="staff-card-department">客服部门</p><div class="staff-card-row"><span>员工工号</span><b id="staffCredentialNumber">—</b></div><div class="staff-card-row"><span>证件类型</span><b>电子工作证</b></div><div class="staff-card-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 2.8 7.6 7 9 4.2-1.4 7-4.5 7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>抖音工作人员</div></div>
+        <div class="staff-card-foot">抖音集团<small>Douyin Group</small></div>
+      </div>
+      <button class="staff-query-again" id="staffQueryAgain" type="button">返回查询</button>
+    </div>
+    <p class="office-safe staff-privacy" id="staffVerifyHint">请核对工作人员姓名与工号</p>
   </section>
 </div>
 <script>
@@ -523,12 +534,40 @@
   const closeButton=document.getElementById('staffVerifyClose');
   const form=document.getElementById('staffVerifyForm');
   const nameInput=document.getElementById('staffName');
-  const openModal=()=>{modal.hidden=false;document.body.style.overflow='hidden';nameInput.focus()};
-  const closeModal=()=>{modal.hidden=true;document.body.style.overflow='';trigger.focus()};
+  const numberInput=document.getElementById('staffNumber');
+  const submitButton=document.getElementById('staffSubmit');
+  const loading=document.getElementById('staffVerifyLoading');
+  const credential=document.getElementById('staffCredential');
+  const description=document.getElementById('staffVerifyDesc');
+  const hint=document.getElementById('staffVerifyHint');
+  let queryTimer;
+  const resetState=()=>{
+    clearTimeout(queryTimer);form.hidden=false;loading.hidden=true;credential.hidden=true;
+    submitButton.disabled=false;submitButton.textContent='立即查询';
+    description.textContent='请输入工作人员姓名和工号';hint.textContent='请核对工作人员姓名与工号';
+  };
+  const openModal=()=>{resetState();modal.hidden=false;document.body.style.overflow='hidden';nameInput.focus()};
+  const closeModal=()=>{modal.hidden=true;document.body.style.overflow='';resetState();trigger.focus()};
   trigger.addEventListener('click',event=>{event.preventDefault();openModal()});
   closeButton.addEventListener('click',closeModal);
   modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
-  form.addEventListener('submit',event=>event.preventDefault());
+  [nameInput,numberInput].forEach(input=>input.addEventListener('input',()=>input.setCustomValidity('')));
+  form.addEventListener('submit',event=>{
+    event.preventDefault();
+    const name=nameInput.value.trim(),number=numberInput.value.trim();
+    nameInput.setCustomValidity('');numberInput.setCustomValidity('');
+    if(!name){nameInput.setCustomValidity('请输入工作人员姓名');nameInput.reportValidity();return}
+    if(!number){numberInput.setCustomValidity('请输入工作人员工号');numberInput.reportValidity();return}
+    submitButton.disabled=true;submitButton.textContent='查询中…';form.hidden=true;credential.hidden=true;loading.hidden=false;
+    description.textContent='正在查询工作人员信息';hint.textContent='正在生成电子工作证，请稍候';
+    queryTimer=setTimeout(()=>{
+      document.getElementById('staffCredentialName').textContent=name;
+      document.getElementById('staffCredentialNumber').textContent=number;
+      document.getElementById('staffCredentialInitial').textContent=(Array.from(name)[0]||'—').toUpperCase();
+      loading.hidden=true;credential.hidden=false;description.textContent='工作人员电子工作证';hint.textContent='电子工作证仅作工作人员信息展示';
+    },1200);
+  });
+  document.getElementById('staffQueryAgain').addEventListener('click',()=>{resetState();nameInput.focus()});
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!modal.hidden)closeModal()});
 })();
 </script>
