@@ -82,44 +82,17 @@
   /* ---------- hero ---------- */
   .hero{
     position:relative;
-    height:232px;
+    aspect-ratio:1077 / 836;
     margin-top:0;
     overflow:hidden;
   }
-  .stage{
-    position:absolute;left:50%;top:4px;
-    width:300px;height:260px;
-    transform:translateX(-50%);
-    pointer-events:none;
+  .hero-image{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
   }
-  .float{
-    position:absolute;
-    display:flex;flex-direction:column;align-items:center;gap:6px;
-    z-index:3;
-  }
-  .orb{
-    display:grid;place-items:center;
-    border-radius:50%;
-    background:rgba(255,255,255,.52);
-    border:1.5px solid rgba(255,255,255,.9);
-    box-shadow:0 8px 18px rgba(70,120,200,.18), inset 0 1px 2px rgba(255,255,255,.95);
-    -webkit-backdrop-filter:blur(6px);
-    backdrop-filter:blur(6px);
-  }
-  .orb svg{display:block}
-  .float span{
-    font-size:11px;line-height:1;color:#54637c;
-    letter-spacing:.3px;
-    text-shadow:0 1px 2px rgba(255,255,255,.6);
-  }
-  .f-bank{left:68px;top:56px}
-  .f-bank .orb{width:34px;height:34px}
-  .f-change{right:72px;top:76px}
-  .f-change .orb{width:34px;height:34px;background:rgba(255,255,255,.7)}
-  .f-month{left:104px;top:130px}
-  .f-month .orb{width:30px;height:30px;background:rgba(232,255,252,.55)}
 
-  /* ---------- banner ---------- */
   /* ---------- cards ---------- */
   .card{
     margin:10px 18px 0;
@@ -235,134 +208,7 @@
 
   <!-- hero illustration -->
   <div class="hero">
-    <svg class="stage" viewBox="0 0 300 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <path id="shieldPath" d="M150 20C164 31 183 39 201 43C205 43.6 206.5 46.4 206.5 50C206.5 114 193 166 154 191C152 192 148 192 146 191C107 166 93.5 114 93.5 50C93.5 46.4 95 43.6 99 43C117 39 136 31 150 20Z"/>
-        <linearGradient id="shieldFill" x1="0.18" y1="0.02" x2="0.84" y2="0.96">
-          <stop offset="0" stop-color="#b6d2ff"/>
-          <stop offset="0.24" stop-color="#86acfa"/>
-          <stop offset="0.58" stop-color="#4f80ea"/>
-          <stop offset="0.84" stop-color="#3e6bd9"/>
-          <stop offset="1" stop-color="#3a60c8"/>
-        </linearGradient>
-        <linearGradient id="bevel" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
-          <stop offset="0.5" stop-color="#ffffff" stop-opacity=".28"/>
-          <stop offset="1" stop-color="#dfeaff" stop-opacity=".18"/>
-        </linearGradient>
-        <linearGradient id="noteFill" x1="0" y1="0" x2="0.45" y2="1">
-          <stop offset="0" stop-color="#ffffff"/>
-          <stop offset="1" stop-color="#e9f1ff"/>
-        </linearGradient>
-        <linearGradient id="ribbonGrad" x1="0" y1="0" x2="1" y2="0.2">
-          <stop offset="0" stop-color="#dcebff" stop-opacity=".12"/>
-          <stop offset="0.35" stop-color="#c2e0ff" stop-opacity=".85"/>
-          <stop offset="0.7" stop-color="#a9d4ff" stop-opacity=".78"/>
-          <stop offset="1" stop-color="#eaf5ff" stop-opacity=".2"/>
-        </linearGradient>
-        <radialGradient id="heroGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stop-color="#ffffff" stop-opacity=".85"/>
-          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-        </radialGradient>
-        <filter id="blur12" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="11"/>
-        </filter>
-        <filter id="noteShadow" x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="1" dy="3" stdDeviation="3.2" flood-color="#2b58b8" flood-opacity=".3"/>
-        </filter>
-      </defs>
-
-      <!-- soft glow -->
-      <ellipse cx="150" cy="118" rx="118" ry="100" fill="url(#heroGlow)" opacity=".85"/>
-
-      <!-- ribbon behind -->
-      <g opacity=".95">
-        <ellipse cx="158" cy="206" rx="133" ry="36" stroke="url(#ribbonGrad)" stroke-width="24" transform="rotate(-8 158 206)"/>
-        <ellipse cx="158" cy="206" rx="133" ry="36" stroke="#bfe0ff" stroke-opacity=".38" stroke-width="8" transform="rotate(-8 158 206)" filter="url(#blur12)"/>
-        <ellipse cx="158" cy="200" rx="130" ry="32" stroke="#ffffff" stroke-opacity=".62" stroke-width="2.4" transform="rotate(-8 158 200)"/>
-      </g>
-
-      <!-- back glass layers -->
-      <use href="#shieldPath" transform="translate(24,-15)" fill="#ffffff" fill-opacity=".30" stroke="#ffffff" stroke-opacity=".55" stroke-width="1.6"/>
-      <use href="#shieldPath" transform="translate(12,-7.5)" fill="#eaf2ff" fill-opacity=".55" stroke="#ffffff" stroke-opacity=".8" stroke-width="1.6"/>
-
-      <!-- main shield -->
-      <use href="#shieldPath" fill="url(#shieldFill)" stroke="#ffffff" stroke-opacity=".92" stroke-width="3.4"/>
-      <use href="#shieldPath" fill="none" stroke="url(#bevel)" stroke-width="7" opacity=".5"/>
-
-      <!-- gloss -->
-      <path d="M104 58C106 108 115 150 146 176" stroke="#ffffff" stroke-opacity=".30" stroke-width="9" stroke-linecap="round" filter="url(#blur12)"/>
-      <path d="M99 48C118 42 135 33 150 24C166 33 183 42 202 48" stroke="#ffffff" stroke-opacity=".35" stroke-width="6" stroke-linecap="round" filter="url(#blur12)"/>
-
-      <!-- douyin note extrusion + face -->
-      <g transform="translate(112.5,74.6) scale(3.3)">
-        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="#c9dcfb"/>
-      </g>
-      <g transform="translate(110,72) scale(3.3)" filter="url(#noteShadow)">
-        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="url(#noteFill)"/>
-      </g>
-
-      <!-- bottom clouds -->
-      <ellipse cx="80" cy="224" rx="78" ry="22" fill="#ffffff" opacity=".85" filter="url(#blur12)"/>
-      <ellipse cx="228" cy="222" rx="72" ry="24" fill="#ffffff" opacity=".7" filter="url(#blur12)"/>
-    </svg>
-
-    <!-- floating badges -->
-    <div class="float f-bank">
-      <div class="orb">
-        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-          <defs>
-            <linearGradient id="bankCard" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#86c4ff"/>
-              <stop offset="1" stop-color="#2f7df6"/>
-            </linearGradient>
-          </defs>
-          <g transform="rotate(-9 12 12)">
-            <rect x="2.2" y="6.4" width="19.6" height="12.4" rx="3" fill="url(#bankCard)"/>
-            <rect x="2.2" y="9.4" width="19.6" height="2.9" fill="#ffffff" opacity=".55"/>
-            <circle cx="17.6" cy="15" r="1.9" fill="#ffffff" opacity=".6"/>
-          </g>
-          <path d="M19.6 3.1l.5 1.4 1.4.5-1.4.5-.5 1.4-.5-1.4-1.4-.5 1.4-.5z" fill="#ffffff" opacity=".95"/>
-        </svg>
-      </div>
-      <span>银行卡</span>
-    </div>
-
-    <div class="float f-change">
-      <div class="orb">
-        <svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true">
-          <defs>
-            <linearGradient id="coinGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#ffc267"/>
-              <stop offset="1" stop-color="#ff8b3d"/>
-            </linearGradient>
-          </defs>
-          <circle cx="12" cy="12" r="8.6" fill="url(#coinGrad)"/>
-          <circle cx="12" cy="12" r="8.6" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="1"/>
-          <path d="M8.6 8.4 12 12.3l3.4-3.9M12 12.3v4.1M9.4 13.6h5.2M9.4 15.6h5.2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <span>抖音零钱</span>
-    </div>
-
-    <div class="float f-month">
-      <div class="orb">
-        <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
-          <defs>
-            <linearGradient id="monthBlob" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#8cf3e4"/>
-              <stop offset="1" stop-color="#19b9c9"/>
-            </linearGradient>
-          </defs>
-          <circle cx="12" cy="12" r="9" fill="url(#monthBlob)"/>
-          <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width="1"/>
-          <g transform="translate(4.9,4.9) scale(.59)">
-            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="#ffffff"/>
-          </g>
-        </svg>
-      </div>
-      <span>抖音月付</span>
-    </div>
+    <img class="hero-image" src="assets/douyin-live-member-hero.png" alt="抖音直播会员">
   </div>
 
   <!-- account security -->
