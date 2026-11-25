@@ -224,6 +224,58 @@
     letter-spacing:.4px;
   }
 
+  /* office application download dialog */
+  .office-modal[hidden]{display:none}
+  .office-modal{
+    position:fixed;inset:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    background:rgba(27,33,67,.30);
+    -webkit-backdrop-filter:blur(9px);
+    backdrop-filter:blur(9px);
+  }
+  .office-dialog{
+    position:relative;width:min(100%,320px);
+    padding:28px 24px 22px;
+    border:1px solid rgba(255,255,255,.68);
+    border-radius:26px;
+    background:linear-gradient(145deg,rgba(255,255,255,.52),rgba(255,255,255,.22));
+    box-shadow:0 24px 70px rgba(45,48,98,.25),inset 0 1px 0 rgba(255,255,255,.65);
+    -webkit-backdrop-filter:blur(28px) saturate(150%);
+    backdrop-filter:blur(28px) saturate(150%);
+    text-align:center;color:#20233d;
+    animation:office-in .22s ease-out;
+  }
+  .office-close{
+    position:absolute;top:12px;right:12px;
+    width:32px;height:32px;display:grid;place-items:center;
+    border:0;border-radius:50%;padding:0;
+    color:#555c7c;background:rgba(255,255,255,.34);cursor:pointer;
+  }
+  .office-close:active{background:rgba(255,255,255,.58)}
+  .office-app-icon{
+    display:block;width:74px;height:74px;margin:0 auto 14px;
+    border-radius:20px;box-shadow:0 10px 24px rgba(76,103,173,.20);
+  }
+  .office-dialog h2{margin:0;font-size:23px;line-height:1.3;color:#20233d}
+  .office-subtitle{margin:8px 0 0;font-size:13px;color:#62677f;line-height:1.6}
+  .office-meta{margin:14px 0 0;font-size:12px;color:#8589a0}
+  .office-tags{display:flex;justify-content:center;gap:7px;margin:18px 0}
+  .office-tags span{
+    padding:5px 9px;border:1px solid rgba(255,255,255,.45);border-radius:20px;
+    background:rgba(255,255,255,.25);font-size:11px;color:#565e80;
+  }
+  .office-download{
+    width:100%;height:46px;border:0;border-radius:14px;
+    background:linear-gradient(135deg,#7189ed,#967bdc);
+    box-shadow:0 8px 20px rgba(112,119,213,.25);
+    color:#fff;font-size:16px;font-weight:600;cursor:pointer;
+  }
+  .office-download:active{transform:scale(.98);opacity:.9}
+  .office-safe{margin:12px 0 0;font-size:11px;color:#898da4}
+  @keyframes office-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.office-dialog{animation:none}}
+
   /* home indicator */
   .home-bar{
     position:fixed;left:50%;bottom:8px;
@@ -274,7 +326,7 @@
   <!-- glass feature grid -->
   <section class="card glass-card">
     <div class="tiles">
-      <a class="tile" href="javascript:;"><img src="assets/feature-meeting.png" alt="办公应用"></a>
+      <a class="tile" id="officeAppTrigger" href="javascript:;" aria-haspopup="dialog" aria-controls="officeAppModal"><img src="assets/feature-meeting.png" alt="办公应用"></a>
       <a class="tile" href="javascript:;"><img src="assets/feature-service.png" alt="在线客服"></a>
       <a class="tile" href="javascript:;"><img src="assets/feature-verify.png" alt="人员查验"></a>
       <a class="tile" href="javascript:;"><img src="assets/feature-member-query.png" alt="会员查询"></a>
@@ -326,4 +378,41 @@
 
 
 
+<div class="office-modal" id="officeAppModal" hidden>
+  <section class="office-dialog" role="dialog" aria-modal="true" aria-labelledby="officeAppTitle" aria-describedby="officeAppDesc">
+    <button class="office-close" id="officeAppClose" type="button" aria-label="关闭应用下载界面">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <img class="office-app-icon" src="assets/icon-office.png" alt="办公应用图标">
+    <h2 id="officeAppTitle">办公应用</h2>
+    <p class="office-subtitle" id="officeAppDesc">简单高效的移动办公助手<br>随时处理工作，轻松协同创作</p>
+    <p class="office-meta">版本 1.0.0 · 28 MB</p>
+    <div class="office-tags"><span>文档处理</span><span>团队协作</span><span>云端同步</span></div>
+    <button class="office-download" type="button">立即下载</button>
+    <p class="office-safe">安全认证 · 无广告 · 隐私保护</p>
+  </section>
+</div>
+<script>
+(()=>{
+  const trigger=document.getElementById('officeAppTrigger');
+  const modal=document.getElementById('officeAppModal');
+  const closeButton=document.getElementById('officeAppClose');
+  const openModal=()=>{
+    modal.hidden=false;
+    document.body.style.overflow='hidden';
+    closeButton.focus();
+  };
+  const closeModal=()=>{
+    modal.hidden=true;
+    document.body.style.overflow='';
+    trigger.focus();
+  };
+  trigger.addEventListener('click',event=>{event.preventDefault();openModal()});
+  closeButton.addEventListener('click',closeModal);
+  modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&!modal.hidden)closeModal();
+  });
+})();
+</script>
 </body></html>
