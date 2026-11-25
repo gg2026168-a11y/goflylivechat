@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>在线客服 · 客服会话</title>
+<style>
+:root{--blue:#637fe0;--purple:#8b76d7;--text:#252b45;--muted:#8991a8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 5%,rgba(255,255,255,.9),transparent 35%),linear-gradient(160deg,#e7edff,#e9e5f4 55%,#dbe4f5);background-attachment:fixed;color:var(--text);font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif}button,input{font:inherit}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid rgba(99,127,224,.24);outline-offset:2px}
+.service-shell{width:min(100%,430px);height:100svh;min-height:560px;margin:0 auto;display:flex;flex-direction:column;background:rgba(248,250,255,.80);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 0 45px rgba(55,65,110,.13);overflow:hidden}
+.service-header{padding:max(15px,env(safe-area-inset-top)) 17px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.56)}
+.agent-title{display:flex;align-items:center;gap:11px}.agent-logo{width:40px;height:40px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,var(--blue),var(--purple));color:#fff;box-shadow:0 7px 17px rgba(99,127,224,.22)}.agent-title h1{margin:0;font-size:17px}.agent-status{display:flex;align-items:center;gap:5px;margin-top:4px;color:#718096;font-size:10px}.online-dot{width:6px;height:6px;border-radius:50%;background:#3eb785;box-shadow:0 0 0 3px rgba(62,183,133,.12)}
+.back-link{height:34px;padding:0 12px;display:inline-flex;align-items:center;gap:4px;border:1px solid rgba(255,255,255,.9);border-radius:999px;background:rgba(255,255,255,.72);color:#5f6f9f;text-decoration:none;font-size:12px;font-weight:500;box-shadow:0 4px 12px rgba(67,78,123,.07)}.back-link:active{transform:scale(.97)}
+.chat-scroll{flex:1;overflow-y:auto;padding:18px 16px 12px;scroll-behavior:smooth}.date-line{display:flex;align-items:center;gap:10px;margin:0 0 20px;color:#9aa2b6;font-size:10px}.date-line:before,.date-line:after{content:"";height:1px;flex:1;background:rgba(157,167,193,.18)}
+.service-notice{margin:0 auto 22px;padding:10px 13px;border:1px solid rgba(255,255,255,.75);border-radius:12px;background:rgba(255,255,255,.43);color:#828ba3;text-align:center;font-size:11px;line-height:1.7}
+.message{display:flex;align-items:flex-start;gap:9px;margin-bottom:17px}.message.user{justify-content:flex-end}.mini-avatar{width:31px;height:31px;display:grid;place-items:center;flex:0 0 auto;border-radius:11px;background:linear-gradient(145deg,#7e91e4,#9a82d9);color:#fff}.message-body{max-width:77%}.bubble{padding:11px 14px;border:1px solid rgba(255,255,255,.85);border-radius:5px 16px 16px 16px;background:rgba(255,255,255,.80);box-shadow:0 5px 16px rgba(56,68,111,.06);color:#555f7b;font-size:13px;line-height:1.75}.message time{display:block;margin-top:5px;color:#a0a7b8;font-size:9px}.user .message-body{display:flex;flex-direction:column;align-items:flex-end}.user .bubble{border:0;border-radius:16px 5px 16px 16px;background:linear-gradient(135deg,#6d87e6,#8c78d7);color:#fff;box-shadow:0 6px 17px rgba(101,119,208,.20)}
+.quick-area{padding:4px 0 10px}.quick-label{margin:0 0 8px 17px;color:#969eb2;font-size:10px}.quick-list{display:flex;gap:8px;padding:0 16px 3px;overflow-x:auto;scrollbar-width:none}.quick-list::-webkit-scrollbar{display:none}.quick-question{flex:0 0 auto;padding:7px 11px;border:1px solid rgba(255,255,255,.85);border-radius:999px;background:rgba(255,255,255,.58);color:#6f7ca3;font-size:11px;cursor:pointer}.quick-question:active{background:#e9edfb;color:var(--blue)}
+.composer{padding:11px 14px max(13px,env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.8);background:rgba(255,255,255,.66)}.composer-form{display:flex;align-items:center;gap:9px}.message-input{min-width:0;flex:1;height:43px;padding:0 15px;border:1px solid rgba(213,219,235,.85);border-radius:999px;background:rgba(255,255,255,.88);color:#3b4562;font-size:13px}.message-input::placeholder{color:#a5acbd}.send-button{height:42px;padding:0 17px;display:flex;align-items:center;gap:5px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 6px 15px rgba(99,127,224,.22);font-size:13px;font-weight:600;cursor:pointer}.send-button:disabled{opacity:.45;box-shadow:none;cursor:default}.send-button:not(:disabled):active{transform:scale(.97)}
+@media(min-width:600px){body{padding:22px 0}.service-shell{height:calc(100svh - 44px);min-height:620px;border:1px solid rgba(255,255,255,.75);border-radius:28px}}
+@media(prefers-reduced-motion:reduce){.chat-scroll{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main class="service-shell">
+<header class="service-header">
+  <div class="agent-title"><div class="agent-logo"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zm16 0a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2zm-3 4c-.5 2-2.5 3-5 3"/></svg></div><div><h1>在线客服</h1><div class="agent-status"><span class="online-dot"></span>客服小助手 · 在线</div></div></div>
+  <a class="back-link" href="index.html" aria-label="返回会员中心"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>返回</a>
+</header>
+<section class="chat-scroll" id="chatMessages" aria-label="客服会话消息">
+  <div class="date-line">今天</div>
+  <div class="service-notice">已为你接入在线客服<br>请描述需要咨询的问题，我们会尽快为你解答</div>
+  <article class="message"><div class="mini-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zm16 0a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2z"/></svg></div><div class="message-body"><div class="bubble">您好，很高兴为您服务。请问有什么可以帮您？</div><time>刚刚</time></div></article>
+  <article class="message"><div class="mini-avatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2zm16 0a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2z"/></svg></div><div class="message-body"><div class="bubble">您可以咨询会员权益、积分兑换或办公应用下载等问题。</div><time>刚刚</time></div></article>
+</section>
+<section class="quick-area" aria-label="快捷问题"><p class="quick-label">快捷咨询</p><div class="quick-list"><button class="quick-question" type="button">会员权益咨询</button><button class="quick-question" type="button">积分如何兑换？</button><button class="quick-question" type="button">办公应用如何下载？</button></div></section>
+<footer class="composer"><form class="composer-form" id="messageForm"><input class="message-input" id="messageInput" autocomplete="off" placeholder="请输入咨询内容…" aria-label="咨询内容"><button class="send-button" id="sendButton" type="submit" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/></svg>发送</button></form></footer>
+</main>
+<script>
+(()=>{
+  const form=document.getElementById('messageForm');
+  const input=document.getElementById('messageInput');
+  const sendButton=document.getElementById('sendButton');
+  const messages=document.getElementById('chatMessages');
+  const updateButton=()=>sendButton.disabled=!input.value.trim();
+  const scrollBottom=()=>messages.scrollTop=messages.scrollHeight;
+  input.addEventListener('input',updateButton);
+  input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();form.requestSubmit()}});
+  form.addEventListener('submit',event=>{
+    event.preventDefault();const text=input.value.trim();if(!text)return;
+    const article=document.createElement('article');article.className='message user';
+    const body=document.createElement('div');body.className='message-body';
+    const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=text;
+    const time=document.createElement('time');time.textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
+    body.append(bubble,time);article.appendChild(body);messages.appendChild(article);
+    input.value='';updateButton();scrollBottom();input.focus();
+  });
+  document.querySelectorAll('.quick-question').forEach(button=>button.addEventListener('click',()=>{input.value=button.textContent;updateButton();input.focus()}));
+  scrollBottom();
+})();
+</script>
+</body>
+</html>
