@@ -125,25 +125,18 @@
   .t-blue{background:linear-gradient(140deg,#f2f6ff 0%,#eaf0fc 100%)}
   .t-yellow{background:linear-gradient(140deg,#f5f6fc 0%,#eef0fa 100%)}
 
-  .links{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    row-gap:20px;
-    column-gap:8px;
-    padding:2px 0 4px;
+  .member-features{
+    display:flex;
+    flex-direction:column;
+    margin:0 -4px;
   }
-  .links a{
-    display:flex;align-items:center;gap:9px;
-    font-size:14.5px;color:#26283b;text-decoration:none;
-    letter-spacing:.1px;
-    line-height:1.2;
+  .member-feature{
+    display:block;
+    width:100%;
+    height:auto;
+    border:0;
+    border-radius:10px;
   }
-  .links a:active{opacity:.6}
-  .li-ico{
-    flex:0 0 auto;width:19px;height:19px;
-    display:grid;place-items:center;
-  }
-  .li-ico svg{display:block}
 
   .lessons{margin-top:2px}
   .lesson{
@@ -223,42 +216,13 @@
     </div>
   </section>
 
-  <!-- privacy -->
+  <!-- member features -->
   <section class="card">
-    <h2>隐私及协议</h2>
-    <div class="links">
-      <a href="javascript:;">
-        <span class="li-ico">
-          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#7183df"/>
-            <rect x="6" y="4.4" width="8" height="11.2" rx="1.6" fill="#ffffff"/>
-            <path d="M8.1 8h3.8M8.1 10.4h3.8M8.1 12.8h2.4" stroke="#7183df" stroke-width="1.1" stroke-linecap="round"/>
-          </svg>
-        </span>
-        用户协议管理
-      </a>
-      <a href="javascript:;">
-        <span class="li-ico">
-          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#7183df"/>
-            <rect x="4.2" y="6.4" width="11.6" height="7.6" rx="1.7" fill="#ffffff"/>
-            <rect x="4.2" y="8.5" width="11.6" height="2" fill="#7183df"/>
-            <rect x="6" y="11.6" width="3.4" height="1.1" rx=".55" fill="#7183df" opacity=".7"/>
-          </svg>
-        </span>
-        银行卡管理
-      </a>
-      <a href="javascript:;">
-        <span class="li-ico">
-          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
-            <rect width="20" height="20" rx="5" fill="#7183df"/>
-            <path d="M10 4.2 15 6v4.3c0 3-2.1 4.9-5 5.7-2.9-.8-5-2.7-5-5.7V6l5-1.8Z" fill="#ffffff"/>
-            <path d="M10 7.3v2.9" stroke="#7183df" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="10" cy="12.6" r=".9" fill="#7183df"/>
-          </svg>
-        </span>
-        隐私保护政策
-      </a>
+    <h2>会员功能</h2>
+    <div class="member-features">
+      <img class="member-feature" src="assets/member-data.png" alt="数据中心、上热门">
+      <img class="member-feature" src="assets/member-plan.png" alt="精选计划：优质创作扶持激励">
+      <img class="member-feature" src="assets/member-verification.png" alt="官方认证：原创官方认证">
     </div>
   </section>
 
