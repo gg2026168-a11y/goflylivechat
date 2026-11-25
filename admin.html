@@ -37,8 +37,8 @@
   <div class="nav-label">功能管理</div>
   <nav class="nav" aria-label="后台功能">
     <button class="nav-item active" data-target="meeting" aria-current="page"><svg><use href="#i-calendar"/></svg>办公应用配置</button>
-    <button class="nav-item" data-target="service" aria-expanded="false" aria-controls="serviceNavFold"><svg><use href="#i-chat"/></svg>在线客服</button>
-    <div class="nav-fold" id="serviceNavFold" hidden><div class="panel-head"><button class="service-config-toggle" id="serviceConfigToggle" type="button" aria-expanded="false" aria-controls="serviceConfigPanel serviceChatPanel"><span><strong id="serviceWindowLabel">客服会话窗口</strong><small id="serviceWindowHint">点击切换至客服资料与快捷咨询配置</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <button class="nav-item" data-target="service" aria-controls="serviceNavFold"><svg><use href="#i-chat"/></svg>在线客服</button>
+    <div class="nav-fold" id="serviceNavFold"><div class="panel-head"><button class="service-config-toggle" id="serviceConfigToggle" type="button" aria-expanded="false" aria-controls="serviceConfigPanel serviceChatPanel"><span><strong id="serviceWindowLabel">客服会话窗口</strong><small id="serviceWindowHint">点击切换至客服资料与快捷咨询配置</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
     <button class="nav-item" data-target="verification"><svg><use href="#i-verify"/></svg>人员查验</button>
     <button class="nav-item" data-target="members"><svg><use href="#i-member"/></svg>会员查询</button>
   </nav>
@@ -96,15 +96,7 @@
   function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
   const titles={meeting:'办公应用配置',service:'在线客服',verification:'人员查验',members:'会员查询'};
   function showSection(id){if(!titles[id])id='meeting';$$('.page-section').forEach(section=>section.hidden=section.id!==id);$$('.nav-item').forEach(item=>{const active=item.dataset.target===id;item.classList.toggle('active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current')});$('#breadcrumbCurrent').textContent=titles[id];history.replaceState(null,'','#'+id)}
-  $$('.nav-item').forEach(item=>item.addEventListener('click',()=>{
-    showSection(item.dataset.target);
-    const isService=item.dataset.target==='service';
-    if(isService){
-      const expanded=$('#serviceNavFold').classList.toggle('open');
-      $('#serviceNavFold').hidden=!expanded;item.setAttribute('aria-expanded',String(expanded));
-      if(!expanded){setServiceWindow(false)}
-    }else{$('#serviceNavFold').hidden=true;$('#serviceNavFold').classList.remove('open');$('.nav-item[data-target="service"]').setAttribute('aria-expanded','false')}
-  }));
+  $$('.nav-item').forEach(item=>item.addEventListener('click',()=>showSection(item.dataset.target)));
   showSection(location.hash.slice(1));
   document.addEventListener('click',event=>{const button=event.target.closest('[data-demo]');if(button)toast(button.dataset.demo)});
   const OFFICE_CONFIG_KEY='douyin.officeApp.config.v1';
