@@ -565,7 +565,7 @@
       loading.hidden=true;
       if(!record){
         form.hidden=false;submitButton.disabled=false;submitButton.textContent='立即查询';
-        description.textContent='未找到对应工作人员';hint.textContent='未查询到对应电子工作证，请核对姓名和工号';hint.style.color='#a45d6c';return;
+        description.textContent='无法查询工作人员';hint.textContent='无法查询工作人员，仅支持查询已录入的两份电子工作证';hint.style.color='#a45d6c';return;
       }
       credentialImage.src=record.image;credentialImage.alt=record.name+'电子工作证';
       credential.hidden=false;description.textContent=record.name+' · '+record.department;
