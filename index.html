@@ -29,7 +29,6 @@
     margin:0 auto;
     min-height:100vh;
     min-height:100dvh;
-    padding-top:calc(env(safe-area-inset-top, 0px) + 10px);
     overflow-x:hidden;
     background:
       radial-gradient(100% 24% at 50% 0%,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 70%),
@@ -45,6 +44,12 @@
   @media (min-width:480px){
     body{background:#b9bfd8}
     .app{box-shadow:0 0 70px rgba(55,57,105,.20); min-height:100vh}
+  }
+
+  /* ---------- stitched top background ---------- */
+  .top-area{
+    padding-top:calc(env(safe-area-inset-top, 0px) + 10px);
+    background:url("assets/douyin-live-top-bg.png") center bottom / 100% 100% no-repeat;
   }
 
   /* ---------- nav ---------- */
@@ -82,7 +87,7 @@
   .hero{
     position:relative;
     aspect-ratio:1077 / 836;
-    margin-top:0;
+    margin-top:-1px;
     overflow:hidden;
   }
   .hero-image{
@@ -90,8 +95,8 @@
     width:100%;
     height:100%;
     object-fit:cover;
-    -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 7%,#000 91%,transparent 100%);
-    mask-image:linear-gradient(180deg,transparent 0%,#000 7%,#000 91%,transparent 100%);
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 91%,transparent 100%);
+    mask-image:linear-gradient(180deg,#000 0%,#000 91%,transparent 100%);
   }
 
   /* ---------- cards ---------- */
@@ -214,6 +219,7 @@
 <body>
 <div class="app">
 
+  <div class="top-area">
   <!-- nav -->
   <div class="nav">
     <button class="back" aria-label="返回">
@@ -235,6 +241,7 @@
 
   <!-- page title -->
   <div class="page-heading">抖音 ·直播会员中心</div>
+  </div>
 
   <!-- hero illustration -->
   <div class="hero">
