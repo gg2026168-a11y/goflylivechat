@@ -3,6 +3,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>在线客服工作台 · 访客信息识别</title>
+<link rel="stylesheet" href="assets/auth.css">
 <style>
 *{box-sizing:border-box} :root{--bg:#eef2f8;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e6ebf2;--brand:#2f6bff;--brand-soft:#eaf0ff}
 html,body{height:100%;margin:0}body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;overflow:hidden;font-size:14px}button,input,textarea{font:inherit}[hidden]{display:none!important}
@@ -14,8 +15,11 @@ html,body{height:100%;margin:0}body{font-family:"PingFang SC","Microsoft YaHei",
 @media(max-width:1050px){.workspace{grid-template-columns:230px minmax(0,1fr)}.visitor{display:none}}@media(max-width:680px){.workspace{grid-template-columns:1fr;padding:8px}.sidebar{display:none}.topbar-right .clock{display:none}.quick{display:none}}
 </style>
 </head>
-<body>
-<header class="topbar"><div class="brand"><div class="logo">CS</div><div><h1>在线客服工作台</h1><p>CUSTOMER SERVICE CONSOLE</p></div></div><div class="topbar-right"><div class="status-chip"><span class="dot offline" id="statusDot"></span><span id="connectionStatus">本地联调</span></div><div class="clock" id="clock">03:32:13</div></div></header>
+<body class="auth-locked">
+<header class="topbar"><div class="brand"><div class="logo">CS</div><div><h1>在线客服工作台</h1><p>CUSTOMER SERVICE CONSOLE</p></div></div><div class="topbar-right"><div class="status-chip"><span class="dot offline" id="statusDot"></span><span id="connectionStatus">本地联调</span></div><span class="auth-user" id="authAccountName">客服账号</span><button class="auth-logout" id="authLogout" type="button">退出登录</button><div class="clock" id="clock">03:32:13</div></div></header>
+<div class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-labelledby="authHeading">
+  <section class="auth-card"><div class="auth-brand"><div class="auth-logo">CS</div><div><strong>在线客服工作台</strong><small>CUSTOMER SERVICE</small></div></div><h2 id="authHeading">客服账号登录</h2><p class="auth-intro">登录后接待访客、查看消息及管理会话。</p><form id="authForm"><label class="auth-field"><span>客服账号</span><input id="authUsername" name="username" autocomplete="username" maxlength="50" placeholder="请输入客服账号" required></label><label class="auth-field"><span>登录密码</span><input id="authPassword" name="password" type="password" autocomplete="current-password" maxlength="128" placeholder="请输入登录密码" required></label><button class="auth-submit" id="authSubmit" type="submit">登 录</button><p class="auth-status" id="authStatus" role="status">请输入客服账号和密码</p></form></section>
+</div>
 <div class="workspace">
 <aside class="panel sidebar"><div class="side-head"><h2>会话列表 <span class="badge" id="convCount">0</span></h2><div class="internal-agent-status"><span>内部客服在线状态</span><strong id="internalAgentState" aria-live="polite"><span class="dot offline" id="internalAgentDot"></span><span id="internalAgentStatus">本地联调</span></strong></div><details class="other-agents" id="otherAgentsDetails"><summary><span>其它客服在线状态</span><span class="other-agents-count" id="otherAgentsCount">未加载</span></summary><div class="other-agents-list" id="otherAgentsList"><div class="other-agents-empty">展开后加载客服状态</div></div></details><div class="visitor-tabs" role="tablist" aria-label="访客分类"><button class="visitor-tab active" type="button" role="tab" aria-selected="true" data-visitor-view="online">在线访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="history">历史访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="mine">我的访客</button></div><input class="search" id="searchInput" placeholder="搜索访客 / IP / 关键词" aria-label="搜索会话"></div><div class="list" id="convList" role="tabpanel"><div class="empty">暂无在线访客<br>等待访客从会员中心接入</div></div></aside>
 <section class="panel chat"><div class="chat-head"><div class="avatar sm" id="chatAvatar">访</div><div><div class="chat-name" id="chatName">暂无会话</div><div class="chat-sub" id="chatSub">等待访客接入</div></div><div class="chat-actions"><button class="ghost-btn" id="transferBtn">转接</button><button class="ghost-btn" id="closeBtn">结束会话</button></div></div><div class="typing-preview" id="typingPreview" role="status" aria-live="polite" hidden=""></div><div class="messages" id="messages"><div class="empty">接入访客后，可在这里查看和回复消息</div></div><div class="quick quick-panel"><button data-template="您好，很高兴为您服务，请问有什么可以帮您？">问候</button><button data-template="请稍等，正在为您查询。">查询中</button><button data-template="您可以在办公应用弹窗中选择 Android 或 iOS 下载。">应用下载</button><button data-template="还有其他可以帮到您的吗？">结束语</button><button class="attachment-action" id="agentPhotoBtn" type="button">照片</button><button class="attachment-action" id="agentFileBtn" type="button">文件</button><button class="attachment-action" id="agentLinkBtn" type="button">超级链接</button></div><div class="composer"><textarea id="input" maxlength="2000" placeholder="输入消息，Enter 发送，Shift + Enter 换行…" disabled=""></textarea><div class="composer-bar"><button class="send-btn" id="sendBtn" disabled="">发送</button></div></div></section>
@@ -30,6 +34,7 @@ html,body{height:100%;margin:0}body{font-family:"PingFang SC","Microsoft YaHei",
 </div>
 <input id="agentPhotoInput" type="file" accept="image/png,image/jpeg,image/gif,.png,.jpg,.jpeg,.gif" hidden><input id="agentFileInput" type="file" hidden>
 <div class="toast" id="toast" role="status"></div>
+<script src="assets/auth.js"></script>
 <script>
 const $=id=>document.getElementById(id),sessions=new Map();
 let activeId='',socket=null,visitorView='online';
