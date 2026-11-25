@@ -67,7 +67,7 @@ func PostMobileLookup(c *gin.Context) {
 	}
 	baseURL := strings.TrimSpace(os.Getenv("IP138_BASE_URL"))
 	if baseURL == "" {
-		baseURL = "https://api.ipshudi.com/mobile/"
+		baseURL = "https://api.ip138.com/mobile/"
 	}
 	endpoint, err := url.Parse(baseURL)
 	if err != nil || endpoint.Host == "" || (endpoint.Scheme != "https" && endpoint.Scheme != "http") {
