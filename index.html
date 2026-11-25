@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>抖音支付 · 账户安全保障</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#c9d7ea;
+    color:#101114;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .app{
+    position:relative;
+    width:100%;
+    max-width:400px;
+    margin:0 auto;
+    min-height:100vh;
+    min-height:100dvh;
+    overflow-x:hidden;
+    background:
+      radial-gradient(115% 42% at 50% 0%, rgba(255,255,255,.30) 0%, rgba(255,255,255,0) 60%),
+      linear-gradient(180deg,
+        #a9c4fa 0%,
+        #bcd4fc 7%,
+        #d2e3fe 14%,
+        #e4effe 22%,
+        #edf4fe 32%,
+        #f2f6fe 44%,
+        #f3f6fe 70%,
+        #f2f5fd 100%);
+  }
+  @media (min-width:480px){
+    body{background:#b8c7db}
+    .app{box-shadow:0 0 70px rgba(22,48,92,.25); min-height:100vh}
+  }
+
+  /* ---------- status bar ---------- */
+  .statusbar{
+    position:relative;
+    height:46px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 12px 0 44px;
+    color:#fff;
+  }
+  .sb-left{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;letter-spacing:.2px}
+  .sb-left svg{display:block;margin-top:1px}
+  .island{
+    position:absolute;left:50%;top:11px;transform:translateX(-50%);
+    width:108px;height:29px;background:#000;border-radius:16px;
+  }
+  .sb-right{display:flex;align-items:center;gap:6px}
+  .sb-right svg{display:block}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:relative;
+    height:44px;
+    display:flex;align-items:center;
+    padding:0 16px;
+  }
+  .back{
+    width:32px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    background:none;border:0;padding:0;margin-left:-2px;
+    cursor:pointer;color:#15161a;
+  }
+  .nav-right{position:absolute;right:14px;top:0;height:44px;width:74px}
+  .service{
+    position:absolute;right:0;top:2px;
+    width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+    background:none;border:0;padding:0;cursor:pointer;color:#16223c;
+  }
+  .free-badge{
+    position:absolute;right:26px;top:17px;
+    padding:7px 9px 8px;
+    background:linear-gradient(180deg,#79aaf9 0%,#5f95f4 100%);
+    color:#fff;font-size:13px;font-weight:600;line-height:1;
+    letter-spacing:.5px;
+    border-radius:7px;
+    box-shadow:0 2px 6px rgba(58,110,210,.18);
+  }
+  .free-badge::after{
+    content:"";position:absolute;left:5px;bottom:-5px;
+    width:10px;height:10px;
+    background:#6599f4;
+    clip-path:polygon(0 0,100% 0,0 100%);
+    border-radius:0 0 0 2px;
+  }
+
+  /* ---------- page head ---------- */
+  .page-head{
+    position:relative;
+    padding:6px 18px 0;
+    text-align:center;
+    z-index:2;
+  }
+  .page-title{
+    margin:0;
+    display:flex;align-items:center;justify-content:center;gap:2px;
+    font-size:23px;font-weight:700;letter-spacing:-.1px;
+    color:#0b0c0f;
+    line-height:1.3;
+  }
+  .page-title svg{display:block;flex:0 0 auto}
+  .pledge{
+    margin:14px auto 0;
+    display:inline-flex;align-items:center;gap:9px;
+    max-width:100%;
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,.50);
+    -webkit-backdrop-filter:blur(6px);
+    backdrop-filter:blur(6px);
+    font-size:13px;color:#48536a;
+    line-height:1.2;
+    white-space:nowrap;
+  }
+  .pledge .sep{width:1px;height:12px;background:rgba(70,85,110,.28);flex:0 0 auto}
+  .pledge a{
+    display:inline-flex;align-items:center;gap:1px;
+    color:#3b78f4;text-decoration:none;font-weight:500;
+  }
+  .pledge a svg{display:block}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    height:232px;
+    margin-top:0;
+    overflow:hidden;
+  }
+  .stage{
+    position:absolute;left:50%;top:4px;
+    width:300px;height:260px;
+    transform:translateX(-50%);
+    pointer-events:none;
+  }
+  .float{
+    position:absolute;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    z-index:3;
+  }
+  .orb{
+    display:grid;place-items:center;
+    border-radius:50%;
+    background:rgba(255,255,255,.52);
+    border:1.5px solid rgba(255,255,255,.9);
+    box-shadow:0 8px 18px rgba(70,120,200,.18), inset 0 1px 2px rgba(255,255,255,.95);
+    -webkit-backdrop-filter:blur(6px);
+    backdrop-filter:blur(6px);
+  }
+  .orb svg{display:block}
+  .float span{
+    font-size:11px;line-height:1;color:#54637c;
+    letter-spacing:.3px;
+    text-shadow:0 1px 2px rgba(255,255,255,.6);
+  }
+  .f-bank{left:68px;top:56px}
+  .f-bank .orb{width:34px;height:34px}
+  .f-change{right:72px;top:76px}
+  .f-change .orb{width:34px;height:34px;background:rgba(255,255,255,.7)}
+  .f-month{left:104px;top:130px}
+  .f-month .orb{width:30px;height:30px;background:rgba(232,255,252,.55)}
+
+  /* ---------- banner ---------- */
+  .banner{
+    margin:2px 18px 0;
+    padding:5px 8px;
+    text-align:center;
+    font-size:15px;
+    line-height:1.47;
+    letter-spacing:.2px;
+    color:#fff;
+    border-radius:10px;
+    background:linear-gradient(93deg,#2f7bf7 0%,#2a77f3 55%,#2270ee 100%);
+    box-shadow:0 6px 14px rgba(43,116,240,.18);
+  }
+
+  /* ---------- cards ---------- */
+  .card{
+    margin:10px 18px 0;
+    padding:16px 16px 10px;
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 1px 2px rgba(24,60,120,.03),0 8px 22px rgba(40,85,170,.045);
+  }
+  .banner + .card{margin-top:4px}
+  .card h2{
+    margin:0 0 12px;
+    font-size:18px;font-weight:700;letter-spacing:.2px;
+    color:#111216;
+    line-height:1.2;
+  }
+  .tiles{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .tile{
+    position:relative;
+    display:flex;align-items:center;
+    min-height:74px;
+    padding:10px 12px;
+    border:0;border-radius:8px;
+    text-align:left;
+    background:#f5faf8;
+    font-family:inherit;color:inherit;
+    cursor:pointer;
+    transition:transform .15s ease;
+    overflow:hidden;
+  }
+  .tile:active{transform:scale(.985)}
+  .tile .txt{padding-right:36px;min-width:0}
+  .tile b{
+    display:block;
+    font-size:15px;font-weight:700;color:#141519;
+    letter-spacing:.1px;line-height:1.3;
+  }
+  .tile p{
+    margin:4px 0 0;
+    font-size:12.5px;line-height:1.25;color:#717b8c;
+  }
+  .tile .ico{
+    position:absolute;right:8px;top:50%;
+    transform:translateY(-50%);
+    width:38px;height:38px;
+    display:grid;place-items:center;
+    filter:drop-shadow(0 4px 7px rgba(30,80,140,.16));
+  }
+  .tile .ico svg{display:block;width:100%;height:100%}
+  .t-green{background:linear-gradient(140deg,#f5fdfa 0%,#ecfaf4 100%)}
+  .t-pink{background:linear-gradient(140deg,#fdf6f7 0%,#fbf0f2 100%)}
+  .t-blue{background:linear-gradient(140deg,#f3f9ff 0%,#ecf5ff 100%)}
+  .t-yellow{background:linear-gradient(140deg,#fffaef 0%,#fdf4e3 100%)}
+
+  .links{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    row-gap:20px;
+    column-gap:8px;
+    padding:2px 0 4px;
+  }
+  .links a{
+    display:flex;align-items:center;gap:9px;
+    font-size:14.5px;color:#191a1e;text-decoration:none;
+    letter-spacing:.1px;
+    line-height:1.2;
+  }
+  .links a:active{opacity:.6}
+  .li-ico{
+    flex:0 0 auto;width:19px;height:19px;
+    display:grid;place-items:center;
+  }
+  .li-ico svg{display:block}
+
+  .lessons{margin-top:2px}
+  .lesson{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:13px 0;
+    text-decoration:none;color:inherit;
+    border-top:1px solid #f0f2f6;
+  }
+  .lesson:first-child{border-top:0;padding-top:0}
+  .lesson:last-child{padding-bottom:2px}
+  .lesson .lt{display:flex;align-items:center;gap:9px;min-width:0}
+  .lesson .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:#3b7bf6;flex:0 0 auto;
+    box-shadow:0 0 0 3px rgba(59,123,246,.10);
+  }
+  .lesson em{
+    font-style:normal;font-size:14.5px;color:#202127;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .lesson svg{flex:0 0 auto;color:#b7bfcc}
+
+  .foot{
+    padding:22px 18px calc(34px + env(safe-area-inset-bottom));
+    text-align:center;
+    font-size:11px;color:#a4aec0;
+    letter-spacing:.4px;
+  }
+
+  /* home indicator */
+  .home-bar{
+    position:fixed;left:50%;bottom:8px;
+    width:124px;height:5px;border-radius:3px;
+    background:#0b0b0d;opacity:.92;
+    transform:translateX(-50%);
+    z-index:60;pointer-events:none;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- status bar -->
+  <div class="statusbar">
+    <div class="sb-left">
+      <span>13:43</span>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+        <path d="M3.4 6.4a4.7 4.7 0 0 1 9.2 0c0 2 .45 3.15.95 3.85H2.45c.5-.7.95-1.85.95-3.85Z"/>
+        <path d="M6.4 12.4a1.8 1.8 0 0 0 3.2 0"/>
+        <path d="M1.9 14.3 14.1 1.7"/>
+      </svg>
+    </div>
+    <div class="island"></div>
+    <div class="sb-right">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor" aria-hidden="true">
+        <rect x="0" y="7.4" width="3" height="4.6" rx="1"/>
+        <rect x="5" y="5" width="3" height="7" rx="1"/>
+        <rect x="10" y="2.4" width="3" height="9.6" rx="1"/>
+        <rect x="15" y="0" width="3" height="12" rx="1"/>
+      </svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+        <path d="M1.2 4.1a10.8 10.8 0 0 1 14.6 0"/>
+        <path d="M4 7.1a6.6 6.6 0 0 1 9 0"/>
+        <path d="M7.3 10.1a2.3 2.3 0 0 1 2.4 0" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg width="27" height="13" viewBox="0 0 27 13" fill="none" aria-hidden="true">
+        <rect x="1" y="1.1" width="21.5" height="10.8" rx="3.2" stroke="currentColor" stroke-opacity=".9"/>
+        <rect x="2.7" y="2.8" width="18.1" height="7.4" rx="1.8" fill="currentColor"/>
+        <path d="M24.6 4.4v4.2a2.3 2.3 0 0 0 0-4.2Z" fill="currentColor" opacity=".75"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- nav -->
+  <div class="nav">
+    <button class="back" aria-label="返回">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15.2 4.2 7.4 12l7.8 7.8"/>
+      </svg>
+    </button>
+    <div class="nav-right">
+      <div class="free-badge">免费</div>
+      <button class="service" aria-label="在线客服">
+        <svg width="25" height="25" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true">
+          <path d="M4.6 16.2v-2.6a9.4 9.4 0 0 1 18.8 0v2.6"/>
+          <rect x="2.8" y="14.3" width="5.2" height="8.4" rx="2.6" fill="currentColor" stroke="none"/>
+          <rect x="20" y="14.3" width="5.2" height="8.4" rx="2.6" fill="currentColor" stroke="none"/>
+          <path d="M22.6 22.7c0 2.1-2.2 3.2-4.8 3.2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- title -->
+  <div class="page-head">
+    <h1 class="page-title">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="#0b0c0f" aria-hidden="true">
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+      </svg>
+      <span>抖音支付·账户安全保障</span>
+    </h1>
+
+    <div class="pledge">
+      <span>保障额度100万，你敢付我敢赔</span>
+      <i class="sep"></i>
+      <a href="javascript:;">
+        去查看
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- hero illustration -->
+  <div class="hero">
+    <svg class="stage" viewBox="0 0 300 260" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <path id="shieldPath" d="M150 20C164 31 183 39 201 43C205 43.6 206.5 46.4 206.5 50C206.5 114 193 166 154 191C152 192 148 192 146 191C107 166 93.5 114 93.5 50C93.5 46.4 95 43.6 99 43C117 39 136 31 150 20Z"/>
+        <linearGradient id="shieldFill" x1="0.18" y1="0.02" x2="0.84" y2="0.96">
+          <stop offset="0" stop-color="#b6d2ff"/>
+          <stop offset="0.24" stop-color="#86acfa"/>
+          <stop offset="0.58" stop-color="#4f80ea"/>
+          <stop offset="0.84" stop-color="#3e6bd9"/>
+          <stop offset="1" stop-color="#3a60c8"/>
+        </linearGradient>
+        <linearGradient id="bevel" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
+          <stop offset="0.5" stop-color="#ffffff" stop-opacity=".28"/>
+          <stop offset="1" stop-color="#dfeaff" stop-opacity=".18"/>
+        </linearGradient>
+        <linearGradient id="noteFill" x1="0" y1="0" x2="0.45" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset="1" stop-color="#e9f1ff"/>
+        </linearGradient>
+        <linearGradient id="ribbonGrad" x1="0" y1="0" x2="1" y2="0.2">
+          <stop offset="0" stop-color="#dcebff" stop-opacity=".12"/>
+          <stop offset="0.35" stop-color="#c2e0ff" stop-opacity=".85"/>
+          <stop offset="0.7" stop-color="#a9d4ff" stop-opacity=".78"/>
+          <stop offset="1" stop-color="#eaf5ff" stop-opacity=".2"/>
+        </linearGradient>
+        <radialGradient id="heroGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#ffffff" stop-opacity=".85"/>
+          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="blur12" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="11"/>
+        </filter>
+        <filter id="noteShadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="1" dy="3" stdDeviation="3.2" flood-color="#2b58b8" flood-opacity=".3"/>
+        </filter>
+      </defs>
+
+      <!-- soft glow -->
+      <ellipse cx="150" cy="118" rx="118" ry="100" fill="url(#heroGlow)" opacity=".85"/>
+
+      <!-- ribbon behind -->
+      <g opacity=".95">
+        <ellipse cx="158" cy="206" rx="133" ry="36" stroke="url(#ribbonGrad)" stroke-width="24" transform="rotate(-8 158 206)"/>
+        <ellipse cx="158" cy="206" rx="133" ry="36" stroke="#bfe0ff" stroke-opacity=".38" stroke-width="8" transform="rotate(-8 158 206)" filter="url(#blur12)"/>
+        <ellipse cx="158" cy="200" rx="130" ry="32" stroke="#ffffff" stroke-opacity=".62" stroke-width="2.4" transform="rotate(-8 158 200)"/>
+      </g>
+
+      <!-- back glass layers -->
+      <use href="#shieldPath" transform="translate(24,-15)" fill="#ffffff" fill-opacity=".30" stroke="#ffffff" stroke-opacity=".55" stroke-width="1.6"/>
+      <use href="#shieldPath" transform="translate(12,-7.5)" fill="#eaf2ff" fill-opacity=".55" stroke="#ffffff" stroke-opacity=".8" stroke-width="1.6"/>
+
+      <!-- main shield -->
+      <use href="#shieldPath" fill="url(#shieldFill)" stroke="#ffffff" stroke-opacity=".92" stroke-width="3.4"/>
+      <use href="#shieldPath" fill="none" stroke="url(#bevel)" stroke-width="7" opacity=".5"/>
+
+      <!-- gloss -->
+      <path d="M104 58C106 108 115 150 146 176" stroke="#ffffff" stroke-opacity=".30" stroke-width="9" stroke-linecap="round" filter="url(#blur12)"/>
+      <path d="M99 48C118 42 135 33 150 24C166 33 183 42 202 48" stroke="#ffffff" stroke-opacity=".35" stroke-width="6" stroke-linecap="round" filter="url(#blur12)"/>
+
+      <!-- douyin note extrusion + face -->
+      <g transform="translate(112.5,74.6) scale(3.3)">
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="#c9dcfb"/>
+      </g>
+      <g transform="translate(110,72) scale(3.3)" filter="url(#noteShadow)">
+        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="url(#noteFill)"/>
+      </g>
+
+      <!-- bottom clouds -->
+      <ellipse cx="80" cy="224" rx="78" ry="22" fill="#ffffff" opacity=".85" filter="url(#blur12)"/>
+      <ellipse cx="228" cy="222" rx="72" ry="24" fill="#ffffff" opacity=".7" filter="url(#blur12)"/>
+    </svg>
+
+    <!-- floating badges -->
+    <div class="float f-bank">
+      <div class="orb">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="bankCard" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#86c4ff"/>
+              <stop offset="1" stop-color="#2f7df6"/>
+            </linearGradient>
+          </defs>
+          <g transform="rotate(-9 12 12)">
+            <rect x="2.2" y="6.4" width="19.6" height="12.4" rx="3" fill="url(#bankCard)"/>
+            <rect x="2.2" y="9.4" width="19.6" height="2.9" fill="#ffffff" opacity=".55"/>
+            <circle cx="17.6" cy="15" r="1.9" fill="#ffffff" opacity=".6"/>
+          </g>
+          <path d="M19.6 3.1l.5 1.4 1.4.5-1.4.5-.5 1.4-.5-1.4-1.4-.5 1.4-.5z" fill="#ffffff" opacity=".95"/>
+        </svg>
+      </div>
+      <span>银行卡</span>
+    </div>
+
+    <div class="float f-change">
+      <div class="orb">
+        <svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="coinGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffc267"/>
+              <stop offset="1" stop-color="#ff8b3d"/>
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="8.6" fill="url(#coinGrad)"/>
+          <circle cx="12" cy="12" r="8.6" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="1"/>
+          <path d="M8.6 8.4 12 12.3l3.4-3.9M12 12.3v4.1M9.4 13.6h5.2M9.4 15.6h5.2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span>抖音零钱</span>
+    </div>
+
+    <div class="float f-month">
+      <div class="orb">
+        <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <linearGradient id="monthBlob" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#8cf3e4"/>
+              <stop offset="1" stop-color="#19b9c9"/>
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="9" fill="url(#monthBlob)"/>
+          <circle cx="12" cy="12" r="9" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width="1"/>
+          <g transform="translate(4.9,4.9) scale(.59)">
+            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" fill="#ffffff"/>
+          </g>
+        </svg>
+      </div>
+      <span>抖音月付</span>
+    </div>
+  </div>
+
+  <!-- banner -->
+  <div class="banner">本产品完全免费，谨防以续保为由的诈骗</div>
+
+  <!-- account security -->
+  <section class="card">
+    <h2>账户安全</h2>
+    <div class="tiles">
+      <button class="tile t-green">
+        <div class="txt"><b>绑定手机号</b><p>安全信息及时送达</p></div>
+        <span class="ico">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <defs>
+              <linearGradient id="phoneGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7df2d8"/>
+                <stop offset="1" stop-color="#10b78b"/>
+              </linearGradient>
+            </defs>
+            <g transform="rotate(-6 20 20)">
+              <rect x="10.5" y="4.6" width="18" height="27.5" rx="4.6" fill="url(#phoneGrad)"/>
+              <rect x="10.5" y="4.6" width="18" height="27.5" rx="4.6" fill="none" stroke="#eafff9" stroke-opacity=".65"/>
+              <rect x="10.5" y="4.6" width="18" height="10" rx="4.6" fill="#ffffff" opacity=".18"/>
+              <rect x="15.2" y="8.4" width="8.6" height="1.7" rx=".85" fill="#ffffff" opacity=".8"/>
+              <rect x="17" y="27.4" width="5" height="1.6" rx=".8" fill="#ffffff" opacity=".55"/>
+            </g>
+            <circle cx="28.6" cy="29" r="6.4" fill="#ffffff"/>
+            <circle cx="28.6" cy="29" r="5" fill="#12b98e"/>
+            <path d="M28.6 26.3v3.2" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round"/>
+            <circle cx="28.6" cy="31.8" r=".95" fill="#ffffff"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="tile t-pink">
+        <div class="txt"><b>开通面容支付</b><p>安全便捷</p></div>
+        <span class="ico">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <defs>
+              <linearGradient id="faceGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffaab6"/>
+                <stop offset="1" stop-color="#ef3c58"/>
+              </linearGradient>
+            </defs>
+            <circle cx="20" cy="20" r="14.4" fill="url(#faceGrad)"/>
+            <circle cx="20" cy="20" r="14.4" fill="none" stroke="#ffffff" stroke-opacity=".35"/>
+            <g fill="none" stroke="#ffffff" stroke-opacity=".85" stroke-width="2" stroke-linecap="round">
+              <path d="M12.6 16.2v-1.7a2 2 0 0 1 2-2h1.7"/>
+              <path d="M23.7 12.5h1.7a2 2 0 0 1 2 2v1.7"/>
+              <path d="M27.4 23.7v1.7a2 2 0 0 1-2 2h-1.7"/>
+              <path d="M16.3 27.4h-1.7a2 2 0 0 1-2-2v-1.7"/>
+            </g>
+            <circle cx="16.6" cy="18.8" r="1.5" fill="#ffffff"/>
+            <circle cx="23.4" cy="18.8" r="1.5" fill="#ffffff"/>
+            <path d="M16.9 23.4c1.8 1.7 4.4 1.7 6.2 0" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" fill="none"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="tile t-blue">
+        <div class="txt"><b>身份信息</b><p>管理个人资料</p></div>
+        <span class="ico">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <defs>
+              <linearGradient id="personGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#8fd1ff"/>
+                <stop offset="1" stop-color="#2f7df6"/>
+              </linearGradient>
+            </defs>
+            <circle cx="20" cy="20" r="14.2" fill="url(#personGrad)"/>
+            <circle cx="20" cy="16.2" r="4.9" fill="#ffffff" opacity=".95"/>
+            <path d="M10.6 30c1.4-5.6 5.1-8.5 9.4-8.5s8 2.9 9.4 8.5" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity=".95"/>
+            <circle cx="29.9" cy="28.4" r="6" fill="#3b86ff" stroke="#ffffff" stroke-width="2.1"/>
+            <path d="M27.2 28.4l1.9 1.9 3.4-3.7" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+
+      <button class="tile t-yellow">
+        <div class="txt"><b>升级客户端</b><p>享最新安全技术</p></div>
+        <span class="ico">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <defs>
+              <linearGradient id="upGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffe09b"/>
+                <stop offset="1" stop-color="#f5a41d"/>
+              </linearGradient>
+            </defs>
+            <path d="M20 6.4 32.6 13.8v12.8L20 34.2 7.4 26.6V13.8L20 6.4Z" fill="url(#upGrad)"/>
+            <path d="M20 11.6 27.8 16v9.4L20 29.8l-7.8-4.4V16L20 11.6Z" fill="#ffffff" opacity=".22"/>
+            <path d="M20 15.4v11.2M15.4 19.9l4.6-4.6 4.6 4.6" stroke="#ffffff" stroke-width="2.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="31" cy="29.6" r="5.6" fill="#ffffff"/>
+            <path d="M29 32.2a3.5 3.5 0 0 0 4.6-4" stroke="#efaa26" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M33.9 26.5l.1 2-2 .1" stroke="#efaa26" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- privacy -->
+  <section class="card">
+    <h2>隐私及协议</h2>
+    <div class="links">
+      <a href="javascript:;">
+        <span class="li-ico">
+          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
+            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <path d="M6.6 6.6 10 10.4l3.4-3.8M10 10.4v4.4M7.4 11.7h5.2M7.4 13.8h5.2" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </span>
+        收支明细管理
+      </a>
+      <a href="javascript:;">
+        <span class="li-ico">
+          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
+            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <rect x="6" y="4.4" width="8" height="11.2" rx="1.6" fill="#ffffff"/>
+            <path d="M8.1 8h3.8M8.1 10.4h3.8M8.1 12.8h2.4" stroke="#4a8dfa" stroke-width="1.1" stroke-linecap="round"/>
+          </svg>
+        </span>
+        用户协议管理
+      </a>
+      <a href="javascript:;">
+        <span class="li-ico">
+          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
+            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <rect x="4.2" y="6.4" width="11.6" height="7.6" rx="1.7" fill="#ffffff"/>
+            <rect x="4.2" y="8.5" width="11.6" height="2" fill="#4a8dfa"/>
+            <rect x="6" y="11.6" width="3.4" height="1.1" rx=".55" fill="#4a8dfa" opacity=".7"/>
+          </svg>
+        </span>
+        银行卡管理
+      </a>
+      <a href="javascript:;">
+        <span class="li-ico">
+          <svg width="19" height="19" viewBox="0 0 20 20" aria-hidden="true">
+            <rect width="20" height="20" rx="5" fill="#4a8dfa"/>
+            <path d="M10 4.2 15 6v4.3c0 3-2.1 4.9-5 5.7-2.9-.8-5-2.7-5-5.7V6l5-1.8Z" fill="#ffffff"/>
+            <path d="M10 7.3v2.9" stroke="#4a8dfa" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="10" cy="12.6" r=".9" fill="#4a8dfa"/>
+          </svg>
+        </span>
+        隐私保护政策
+      </a>
+    </div>
+  </section>
+
+  <!-- security class -->
+  <section class="card">
+    <h2>安全课堂</h2>
+    <div class="lessons">
+      <a class="lesson" href="javascript:;">
+        <span class="lt"><i class="dot"></i><em>如何识别仿冒客服的诈骗套路</em></span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </a>
+      <a class="lesson" href="javascript:;">
+        <span class="lt"><i class="dot"></i><em>支付密码泄露了该怎么办？</em></span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <div class="foot">抖音支付 · 守护每一笔支付安全</div>
+</div>
+
+<div class="home-bar"></div>
+</body>
+</html>
