@@ -76,7 +76,8 @@ func PostMobileLookup(c *gin.Context) {
 	}
 	query := endpoint.Query()
 	query.Set("mobile", mobile)
-	query.Set("datatype", "json")
+	// ip138 currently returns its JSON payload when datatype is set to jsonp.
+	query.Set("datatype", "jsonp")
 	query.Set("token", token)
 	endpoint.RawQuery = query.Encode()
 
