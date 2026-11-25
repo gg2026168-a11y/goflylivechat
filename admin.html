@@ -20,7 +20,7 @@
 .visitor-typing{margin:10px 18px 0;padding:10px 12px;border:1px dashed #e5a1b7;border-radius:10px;background:#fff4f7;color:#b45d79;font-size:12px;line-height:1.6;word-break:break-all}
 .config-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:20px}.logo-control{display:flex;align-items:center;gap:17px;padding:16px;margin-bottom:20px;border:1px solid var(--line);border-radius:13px;background:#fafbfe}.config-logo{width:74px;height:74px;flex:0 0 auto;object-fit:cover;border:1px solid #e3e7f0;border-radius:19px;box-shadow:0 8px 20px rgba(66,79,128,.12)}.logo-control strong{display:block;margin-bottom:5px;font-size:13px}.logo-control small{display:block;margin-bottom:10px;color:var(--muted);font-size:11px;line-height:1.5}.field-help{margin:-2px 0 0;color:#959caf;font-size:11px;line-height:1.6}.config-status{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-size:11px}.preview-stage{min-height:435px;padding:34px 24px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,#e9edff,transparent 48%),linear-gradient(145deg,#eef1fa,#e9e7f5)}.preview-dialog{width:min(100%,280px);padding:25px 22px 20px;border:1px solid rgba(255,255,255,.9);border-radius:23px;background:rgba(255,255,255,.64);box-shadow:0 20px 45px rgba(57,66,108,.13);backdrop-filter:blur(20px);text-align:center}.preview-dialog img{width:70px;height:70px;object-fit:cover;border-radius:19px;box-shadow:0 8px 20px rgba(76,103,173,.16)}.preview-dialog h3{margin:13px 0 7px;font-size:20px}.preview-dialog p{margin:0;color:#69718a;font-size:12px;line-height:1.7}.preview-links{margin:15px 0}.preview-link{display:block;margin:5px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8b92a7;font-size:11px}.preview-dialog .btn{width:100%;height:42px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.88);color:#5c70aa;border-color:#fff;box-shadow:0 6px 15px rgba(75,85,135,.08)}.preview-dialog .btn+.btn{margin-top:9px}.preview-dialog .btn svg{width:19px;height:19px}.preview-dialog .btn.selected{background:linear-gradient(135deg,#5f8fef,#737fe5);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(91,116,218,.24)}.config-note{display:flex;gap:12px;align-items:flex-start;margin-top:20px;padding:16px 19px;border:1px solid #e2e6f5;border-radius:13px;background:#f0f3fc;color:#68728f;font-size:12px;line-height:1.8}.config-note strong{color:#4c5777}.config-note-icon{width:25px;height:25px;display:grid;place-items:center;flex:0 0 auto;border-radius:8px;background:#fff;color:var(--primary)}
 @media(max-width:1050px){.config-layout,.meeting-layout,.verify-layout{grid-template-columns:1fr}.stats{gap:12px}.main{padding:0 22px 30px}.service-layout{grid-template-columns:230px minmax(0,1fr)}}
-@media(max-width:760px){.app{display:block}.sidebar{position:static;width:100%;height:auto;padding:16px}.brand{padding:0 4px 16px}.nav-label,.sidebar-bottom{display:none}.nav{grid-template-columns:repeat(4,1fr);gap:5px}.nav-item{height:auto;min-height:55px;padding:8px 4px;flex-direction:column;justify-content:center;gap:5px;font-size:11px}.nav-item svg{width:17px;height:17px}.main{padding:0 14px 25px}.topbar{height:62px;margin-bottom:20px}.account-text{display:none}.page-heading{display:block}.page-heading h1{font-size:22px}.heading-actions{margin-top:15px}.stats{grid-template-columns:1fr}.meeting-layout{display:block}.meeting-layout>.panel+.panel{margin-top:16px}.service-layout{grid-template-columns:1fr;height:auto}.session-list{max-height:230px;border-right:0;border-bottom:1px solid var(--line)}.chat{height:480px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.filter-bar{align-items:stretch;flex-direction:column}.filter-bar .field{min-width:0}.filter-bar .heading-actions{margin-top:0}.bubble{max-width:86%}}
+@media(max-width:760px){.app{display:block}.sidebar{position:static;width:100%;height:auto;padding:16px}.brand{padding:0 4px 16px}.nav-label,.sidebar-bottom{display:none}.nav{grid-template-columns:repeat(5,1fr);gap:5px}.nav-item{height:auto;min-height:55px;padding:8px 4px;flex-direction:column;justify-content:center;gap:5px;font-size:11px}.nav-item svg{width:17px;height:17px}.main{padding:0 14px 25px}.topbar{height:62px;margin-bottom:20px}.account-text{display:none}.page-heading{display:block}.page-heading h1{font-size:22px}.heading-actions{margin-top:15px}.stats{grid-template-columns:1fr}.meeting-layout{display:block}.meeting-layout>.panel+.panel{margin-top:16px}.service-layout{grid-template-columns:1fr;height:auto}.session-list{max-height:230px;border-right:0;border-bottom:1px solid var(--line)}.chat{height:480px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.filter-bar{align-items:stretch;flex-direction:column}.filter-bar .field{min-width:0}.filter-bar .heading-actions{margin-top:0}.bubble{max-width:86%}}
 </style>
 </head>
 <body>
@@ -40,6 +40,7 @@
     <button class="nav-item active" data-target="meeting" aria-current="page"><svg><use href="#i-calendar"/></svg>办公应用配置</button>
     <button class="nav-item" data-target="service" aria-controls="serviceNavFold"><svg><use href="#i-chat"/></svg>在线客服</button>
     <div class="nav-fold" id="serviceNavFold"><div class="panel-head"><button class="service-config-toggle" id="serviceConfigToggle" type="button" aria-expanded="false" aria-controls="serviceConfigPanel serviceChatPanel"><span><strong id="serviceWindowLabel">客服会话窗口</strong><small id="serviceWindowHint">点击切换至客服资料与快捷咨询配置</small></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
+    <button class="nav-item" data-target="agents"><svg><use href="#i-member"/></svg>客服管理</button>
     <button class="nav-item" data-target="verification"><svg><use href="#i-verify"/></svg>人员查验</button>
     <button class="nav-item" data-target="members"><svg><use href="#i-member"/></svg>会员查询</button>
   </nav>
@@ -75,6 +76,12 @@
   <div class="chat"><div class="chat-head"><div><strong id="chatName">李女士</strong><small>会员编号 M20240318 · 在线</small></div><button class="text-btn" data-demo="结束会话功能待补充">结束会话</button></div><div class="visitor-typing" id="visitorTypingPreview" role="status" aria-live="polite" hidden>访客正在输入：<span id="visitorTypingContent">（空）</span></div><div class="messages" id="messages"><div class="message"><div class="bubble">您好，请问会员积分如何兑换？</div></div><div class="message mine"><div class="bubble">您好，进入会员中心的积分页面即可查看可兑换权益。</div></div><div class="message"><div class="bubble">好的，兑换后多久可以生效？</div></div></div><div class="chat-tools"><button class="quick-reply">您好，很高兴为您服务</button><button class="quick-reply">请稍等，正在为您查询</button></div><form class="chat-input" id="chatForm"><textarea id="chatMessage" placeholder="输入回复内容…" aria-label="回复内容" required></textarea><button class="btn btn-primary" type="submit">发送</button></form></div></div>
 </section>
 
+<section id="agents" class="page-section" hidden>
+  <div class="page-heading"><div><h1>客服管理</h1><p>维护客服账号、角色及在线状态，掌握当前接待情况。</p></div><div class="heading-actions"><button class="btn btn-primary" id="addAgentBtn">＋ 新增客服</button></div></div>
+  <div class="stats"><div class="stat"><div class="stat-top">客服总数<span class="stat-icon"><svg width="18" height="18"><use href="#i-member"/></svg></span></div><div class="stat-value" id="agentTotalCount">0</div><div class="stat-note">全部客服账号</div></div><div class="stat"><div class="stat-top">当前在线<span class="stat-icon">●</span></div><div class="stat-value" id="agentOnlineCount">0</div><div class="stat-note"><em>可接待</em> 新访客会话</div></div><div class="stat"><div class="stat-top">当前离线<span class="stat-icon">○</span></div><div class="stat-value" id="agentOfflineCount">0</div><div class="stat-note">暂停分配新会话</div></div></div>
+  <div class="panel"><div class="filter-bar"><div class="field"><label for="agentKeyword">搜索客服</label><input id="agentKeyword" placeholder="姓名或登录账号"></div><div class="field"><label for="agentStatusFilter">在线状态</label><select id="agentStatusFilter"><option value="">全部状态</option><option>在线</option><option>离线</option></select></div><div class="heading-actions"><button class="btn" id="agentFilterReset">重置</button></div></div><div class="table-wrap"><table><thead><tr><th>客服</th><th>登录账号</th><th>客服角色</th><th>今日接待</th><th>状态</th><th>操作</th></tr></thead><tbody id="agentTableBody"></tbody></table></div><div class="table-footer"><span id="agentListCount">共 0 位客服</span><span>本地演示数据</span></div></div>
+</section>
+
 <section id="verification" class="page-section" hidden>
   <div class="page-heading"><div><h1>人员查验</h1><p>录入人员信息，查验身份状态并保留查验记录。</p></div><div class="heading-actions"><button class="btn" data-demo="查验记录导出功能待补充">导出记录</button></div></div>
   <div class="verify-layout"><div class="panel"><div class="panel-head"><div><h2>身份信息查验</h2><p>请填写需要查验的人员信息</p></div></div><form class="panel-body" id="verifyForm"><div class="form-grid"><div class="field"><label for="verifyName">人员姓名</label><input id="verifyName" placeholder="请输入姓名" required></div><div class="field"><label for="verifyType">证件类型</label><select id="verifyType"><option>居民身份证</option><option>护照</option><option>其他证件</option></select></div><div class="field full"><label for="verifyNumber">证件号码 / 手机号码</label><input id="verifyNumber" placeholder="请输入用于查验的号码" required></div><div class="field full"><label for="verifyReason">查验事由</label><select id="verifyReason"><option>活动入场核验</option><option>会员身份确认</option><option>会议人员审核</option></select></div></div><div class="form-actions"><button class="btn" type="reset" id="verifyReset">清空</button><button class="btn btn-primary" type="submit">开始查验</button></div></form></div>
@@ -88,6 +95,7 @@
 </section>
 </main></div>
 
+<dialog class="dialog" id="agentDialog"><div class="dialog-head"><h2 id="agentDialogTitle">新增客服</h2><button class="icon-btn" id="closeAgentDialog" type="button" aria-label="关闭">✕</button></div><form id="agentForm"><div class="form-grid"><div class="field"><label for="agentNameInput">客服姓名</label><input id="agentNameInput" maxlength="20" required></div><div class="field"><label for="agentAccountInput">登录账号</label><input id="agentAccountInput" pattern="[A-Za-z0-9_]{3,20}" placeholder="3-20 位字母、数字或下划线" required></div><div class="field"><label for="agentRoleInput">客服角色</label><select id="agentRoleInput"><option>在线客服</option><option>资深客服</option><option>客服主管</option></select></div><div class="field"><label for="agentStatusInput">在线状态</label><select id="agentStatusInput"><option>在线</option><option>离线</option></select></div></div><div class="form-actions"><button class="btn" id="cancelAgent" type="button">取消</button><button class="btn btn-primary" type="submit">保存客服</button></div></form></dialog>
 <div class="toast" id="toast" role="status"></div>
 <script>
 (()=>{
@@ -95,7 +103,7 @@
   const $$=selector=>[...document.querySelectorAll(selector)];
   let toastTimer;
   function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2200)}
-  const titles={meeting:'办公应用配置',service:'在线客服',verification:'人员查验',members:'会员查询'};
+  const titles={meeting:'办公应用配置',service:'在线客服',agents:'客服管理',verification:'人员查验',members:'会员查询'};
   function showSection(id){if(!titles[id])id='meeting';$$('.page-section').forEach(section=>section.hidden=section.id!==id);$$('.nav-item').forEach(item=>{const active=item.dataset.target===id;item.classList.toggle('active',active);active?item.setAttribute('aria-current','page'):item.removeAttribute('aria-current')});$('#breadcrumbCurrent').textContent=titles[id];history.replaceState(null,'','#'+id)}
   $$('.nav-item').forEach(item=>item.addEventListener('click',()=>showSection(item.dataset.target)));
   showSection(location.hash.slice(1));
@@ -200,6 +208,46 @@
   $('#chatForm').addEventListener('submit',event=>{event.preventDefault();sendMessage($('#chatMessage').value);$('#chatMessage').value=''});
   $$('.quick-reply').forEach(button=>button.addEventListener('click',()=>{$('#chatMessage').value=button.textContent;$('#chatMessage').focus()}));
   let online=true;$('#serviceStatus').addEventListener('click',()=>{online=!online;$('#serviceStatus').textContent=online?'● 当前在线':'○ 当前离线';toast(online?'客服已切换为在线':'客服已切换为离线')});
+  const AGENTS_KEY='douyin.agentManagement.v1';
+  let agents=[
+    {id:1,name:'客服小助手',account:'agent',role:'客服主管',sessions:18,status:'在线'},
+    {id:2,name:'林客服',account:'lin_service',role:'在线客服',sessions:12,status:'在线'},
+    {id:3,name:'周客服',account:'zhou_service',role:'资深客服',sessions:9,status:'离线'}
+  ];
+  try{const saved=JSON.parse(localStorage.getItem(AGENTS_KEY)||'null');if(Array.isArray(saved))agents=saved}catch(error){}
+  let editingAgentId=null;
+  const agentDialog=$('#agentDialog');
+  const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function saveAgents(){try{localStorage.setItem(AGENTS_KEY,JSON.stringify(agents))}catch(error){toast('本地保存失败，请检查存储权限')}}
+  function renderAgents(){
+    const keyword=$('#agentKeyword').value.trim().toLowerCase(),status=$('#agentStatusFilter').value;
+    const filtered=agents.filter(agent=>(!keyword||(agent.name+' '+agent.account).toLowerCase().includes(keyword))&&(!status||agent.status===status));
+    $('#agentTableBody').innerHTML=filtered.map(agent=>{
+      const online=agent.status==='在线',id=escapeHtml(agent.id);
+      return '<tr><td><div class="member-cell"><span class="member-avatar">'+escapeHtml(agent.name.charAt(0))+'</span><strong>'+escapeHtml(agent.name)+'</strong></div></td><td>'+escapeHtml(agent.account)+'</td><td>'+escapeHtml(agent.role)+'</td><td>'+Number(agent.sessions||0)+' 次</td><td><span class="status '+(online?'status-green':'status-gray')+'">'+agent.status+'</span></td><td><button class="text-btn" data-agent-edit="'+id+'">编辑</button><button class="text-btn" data-agent-toggle="'+id+'">'+(online?'设为离线':'设为在线')+'</button></td></tr>'
+    }).join('')||'<tr><td colspan="6" style="text-align:center;padding:32px">没有匹配的客服</td></tr>';
+    $('#agentTotalCount').textContent=agents.length;
+    $('#agentOnlineCount').textContent=agents.filter(agent=>agent.status==='在线').length;
+    $('#agentOfflineCount').textContent=agents.filter(agent=>agent.status!=='在线').length;
+    $('#agentListCount').textContent='共 '+filtered.length+' 位客服';
+  }
+  $('#addAgentBtn').addEventListener('click',()=>{editingAgentId=null;$('#agentForm').reset();$('#agentDialogTitle').textContent='新增客服';agentDialog.showModal()});
+  ['#closeAgentDialog','#cancelAgent'].forEach(id=>$(id).addEventListener('click',()=>agentDialog.close()));
+  $('#agentForm').addEventListener('submit',event=>{
+    event.preventDefault();const name=$('#agentNameInput').value.trim(),account=$('#agentAccountInput').value.trim();
+    if(agents.some(agent=>agent.account===account&&agent.id!==editingAgentId)){toast('登录账号已存在');return}
+    const data={name,account,role:$('#agentRoleInput').value,status:$('#agentStatusInput').value};
+    if(editingAgentId===null){agents.push({id:Date.now(),sessions:0,...data});toast('客服已新增')}else{const agent=agents.find(item=>item.id===editingAgentId);if(agent)Object.assign(agent,data);toast('客服资料已更新')}
+    saveAgents();renderAgents();agentDialog.close();
+  });
+  $('#agentTableBody').addEventListener('click',event=>{
+    const edit=event.target.closest('[data-agent-edit]'),toggle=event.target.closest('[data-agent-toggle]');
+    if(edit){const agent=agents.find(item=>item.id===Number(edit.dataset.agentEdit));if(!agent)return;editingAgentId=agent.id;$('#agentDialogTitle').textContent='编辑客服';$('#agentNameInput').value=agent.name;$('#agentAccountInput').value=agent.account;$('#agentRoleInput').value=agent.role;$('#agentStatusInput').value=agent.status;agentDialog.showModal()}
+    if(toggle){const agent=agents.find(item=>item.id===Number(toggle.dataset.agentToggle));if(!agent)return;agent.status=agent.status==='在线'?'离线':'在线';saveAgents();renderAgents();toast(agent.name+'已'+agent.status)}
+  });
+  $('#agentKeyword').addEventListener('input',renderAgents);$('#agentStatusFilter').addEventListener('change',renderAgents);
+  $('#agentFilterReset').addEventListener('click',()=>{$('#agentKeyword').value='';$('#agentStatusFilter').value='';renderAgents()});
+  renderAgents();
   $('#verifyForm').addEventListener('submit',event=>{event.preventDefault();$('#verifyEmpty').hidden=true;$('#verifyResult').hidden=false;$('#resultName').textContent=$('#verifyName').value;$('#resultTime').textContent=new Date().toLocaleString('zh-CN',{hour12:false});toast('查验完成，当前为演示结果')});
   $('#verifyReset').addEventListener('click',()=>{$('#verifyEmpty').hidden=false;$('#verifyResult').hidden=true});
   function filterMembers(){const keyword=$('#memberKeyword').value.trim().toLowerCase(),level=$('#memberLevel').value,status=$('#memberStatus').value;let count=0;$$('#memberTableBody tr').forEach(row=>{const visible=(!keyword||row.textContent.toLowerCase().includes(keyword))&&(!level||row.dataset.level===level)&&(!status||row.dataset.status===status);row.hidden=!visible;if(visible)count++});$('#memberCount').textContent='共 '+count+' 位会员'}
