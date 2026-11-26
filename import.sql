@@ -13,7 +13,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 TRUNCATE TABLE `user`;
 INSERT INTO `user` (`id`, `name`, `password`, `nickname`, `created_at`, `updated_at`, `deleted_at`, `avator`) VALUE
-(1, 'agent', 'b33aed8f3134996703dc39f9a7c95783', 'Open Source LiveChat Support', '2020-06-27 19:32:41', '2020-07-04 09:32:20', NULL, '/static/images/4.jpg');
+(1, 'agent', 'b33aed8f3134996703dc39f9a7c95783', 'Open Source LiveChat Support', '2020-06-27 19:32:41', '2020-07-04 09:32:20', NULL, '/assets/default-agent-avatar.png');
 
 DROP TABLE IF EXISTS `visitor`;
 CREATE TABLE `visitor` (
@@ -22,6 +22,7 @@ CREATE TABLE `visitor` (
  `avator` varchar(500) NOT NULL DEFAULT '',
  `source_ip` varchar(50) NOT NULL DEFAULT '',
  `to_id` varchar(50) NOT NULL DEFAULT '',
+ `claimed` tinyint(1) NOT NULL DEFAULT '0',
  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
  `updated_at` timestamp NULL DEFAULT NULL,
  `deleted_at` timestamp NULL DEFAULT NULL,
@@ -111,3 +112,39 @@ CREATE TABLE `reply_item` (
  KEY `user_id` (`user_id`),
  KEY `group_id` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `person_registry` (
+ `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ `updated_at` timestamp NULL DEFAULT NULL,
+ `deleted_at` timestamp NULL DEFAULT NULL,
+ `name` varchar(100) NOT NULL,
+ `credential_type` varchar(20) NOT NULL,
+ `credential_hash` char(64) NOT NULL,
+ `credential_masked` varchar(80) NOT NULL,
+ `status` varchar(20) NOT NULL DEFAULT 'active',
+ PRIMARY KEY (`id`),
+ UNIQUE KEY `idx_person_credential` (`credential_type`,`credential_hash`),
+ KEY `idx_person_registry_deleted_at` (`deleted_at`),
+ KEY `idx_person_registry_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `person_verification` (
+ `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ `updated_at` timestamp NULL DEFAULT NULL,
+ `deleted_at` timestamp NULL DEFAULT NULL,
+ `registry_id` int(10) unsigned DEFAULT NULL,
+ `name` varchar(100) NOT NULL,
+ `credential_type` varchar(20) NOT NULL,
+ `credential_masked` varchar(80) NOT NULL,
+ `reason` varchar(50) NOT NULL,
+ `result` varchar(30) NOT NULL,
+ `operator_id` int(10) unsigned NOT NULL DEFAULT '0',
+ `operator_name` varchar(100) NOT NULL DEFAULT '',
+ PRIMARY KEY (`id`),
+ KEY `idx_person_verification_created_at` (`created_at`),
+ KEY `idx_person_verification_registry_id` (`registry_id`),
+ KEY `idx_person_verification_result` (`result`),
+ KEY `idx_person_verification_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

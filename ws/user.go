@@ -68,6 +68,36 @@ func AddKefuToList(kefu *User) {
 	KefuList[kefu.Id] = kefu
 }
 
+func IsKefuOnline(kefuId string) bool {
+	kefu, ok := KefuList[kefuId]
+	return ok && kefu != nil
+}
+
+// SelectAvailableKefu assigns a new visitor to the connected agent with the fewest visitors.
+func SelectAvailableKefu() string {
+	selected := ""
+	selectedVisitors := 0
+	for name, kefu := range KefuList {
+		if kefu == nil || name == "admin" {
+			continue
+		}
+		visitorCount := 0
+		for _, visitor := range ClientList {
+			if visitor != nil && visitor.To_id == name {
+				visitorCount++
+			}
+		}
+		if selected == "" || visitorCount < selectedVisitors || (visitorCount == selectedVisitors && name < selected) {
+			selected = name
+			selectedVisitors = visitorCount
+		}
+	}
+	if selected == "" && IsKefuOnline("admin") {
+		return "admin"
+	}
+	return selected
+}
+
 // 给指定客服发消息
 func OneKefuMessage(toId string, str []byte) {
 	kefu, ok := KefuList[toId]
@@ -80,6 +110,14 @@ func OneKefuMessage(toId string, str []byte) {
 		tools.Logger().Println("send_kefu_message", error, string(str))
 	}
 }
+
+// AllKefuMessage 将在线访客状态同步给每位已连接客服。
+func AllKefuMessage(str []byte) {
+	for kefuId := range KefuList {
+		OneKefuMessage(kefuId, str)
+	}
+}
+
 func KefuMessage(visitorId, content string, kefuInfo models.User) {
 	msg := TypeMessage{
 		Type: "message",

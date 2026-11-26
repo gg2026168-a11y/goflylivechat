@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "node protect_frontend.cjs"
+  },
+  "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
+    "javascript-obfuscator": "^5.10.1"
+  }
+}

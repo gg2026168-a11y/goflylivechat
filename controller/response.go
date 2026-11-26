@@ -21,6 +21,10 @@ type VisitorOnline struct {
 	Username    string `json:"username"`
 	Avator      string `json:"avator"`
 	LastMessage string `json:"last_message"`
+	Claimed     bool   `json:"claimed"`
+	OwnerId     string `json:"owner_id"`
+	OwnerName   string `json:"owner_name"`
+	OwnerAvatar string `json:"owner_avatar"`
 }
 type GetuiResponse struct {
 	Code float64                `json:"code"`

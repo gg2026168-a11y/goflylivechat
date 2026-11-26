@@ -1,0 +1,565 @@
+[2026/11/26 2:05] 白:
+转发自 白
+能看到，之前的代码已经实现了。数据流是这样走的：
+
+访客端（visitor.html）监听输入框的 input 事件，每 300ms 把输入框当前值发出去：
+
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'visitor_typing',
+        content: input.value   // ← 访客输入框里的实时内容
+      }));
+    }
+  }, 300);
+});
+后端（main.go）收到 visitor_typing 后，只推给客服房间：
+
+case "visitor_typing":
+    if c.role != RoleVisitor {
+        return
+    }
+    saveDraft(c.sessionID, msg.Content)
+    out, _ := json.Marshal(map[string]any{
+        "type":       "visitor_typing",
+        "content":    msg.Content,
+    })
+    c.room.BroadcastToAgents(out)   // ← 只推客服，不推访客
+客服端（agent.html）收到后显示在对话框上方的粉色虚线框里：
+
+if (m.type === 'visitor_typing') {
+    typingPreview.textContent = `访客正在输入：${m.content || '（空）'}`;
+    return;
+}
+所以客服工作台能看到的是：访客输入框里正在敲的每个字，以 300ms 的节奏实时刷新。访客删字、清空、粘贴，客服端都会同步更新。
+
+验证方式：用 http 服务托管两个页面（别用 file://，否则 WebSocket 的 Origin 是 null 可能被拒），开两个标签：
+
+· visitor.html?sid=1
+· agent.html?sid=1
+
+在访客端输入框打字，客服端上方粉色框会实时出现「访客正在输入：xxx」。访客端自己的消息区不会出现任何「正在输入」字样，因为它的 onmessage 里第一行就是 if (m.type !== 'chat_message') return;。
+
+如果你实际跑起来看不到，最可能的原因是：
+
+1. 两个页面 sid 不一致，不在同一个房间；
+2. 页面用 file:// 打开，WebSocket 连不上；
+3. 后端没启动或 DSN 写错，initDB 失败直接 log.Fatalf 退出了。
+
+先看浏览器控制台有没有 WebSocket 报错，再看后端日志有没有 listening on :8080。
+[2026/11/26 2:17] 白: 这是一个可直接运行的HTML在线客服工作台，能自动读取访客IP、设备及地区信息，方便您快速掌握访客背景。
+
+`html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>在线客服工作台 · 访客信息识别</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --bg: #eef2f8;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --line: #e6ebf2;
+    --brand: #2f6bff;
+    --brand-soft: #eaf0ff;
+    --ok: #16a34a;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #cdd8e8; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #b3c2d8; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  /* ============ 顶栏 ============ */
+  .topbar {
+    flex: none;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    color: #fff;
+    background: linear-gradient(100deg, #0f1a33, #1c2f57 55%, #274a86);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700; letter-spacing: .5px; color: #06224d;
+    background: linear-gradient(135deg, #4f8bff, #6ee7ff);
+  }
+  .brand h1 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .3px; }
+  .brand p { margin: 1px 0 0; font-size: 11px; color: #93a8cc; letter-spacing: .8px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+  .status-chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border-radius: 20px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.14);
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 0 3px rgba(52,211,153,.18); }
+  .clock { font-variant-numeric: tabular-nums; color: #c6d4ec; letter-spacing: 1px; }
+
+  /* ============ 布局 ============ */
+  .workspace {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 268px minmax(0, 1fr) 330px;
+    gap: 14px;
+    padding: 14px;
+  }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ============ 会话列表 ============ */
+  .side-head { padding: 14px 14px 10px; border-bottom: 1px solid var(--line); }
+  .side-head h2 {
+    margin: 0 0 10px; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .badge {
+    font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 20px;
+    background: var(--brand-soft); color: #2f5fd0;
+  }
+  .search {
+    width: 100%; height: 32px; padding: 0 11px;
+    border: 1px solid var(--line); border-radius: 9px;
+    background: #f7f9fd; font: inherit; font-size: 12.5px; color: var(--text);
+    outline: none; transition: .2s;
+  }
+  .search:focus { border-color: #b9cdff; background: #fff; box-shadow: 0 0 0 3px rgba(47,107,255,.1); }
+  .list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+  .conv {
+    display: flex; gap: 10px; padding: 10px; border-radius: 11px;
+    cursor: pointer; transition: background .15s;
+  }
+  .conv:hover { background: #f4f7fd; }
+  .conv.active { background: var(--brand-soft); }
+  .conv-main { flex: 1; min-width: 0; }
+  .conv-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .conv-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conv-time { font-size: 10.5px; color: #9aa8bd; flex: none; }
+  .conv-tag { font-size: 11.5px; color: var(--muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 11px; flex: none;
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 600; color: #fff;
+    background: linear-gradient(135deg, #5b8def, #7c5cf0);
+  }
+  .avatar.sm { width: 32px; height: 32px; border-radius: 10px; font-size: 12px; }
+  .unread {
+    min-width: 17px; height: 17px; padding: 0 5px; border-radius: 9px;
+    background: #ff5a5f; color: #fff; font-size: 10.5px; font-weight: 700;
+    display: grid; place-items: center; margin-top: 4px;
+  }
+
+  /* ============ 聊天区 ============ */
+  .chat-head {
+    flex: none; display: flex; align-items: center; gap: 10px;
+    padding: 11px 16px; border-bottom: 1px solid var(--line);
+  }
+  .chat-name { font-size: 13.5px; font-weight: 600; }
+  .chat-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+  .chat-sub .mini-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+  .chat-actions { margin-left: auto; display: flex; gap: 8px; }
+  .ghost-btn {
+    font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--line); background: #fff; color: #46536b; cursor: pointer;
+    transition: .18s;
+  }
+  .ghost-btn:hover { border-color: #b9cdff; color: var(--brand); background: #f7faff; }
+
+  .messages {
+    flex: 1; overflow-y: auto; padding: 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    background: linear-gradient(#f8fafd, #f3f6fb);
+  }
+  .msg { display: flex; flex-direction: column; max-width: 78%; animation: pop .22s ease; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .msg.agent { align-self: flex-end; align-items: flex-end; }
+  .msg.visitor { align-self: flex-start; align-items: flex-start; }
+  .msg.system { align-self: center; max-width: 100%; }
+  .bubble {
+    padding: 9px 13px; border-radius: 12px;
+    font-size: 13.5px; line-height: 1.62;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .msg.agent .bubble {
+    color: #fff; border-bottom-right-radius: 4px;
+    background: linear-gradient(135deg, #3b7bff, #2f6bff);
+  }
+  .msg.visitor .bubble {
+    background: #fff; border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  }
+  .msg.system .bubble {
+    background: rgba(148,163,184,.13); color: #64748b;
+    font-size: 11.5px; padding: 5px 12px; border-radius: 20px;
+  }
+  .meta { font-size: 10.5px; color: #9aa8bd; margin-top: 5px; padding: 0 3px; }
+
+  .composer { flex: none; border-top: 1px solid var(--line); padding: 10px 14px 12px; background: #fff; }
+  .composer textarea {
+    width: 100%; height: 58px; border: 0; outline: none; resize: none;
+    font: inherit; font-size: 13.5px; line-height: 1.6; color: var(--text);
+    background: transparent;
+  }
+  .composer-bar { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .quick { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .quick button {
+    font: inherit; font-size: 11.5px; padding: 4px 10px; border-radius: 20px;
+    border: 1px solid var(--line); background: #f8fafd; color: #55627a; cursor: pointer;
+    transition: .18s;
+  }
+  .quick button:hover { border-color: #b9cdff; color: var(--brand); background: #f2f7ff; }
+  .send-btn {
+    flex: none; font: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 20px; border-radius: 9px; border: 0; cursor: pointer; color: #fff;
+    background: linear-gradient(135deg, #3b7bff, #2f6bff);
+    box-shadow: 0 4px 12px rgba(47,107,255,.28);
+    transition: .18s;
+  }
+  .send-btn:hover { filter: brightness(1.06); }
+  .send-btn:active { transform: translateY(1px); }
+[2026/11/26 2:17] 白: /* ============ 访客信息 ============ */
+  .visitor { overflow-y: auto; padding: 14px; gap: 12px; }
+  .panel-title {
+    font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+    margin-bottom: 2px;
+  }
+  .live {
+    font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+    color: #0f8a4d; background: #e6f9ef; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .live::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+    animation: blink 1.4s infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+  .visitor-hero { display: flex; align-items: center; gap: 11px; }
+  .vname { font-size: 13.5px; font-weight: 600; }
+  .vsub { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; }
+  .card-label {
+    font-size: 11.5px; font-weight: 600; color: var(--muted); letter-spacing: .5px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .mini-btn {
+    font: inherit; font-size: 11px; padding: 3px 9px; border-radius: 7px; cursor: pointer;
+    border: 1px solid var(--line); background: #f8fafd; color: #55627a; transition: .18s;
+  }
+  .mini-btn:hover { border-color: #b9cdff; color: var(--brand); background: #f2f7ff; }
+
+  .ip-text {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 19px; font-weight: 700; letter-spacing: .4px;
+    word-break: break-all; line-height: 1.3;
+  }
+  .ip-text.loading { color: #b6c2d4; animation: blink 1.2s infinite; }
+  .loc { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag {
+    font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    background: var(--brand-soft); color: #2f5fd0; max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .rows { display: flex; flex-direction: column; gap: 9px; }
+  .row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; }
+  .row > span { color: var(--muted); flex: none; }
+  .row > b { font-weight: 600; text-align: right; word-break: break-all; }
+  .row > b.wait { color: #b6c2d4; font-weight: 500; }
+
+  .ua-box { margin-top: 10px; }
+  .ua-box summary {
+    font-size: 11.5px; color: var(--muted); cursor: pointer; outline: none;
+    list-style: none; user-select: none;
+  }
+  .ua-box summary::-webkit-details-marker { display: none; }
+  .ua-box summary::before { content: '▸ '; }
+  .ua-box[open] summary::before { content: '▾ '; }
+  .ua-text {
+    margin-top: 8px; font-size: 11px; line-height: 1.6; color: #64748b;
+    background: #f7f9fd; border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px; word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: flex; gap: 10px; font-size: 12px; position: relative; padding-bottom: 12px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: ''; position: absolute; left: 3.5px; top: 12px; bottom: 0;
+    width: 1px; background: var(--line);
+  }
+  .tl-item:last-child::before { display: none; }
+  .tl-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex: none; margin-top: 4px;
+    background: #cbd5e1;
+  }
+  .tl-item.hi .tl-dot { background: var(--brand); box-shadow: 0 0 0 3px rgba(47,107,255,.14); }
+  .tl-text { flex: 1; color: #46536b; line-height: 1.5; }
+  .tl-time { font-size: 10.5px; color: #9aa8bd; margin-top: 2px; }
+
+  /* ============ Toast ============ */
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; z-index: 99;
+    transform: translate(-50%, 16px);
+    background: rgba(15,23,42,.93); color: #fff;
+    padding: 9px 16px; border-radius: 10px; font-size: 12.5px;
+    opacity: 0; pointer-events: none; transition: .25s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ============ 响应式 ============ */
+  @media (max-width: 1180px) {
+    .workspace { grid-template-columns: 1fr 310px; }
+    .sidebar { display: none; }
+  }
+  @media (max-width: 860px) {
+    .workspace { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
+    .visitor { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= 顶栏 ================= -->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">CS</div>
+    <div>
+      <h1>在线客服工作台</h1>
+      <p>CUSTOMER SERVICE CONSOLE</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-chip"><span class="dot"></span>服务在线</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+</header>
+
+<!-- ================= 主体 ================= -->
+<div class="workspace">
+
+  <!-- 左侧：会话列表 -->
+  <aside class="panel sidebar">
+    <div class="side-head">
+      <h2>会话列表 <span class="badge" id="convCount">0</span></h2>
+      <input class="search" id="searchInput" placeholder="搜索访客 / IP / 关键词" />
+    </div>
+    <div class="list" id="convList"></div>
+  </aside>
+
+  <!-- 中间：聊天 -->
+  <section class="panel chat">
+    <div class="chat-head">
+      <div class="avatar sm" id="chatAvatar">访</div>
+      <div>
+        <div class="chat-name" id="chatName">访客 #1024</div>
+        <div class="chat-sub"><span class="mini-dot"></span>正在浏览 · 商品详情页</div>
+      </div>
+      <div class="chat-actions">
+        <button class="ghost-btn">转接</button>
+        <button class="ghost-btn">结束会话</button>
+      </div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="composer">
+      <textarea id="input" placeholder="输入消息，Enter 发送，Shift + Enter 换行…"></textarea>
+      <div class="composer-bar">
+        <div class="quick">
+          <button data-tpl="您好，很高兴为您服务，请问有什么可以帮您？">问候</button>
+          <button data-tpl="稍等，我帮您查询一下订单状态～">查订单</button>
+          <button data-tpl="本店支持 7 天无理由退换，请您放心购买。">售后</button>
+          <button data-tpl="还有其他可以帮到您的吗？">结束语</button>
+        </div>
+        <button class="send-btn" id="sendBtn">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 右侧：访客信息 -->
+  <aside class="panel visitor">
+    <div class="panel-title">
+      访客信息
+      <span class="live">实时</span>
+      <button class="mini-btn" id="refreshBtn" style="margin-left:auto">刷新</button>
+    </div>
+
+    <div class="visitor-hero">
+      <div class="avatar" id="avatar">访</div>
+      <div style="min-width:0">
+        <div class="vname">访客 #1024</div>
+        <div class="vsub" id="heroSub">正在获取位置…</div>
+      </div>
+    </div>
+
+    <!-- IP / 地区 -->
+    <div class="card">
+      <div class="card-label">
+        IP 地址
+        <button class="mini-btn" id="copyIp">复制</button>
+      </div>
+      <div class="ip-text loading" id="ipText">识别中…</div>
+      <div class="loc" id="locText">正在解析归属地…</div>
+      <div class="tags" id="geoTags"></div>
+    </div>
+
+    <!-- 设备与系统 -->
+    <div class="card">
+      <div class="card-label">设备与系统</div>
+      <div class="rows">
+        <div class="row"><span>设备类型</span><b class="wait" id="dType">—</b></div>
+        <div class="row"><span>操作系统</span><b class="wait" id="dOs">—</b></div>
+        <div class="row"><span>浏览器</span><b class="wait" id="dBrowser">—</b></div>
+        <div class="row"><span>屏幕分辨率</span><b class="wait" id="dScreen">—</b></div>
+        <div class="row"><span>窗口尺寸</span><b class="wait" id="dView">—</b></div>
+        <div class="row"><span>像素比 DPR</span><b class="wait" id="dDpr">—</b></div>
+      </div>
+    </div>
+
+    <!-- 环境与网络 -->
+    <div class="card">
+      <div class="card-label">环境与网络</div>
+      <div class="rows">
+        <div class="row"><span>语言</span><b class="wait" id="eLang">—</b></div>
+        <div class="row"><span>时区</span><b class="wait" id="eTz">—</b></div>
+        <div class="row"><span>网络状态</span><b class="wait" id="eNet">—</b></div>
+[2026/11/26 2:17] 白: <div class="row"><span>CPU 核心</span><b class="wait" id="eCpu">—</b></div>
+        <div class="row"><span>设备内存</span><b class="wait" id="eMem">—</b></div>
+        <div class="row"><span>访问来源</span><b class="wait" id="eRef">—</b></div>
+      </div>
+      <details class="ua-box">
+        <summary>查看 User-Agent</summary>
+        <div class="ua-text" id="uaText">—</div>
+      </details>
+    </div>
+
+    <!-- 会话轨迹 -->
+    <div class="card">
+      <div class="card-label">会话轨迹</div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+ *  工具函数
+ * =======================================================*/
+const $ = (id) => document.getElementById(id);
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+));
+
+function toast(msg) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+function nowTime() {
+  return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+/* =========================================================
+ *  一、设备 / 系统识别（User-Agent 解析）
+ * =======================================================*/
+function detectOS(ua) {
+  let m;
+  if (/Windows NT 10\.0/.test(ua)) return 'Windows 10/11';
+  if (/Windows NT 6\.3/.test(ua))  return 'Windows 8.1';
+  if (/Windows NT 6\.1/.test(ua))  return 'Windows 7';
+  if (/Windows NT/.test(ua))       return 'Windows';
+  if ((m = ua.match(/Android\s([\d.]+)/))) return 'Android ' + m[1];
+  if ((m = ua.match(/iPhone OS ([\d_]+)/))) return 'iOS ' + m[1].replace(/_/g, '.');
+  if ((m = ua.match(/iPad.*?OS ([\d_]+)/))) return 'iPadOS ' + m[1].replace(/_/g, '.');
+  if ((m = ua.match(/Mac OS X ([\d_]+)/))) return 'macOS ' + m[1].replace(/_/g, '.');
+  if (/CrOS/.test(ua))  return 'Chrome OS';
+  if (/Ubuntu/.test(ua)) return 'Ubuntu';
+  if (/Linux/.test(ua))  return 'Linux';
+  return '未知系统';
+}
+
+function detectBrowser(ua) {
+  let m;
+  // 注意顺序：Edge / Opera 的 UA 中同样包含 Chrome 与 Safari
+  if ((m = ua.match(/Edg(?:e|A|iOS)?\/([\d.]+)/))) return 'Edge ' + m[1].split('.')[0];
+  if ((m = ua.match(/OPR\/([\d.]+)/)))              return 'Opera ' + m[1].split('.')[0];
+  if ((m = ua.match(/Firefox\/([\d.]+)/)))          return 'Firefox ' + m[1].split('.')[0];
+  if ((m = ua.match(/MicroMessenger\/([\d.]+)/)))   return '微信内置浏览器';
+  if ((m = ua.match(/Chrome\/([\d.]+)/)))           return 'Chrome ' + m[1].split('.')[0];
+  if ((m = ua.match(/Version\/([\d.]+).*Safari/)))  return 'Safari ' + m[1].split('.')[0];
+  if (/Safari/.test(ua)) return 'Safari';
+  return '未知浏览器';
+}
+
+function detectDeviceType(ua) {
+  if (/iPad|Tablet|PlayBook|Silk/.test(ua)) return '平板电脑';
+  if (/Android/.test(ua) && !/Mobile/.test(ua)) return '平板电脑';
+  if (/Mobi|iPhone|iPod|Windows Phone|Android.*Mobile|HarmonyOS/.test(ua)) return '手机';
+  return '桌面电脑';
+}
+
+/* 填充设备信息面板 */
+function renderDeviceInfo() {
+  const ua = navigator.userAgent;
+
+  $('dType').textContent    = detectDeviceType(ua);
+  $('dOs').textContent      = detectOS(ua);
+  $('dBrowser').textContent = detectBrowser(ua);
+  $('dScreen').textContent  = ${screen.width} × ${screen.height};
+  $('dView').textContent    = ${innerWidth} × ${innerHeight};
+  $('dDpr').textContent     = (window.devicePixelRatio || 1).toFixed(2) + 'x';
+
+  // 语言
+  const langs = navigator.languages || [];
+  $('eLang').textContent = navigator.language +
+    (langs.length > 1 ?  (+${langs.length - 1}) : '');
+
+  // 时区
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '未知';
+  const offset = -new Date().getTimezoneOffset() / 60;
+  $('eTz').textContent = ${tz} (UTC${offset >= 0 ? '+' : '-'}${Math.abs(offset)});
+
+  // 网络
+  const conn = navigator.connection  navigator.mozConnection  navigator.webkitConnection || {};
+  let net = navigator.onLine ? '在线' : '离线';
+  if (conn.effectiveType) net +=  · ${conn.effectiveType.toUpperCase()};
+  if (conn.downlink)      net += ` · ${conn.down

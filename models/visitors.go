@@ -10,6 +10,7 @@ type Visitor struct {
 	Avator      string `json:"avator"`
 	SourceIp    string `json:"source_ip"`
 	ToId        string `json:"to_id"`
+	Claimed     bool   `json:"claimed"`
 	VisitorId   string `json:"visitor_id"`
 	Status      uint   `json:"status"`
 	Refer       string `json:"refer"`
@@ -57,7 +58,7 @@ func FindVisitorsByKefuId(page uint, pagesize uint, kefuId string) []Visitor {
 	var visitors []Visitor
 	//sql := fmt.Sprintf("select * from visitor where id>=(select id from visitor where  to_id='%s' order by updated_at desc limit %d,1) and to_id='%s' order by updated_at desc limit %d ", kefuId, offset, kefuId, pagesize)
 	//DB.Raw(sql).Scan(&visitors)
-	DB.Where("to_id=?", kefuId).Offset(offset).Limit(pagesize).Order("updated_at desc").Find(&visitors)
+	DB.Where("to_id=? AND claimed=?", kefuId, true).Offset(offset).Limit(pagesize).Order("updated_at desc").Find(&visitors)
 	return visitors
 }
 func FindVisitorsOnline() []Visitor {
@@ -73,7 +74,7 @@ func UpdateVisitorStatus(visitorId string, status uint) {
 	visitor := Visitor{}
 	DB.Model(&visitor).Where("visitor_id = ?", visitorId).Update("status", status)
 }
-func UpdateVisitor(name, avator, visitorId string, status uint, clientIp string, sourceIp string, refer, extra string) {
+func UpdateVisitor(name, avator, visitorId string, status uint, clientIp string, sourceIp string, refer, extra, toId string) {
 	visitor := &Visitor{
 		Status:   status,
 		ClientIp: clientIp,
@@ -82,6 +83,7 @@ func UpdateVisitor(name, avator, visitorId string, status uint, clientIp string,
 		Extra:    extra,
 		Name:     name,
 		Avator:   avator,
+		ToId:     toId,
 	}
 	visitor.UpdatedAt = time.Now()
 	DB.Model(visitor).Where("visitor_id = ?", visitorId).Update(visitor)
@@ -89,6 +91,30 @@ func UpdateVisitor(name, avator, visitorId string, status uint, clientIp string,
 func UpdateVisitorKefu(visitorId string, kefuId string) {
 	visitor := Visitor{}
 	DB.Model(&visitor).Where("visitor_id = ?", visitorId).Update("to_id", kefuId)
+}
+
+// ClaimVisitor 原子接入未被其他客服占用的访客，避免并发重复接入。
+func ClaimVisitor(visitorId string, kefuId string) bool {
+	result := DB.Model(&Visitor{}).
+		Where("visitor_id = ? AND (claimed = ? OR to_id = ?)", visitorId, false, kefuId).
+		Updates(map[string]interface{}{
+			"to_id":      kefuId,
+			"claimed":    true,
+			"updated_at": time.Now(),
+		})
+	return result.Error == nil && result.RowsAffected > 0
+}
+
+// TransferVisitor 将已接入的访客转交给其他客服。
+func TransferVisitor(visitorId string, kefuId string) bool {
+	result := DB.Model(&Visitor{}).
+		Where("visitor_id = ?", visitorId).
+		Updates(map[string]interface{}{
+			"to_id":      kefuId,
+			"claimed":    true,
+			"updated_at": time.Now(),
+		})
+	return result.Error == nil && result.RowsAffected > 0
 }
 
 // 查询条数
@@ -101,7 +127,7 @@ func CountVisitors() uint {
 // 查询条数
 func CountVisitorsByKefuId(kefuId string) uint {
 	var count uint
-	DB.Model(&Visitor{}).Where("to_id=?", kefuId).Count(&count)
+	DB.Model(&Visitor{}).Where("to_id=? AND claimed=?", kefuId, true).Count(&count)
 	return count
 }
 

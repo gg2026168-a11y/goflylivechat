@@ -8,6 +8,7 @@ import (
 )
 
 func InitApiRouter(engine *gin.Engine) {
+	controller.SeedPersonRegistries()
 	//路由分组
 	v2 := engine.Group("/2")
 	{
@@ -22,10 +23,17 @@ func InitApiRouter(engine *gin.Engine) {
 	}
 	engine.GET("/captcha", controller.GetCaptcha)
 	engine.POST("/check", controller.LoginCheckPass)
+	engine.POST("/mobile_lookup", middleware.JwtApiMiddleware, controller.PostMobileLookup)
+	engine.GET("/person_registries", middleware.JwtApiMiddleware, controller.GetPersonRegistries)
+	engine.POST("/person_registries", middleware.JwtApiMiddleware, controller.PostPersonRegistry)
+	engine.PUT("/person_registries/:id", middleware.JwtApiMiddleware, controller.PutPersonRegistry)
+	engine.POST("/person_verify", middleware.JwtApiMiddleware, controller.PostPersonVerification)
+	engine.GET("/person_verify_records", middleware.JwtApiMiddleware, controller.GetPersonVerificationRecords)
+	engine.GET("/person_verify_export", middleware.JwtApiMiddleware, controller.GetPersonVerificationExport)
 
 	engine.GET("/userinfo", middleware.JwtApiMiddleware, controller.GetKefuInfoAll)
-	engine.POST("/register", middleware.Ipblack, controller.PostKefuRegister)
-	engine.POST("/install", controller.PostInstall)
+	engine.POST("/register", middleware.JwtApiMiddleware, middleware.SuperUserOnly, middleware.Ipblack, controller.PostKefuRegister)
+	engine.POST("/install", middleware.JwtApiMiddleware, middleware.SuperUserOnly, controller.PostInstall)
 	//前后聊天
 	engine.GET("/ws_kefu", middleware.JwtApiMiddleware, ws.NewKefuServer)
 	engine.GET("/ws_visitor", middleware.Ipblack, ws.NewVisitorServer)
@@ -56,13 +64,14 @@ func InitApiRouter(engine *gin.Engine) {
 	engine.GET("/roles", middleware.JwtApiMiddleware, middleware.RbacAuth, controller.GetRoleList)
 	engine.POST("/role", middleware.JwtApiMiddleware, middleware.RbacAuth, controller.PostRole)
 
-	engine.GET("/visitors_online", controller.GetVisitorOnlines)
+	engine.GET("/visitors_online", middleware.JwtApiMiddleware, controller.GetVisitorOnlines)
 	engine.GET("/visitors_kefu_online", middleware.JwtApiMiddleware, controller.GetKefusVisitorOnlines)
-	engine.GET("/clear_online_tcp", controller.DeleteOnlineTcp)
+	engine.GET("/clear_online_tcp", middleware.JwtApiMiddleware, middleware.SuperUserOnly, controller.DeleteOnlineTcp)
 	engine.POST("/visitor_login", middleware.Ipblack, controller.PostVisitorLogin)
 	//engine.POST("/visitor", controller.PostVisitor)
 	engine.GET("/visitor", middleware.JwtApiMiddleware, controller.GetVisitor)
 	engine.GET("/visitors", middleware.JwtApiMiddleware, controller.GetVisitors)
+	engine.POST("/visitor_claim", middleware.JwtApiMiddleware, controller.PostVisitorClaim)
 	engine.GET("/statistics", middleware.JwtApiMiddleware, controller.GetStatistics)
 	//前台接口
 	engine.GET("/about", controller.GetAbout)
