@@ -99,8 +99,8 @@
 
 <section id="agents" class="page-section" hidden="">
   <div class="page-heading"><div><h1>客服管理</h1><p>维护客服账号、角色及在线状态，掌握当前接待情况。</p></div><div class="heading-actions"><button class="btn btn-primary" id="addAgentBtn">＋ 新增客服</button></div></div>
-  <div class="stats"><div class="stat"><div class="stat-top">客服总数<span class="stat-icon"><svg width="18" height="18"><use href="#i-member"></use></svg></span></div><div class="stat-value" id="agentTotalCount">3</div><div class="stat-note">全部客服账号</div></div><div class="stat"><div class="stat-top">当前在线<span class="stat-icon">●</span></div><div class="stat-value" id="agentOnlineCount">2</div><div class="stat-note"><em>可接待</em> 新访客会话</div></div><div class="stat"><div class="stat-top">当前离线<span class="stat-icon">○</span></div><div class="stat-value" id="agentOfflineCount">1</div><div class="stat-note">暂停分配新会话</div></div></div>
-  <div class="panel"><div class="filter-bar"><div class="field"><label for="agentKeyword">搜索客服</label><input id="agentKeyword" placeholder="姓名或登录账号"></div><div class="field"><label for="agentStatusFilter">在线状态</label><select id="agentStatusFilter"><option value="">全部状态</option><option>在线</option><option>离线</option></select></div><div class="heading-actions"><button class="btn" id="agentFilterReset">重置</button></div></div><div class="table-wrap"><table><thead><tr><th>客服</th><th>登录账号</th><th>客服角色</th><th>今日接待</th><th>状态</th><th>操作</th></tr></thead><tbody id="agentTableBody"><tr><td><div class="member-cell"><span class="member-avatar">客</span><strong>客服小助手</strong></div></td><td>agent</td><td>超级管理员</td><td>18 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="1">编辑</button><button class="text-btn" data-agent-toggle="1">设为离线</button></td></tr><tr><td><div class="member-cell"><span class="member-avatar">林</span><strong>林客服</strong></div></td><td>lin_service</td><td>在线客服</td><td>12 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="2">编辑</button><button class="text-btn" data-agent-toggle="2">设为离线</button></td></tr><tr><td><div class="member-cell"><span class="member-avatar">周</span><strong>周客服</strong></div></td><td>zhou_service</td><td>在线客服</td><td>9 次</td><td><span class="status status-gray">离线</span></td><td><button class="text-btn" data-agent-edit="3">编辑</button><button class="text-btn" data-agent-toggle="3">设为在线</button></td></tr></tbody></table></div><div class="table-footer"><span id="agentListCount">共 3 位客服</span><span>本地演示数据</span></div></div>
+  <div class="stats"><div class="stat"><div class="stat-top">客服总数<span class="stat-icon"><svg width="18" height="18"><use href="#i-member"></use></svg></span></div><div class="stat-value" id="agentTotalCount">4</div><div class="stat-note">全部客服账号</div></div><div class="stat"><div class="stat-top">当前在线<span class="stat-icon">●</span></div><div class="stat-value" id="agentOnlineCount">4</div><div class="stat-note"><em>可接待</em> 新访客会话</div></div><div class="stat"><div class="stat-top">当前离线<span class="stat-icon">○</span></div><div class="stat-value" id="agentOfflineCount">0</div><div class="stat-note">暂停分配新会话</div></div></div>
+  <div class="panel"><div class="filter-bar"><div class="field"><label for="agentKeyword">搜索客服</label><input id="agentKeyword" placeholder="姓名或登录账号"></div><div class="field"><label for="agentStatusFilter">在线状态</label><select id="agentStatusFilter"><option value="">全部状态</option><option>在线</option><option>离线</option></select></div><div class="heading-actions"><button class="btn" id="agentFilterReset">重置</button></div></div><div class="table-wrap"><table><thead><tr><th>客服</th><th>登录账号</th><th>客服角色</th><th>今日接待</th><th>状态</th><th>操作</th></tr></thead><tbody id="agentTableBody"><tr><td><div class="member-cell"><span class="member-avatar">超</span><strong>超级管理员</strong></div></td><td>agent</td><td>超级管理员</td><td>18 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="1">编辑</button><button class="text-btn" data-agent-toggle="1">设为离线</button></td></tr><tr><td><div class="member-cell"><span class="member-avatar">在</span><strong>在线客服A</strong></div></td><td>kefu_a</td><td>在线客服</td><td>0 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="2">编辑</button><button class="text-btn" data-agent-toggle="2">设为离线</button></td></tr><tr><td><div class="member-cell"><span class="member-avatar">在</span><strong>在线客服B</strong></div></td><td>kefu_b</td><td>在线客服</td><td>0 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="3">编辑</button><button class="text-btn" data-agent-toggle="3">设为离线</button></td></tr><tr><td><div class="member-cell"><span class="member-avatar">在</span><strong>在线客服C</strong></div></td><td>kefu_c</td><td>在线客服</td><td>0 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="4">编辑</button><button class="text-btn" data-agent-toggle="4">设为离线</button></td></tr><tr><td><div class="member-cell"><span class="member-avatar">在</span><strong>在线客服D</strong></div></td><td>kefu_d</td><td>在线客服</td><td>0 次</td><td><span class="status status-green">在线</span></td><td><button class="text-btn" data-agent-edit="5">编辑</button><button class="text-btn" data-agent-toggle="5">设为离线</button></td></tr></tbody></table></div><div class="table-footer"><span id="agentListCount">共 4 位在线客服（超级管理员不计入）</span><span>本地演示数据</span></div></div>
 </section>
 
 <section id="verification" class="page-section" hidden="">
@@ -215,11 +215,13 @@
   });
   $('#serviceConfigReset').addEventListener('click',()=>{serviceConfig=JSON.parse(JSON.stringify(defaultServiceConfig));setServiceForm(serviceConfig);try{localStorage.removeItem(SERVICE_CONFIG_KEY);toast('客服配置已恢复默认')}catch(error){toast('恢复失败，请检查浏览器存储权限')}});
   let online=true;$('#serviceStatus').addEventListener('click',()=>{online=!online;$('#serviceStatus').textContent=online?'● 当前在线':'○ 当前离线';toast(online?'客服已切换为在线':'客服已切换为离线')});
-  const AGENTS_KEY='douyin.agentManagement.v1';
+  const AGENTS_KEY='douyin.agentManagement.v2';
   let agents=[
-    {id:1,name:'客服小助手',account:'agent',role:'超级管理员',sessions:18,status:'在线'},
-    {id:2,name:'林客服',account:'lin_service',role:'在线客服',sessions:12,status:'在线'},
-    {id:3,name:'周客服',account:'zhou_service',role:'在线客服',sessions:9,status:'离线'}
+    {id:1,name:'超级管理员',account:'agent',role:'超级管理员',sessions:18,status:'在线'},
+    {id:2,name:'在线客服A',account:'kefu_a',role:'在线客服',sessions:0,status:'在线'},
+    {id:3,name:'在线客服B',account:'kefu_b',role:'在线客服',sessions:0,status:'在线'},
+    {id:4,name:'在线客服C',account:'kefu_c',role:'在线客服',sessions:0,status:'在线'},
+    {id:5,name:'在线客服D',account:'kefu_d',role:'在线客服',sessions:0,status:'在线'}
   ];
   try{const saved=JSON.parse(localStorage.getItem(AGENTS_KEY)||'null');if(Array.isArray(saved))agents=saved}catch(error){}
   agents=agents.map(agent=>({...agent,role:agent.role==='超级管理员'||agent.role==='客服主管'?'超级管理员':'在线客服'}));
@@ -239,17 +241,18 @@
       const online=agent.status==='在线',id=escapeHtml(agent.id);
       return '<tr><td><div class="member-cell"><span class="member-avatar">'+escapeHtml(agent.name.charAt(0))+'</span><strong>'+escapeHtml(agent.name)+'</strong></div></td><td>'+escapeHtml(agent.account)+'</td><td>'+escapeHtml(agent.role)+'</td><td>'+Number(agent.sessions||0)+' 次</td><td><span class="status '+(online?'status-green':'status-gray')+'">'+agent.status+'</span></td><td><button class="text-btn" data-agent-edit="'+id+'">编辑</button><button class="text-btn" data-agent-toggle="'+id+'">'+(online?'设为离线':'设为在线')+'</button></td></tr>'
     }).join('')||'<tr><td colspan="6" style="text-align:center;padding:32px">没有匹配的客服</td></tr>';
-    $('#agentTotalCount').textContent=agents.length;
-    $('#agentOnlineCount').textContent=agents.filter(agent=>agent.status==='在线').length;
-    $('#agentOfflineCount').textContent=agents.filter(agent=>agent.status!=='在线').length;
-    $('#agentListCount').textContent='共 '+filtered.length+' 位客服';
+    const serviceAgents=agents.filter(agent=>agent.role==='在线客服');
+    $('#agentTotalCount').textContent=serviceAgents.length;
+    $('#agentOnlineCount').textContent=serviceAgents.filter(agent=>agent.status==='在线').length;
+    $('#agentOfflineCount').textContent=serviceAgents.filter(agent=>agent.status!=='在线').length;
+    $('#agentListCount').textContent='共 '+filtered.filter(agent=>agent.role==='在线客服').length+' 位在线客服（超级管理员不计入）';
     renderDashboard();
   }
   function renderDashboard(){
-    const onlineCount=agents.filter(agent=>agent.status==='在线').length;
-    $('#dashboardAgentTotal').textContent=agents.length;
-    $('#dashboardAgentOnline').textContent=onlineCount;
-    $('#dashboardSessionsTotal').textContent=agents.reduce((total,agent)=>total+Number(agent.sessions||0),0);
+    const serviceAgents=agents.filter(agent=>agent.role==='在线客服');
+    $('#dashboardAgentTotal').textContent=serviceAgents.length;
+    $('#dashboardAgentOnline').textContent=serviceAgents.filter(agent=>agent.status==='在线').length;
+    $('#dashboardSessionsTotal').textContent=serviceAgents.reduce((total,agent)=>total+Number(agent.sessions||0),0);
     $('#dashboardAgentTable').innerHTML=agents.map(agent=>{
       const online=agent.status==='在线';
       return '<tr><td><div class="member-cell"><span class="member-avatar">'+escapeHtml(agent.name.charAt(0))+'</span><strong>'+escapeHtml(agent.name)+'</strong></div></td><td>'+escapeHtml(agent.role)+'</td><td>'+Number(agent.sessions||0)+' 次</td><td><span class="status '+(online?'status-green':'status-gray')+'">'+escapeHtml(agent.status)+'</span></td></tr>'
