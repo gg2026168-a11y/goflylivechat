@@ -20,6 +20,10 @@ func JwtApiMiddleware(c *gin.Context) {
 	if token == "" {
 		token = c.Query("token")
 	}
+	if token == "" {
+		// 兼容历史前端将 token 放在 POST body 的调用方式（如 /kefu/message）
+		token = c.PostForm("token")
+	}
 	userinfo := tools.ParseToken(token)
 	if userinfo == nil || userinfo["kefu_name"] == nil || userinfo["create_time"] == nil {
 		c.JSON(200, gin.H{

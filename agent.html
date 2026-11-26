@@ -356,7 +356,7 @@ async function uploadLinkCardImage(file){
 async function deliverAgentMessage(content,s){
   if(!isMine(s))throw new Error(s&&s.claimed?'该访客已由 '+sessionOwnerName(s)+' 接入':'请先接入该访客');
   if(token&&location.protocol!=='file:'){
-    const body=new URLSearchParams({token,type:'kefu',to_id:s.id,content}),response=await fetch('/kefu/message',{method:'POST',body}),result=await response.json();if(result.code!==200)throw new Error(result.msg||'发送失败');
+    const body=new URLSearchParams({type:'kefu',to_id:s.id,content}),response=await fetch('/kefu/message',{method:'POST',headers:{token,'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body}),result=await response.json();if(result.code!==200)throw new Error(result.msg||'发送失败');
     if(!socket||socket.readyState!==WebSocket.OPEN)addMessage(s.id,'agent',content);
   }else{addMessage(s.id,'agent',content);if(channel)channel.postMessage({type:'chat_message',from:'agent',to:s.id,content})}
 }
