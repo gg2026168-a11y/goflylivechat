@@ -21,6 +21,7 @@
 .office-message-bubble{padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}.preview-dialog.office-reply-card{width:270px;max-width:100%;padding:18px 16px 14px;border:1px solid rgba(255,255,255,.90);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(255,255,255,.64));box-shadow:0 14px 34px rgba(57,66,108,.13);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);text-align:center;color:#252b45}.office-reply-card>img{width:58px;height:58px;object-fit:cover;border:1px solid rgba(255,255,255,.85);border-radius:16px;box-shadow:0 8px 18px rgba(76,103,173,.16)}.office-reply-card h3{margin:10px 0 5px;font-size:18px}.office-reply-card p{margin:0;color:#69718a;font-size:11px;line-height:1.65}.office-reply-links{display:grid;gap:3px;margin:10px 0}.office-reply-link{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8b92a7;font-size:10px}.office-reply-downloads{display:grid;gap:8px}.office-reply-download{width:100%;min-height:39px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(255,255,255,.95);border-radius:999px;background:rgba(255,255,255,.88);box-shadow:0 5px 13px rgba(75,85,135,.08);color:#5c70aa;font-size:11px;font-weight:600;cursor:pointer}.office-reply-download svg{width:17px;height:17px;flex:0 0 auto}.office-reply-download.selected{border-color:transparent;background:linear-gradient(135deg,#5f8fef,#737fe5);color:#fff}.office-reply-hint{min-height:16px;margin-top:8px!important;color:#6c7491!important}.office-reply-hint.error{color:#a45d6c!important}.office-reply-hint.success{color:#38866b!important}
 @media(min-width:600px){body{padding:22px 0}.service-shell{height:calc(100svh - 44px);min-height:620px;border:1px solid rgba(255,255,255,.75);border-radius:28px}}
 @media(prefers-reduced-motion:reduce){.chat-scroll{scroll-behavior:auto}}
+.link-card-message{display:flex;align-items:flex-start;gap:9px;width:min(235px,100%);min-width:185px;padding:11px;border:1px solid rgba(213,222,238,.95);border-radius:13px;background:rgba(255,255,255,.96);box-shadow:0 7px 18px rgba(61,75,120,.09);color:#405375;text-decoration:none;white-space:normal;word-break:break-word}.link-card-message:hover{border-color:#b9c9ef}.link-card-icon{width:29px;height:29px;display:grid;place-items:center;flex:0 0 auto;border-radius:9px;background:#edf1ff;color:#687de0}.link-card-copy{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}.link-card-copy strong{color:#40506e;font-size:12px;line-height:1.5}.link-card-subtitle{color:#929baf;font-size:10px;line-height:1.55}.link-card-subtitle-image{display:block;width:100%;max-width:180px;max-height:115px;margin-top:4px;object-fit:cover;border-radius:8px;background:#f2f4f9}.link-card-arrow{flex:0 0 auto;color:#9aa5b8;font-size:13px}
 </style>
 </head>
 <body>
@@ -135,8 +136,25 @@
     document.querySelectorAll('.mini-avatar').forEach(applyAvatar);
     document.querySelectorAll('.quick-question').forEach((button,index)=>button.textContent=serviceConfig.quick[index].question);
   }
+  function decodeLinkCard(value){
+    const text=String(value??'');if(!text.startsWith('link-card:'))return null;
+    try{
+      const data=JSON.parse(text.slice(10)),url=new URL(data.u);if(!['http:','https:'].includes(url.protocol))return null;
+      const image=String(data.i||''),safeImage=/^(https?:\/\/|blob:|(?:\/)?(?:static|assets)\/)/i.test(image)?image:'';
+      return {url:url.href,title:String(data.t||url.hostname).slice(0,80),subtitle:String(data.s||'').slice(0,120),image:safeImage};
+    }catch(error){return null}
+  }
+  function appendLinkCard(container,card){
+    const link=document.createElement('a');link.className='link-card-message';link.href=card.url;link.target='_blank';link.rel='noopener noreferrer';
+    const icon=document.createElement('span');icon.className='link-card-icon';icon.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/></svg>';
+    const copy=document.createElement('span');copy.className='link-card-copy';const title=document.createElement('strong');title.textContent=card.title;copy.appendChild(title);
+    if(card.subtitle){const subtitle=document.createElement('span');subtitle.className='link-card-subtitle';subtitle.textContent=card.subtitle;copy.appendChild(subtitle)}
+    if(card.image){const image=document.createElement('img');image.className='link-card-subtitle-image';image.src=card.image;image.alt='自定义副标题图片';image.loading='lazy';image.onload=scrollBottom;copy.appendChild(image)}
+    const arrow=document.createElement('span');arrow.className='link-card-arrow';arrow.textContent='↗';link.append(icon,copy,arrow);container.appendChild(link);
+  }
   function appendRichContent(container,text){
-    const value=String(text??''),pattern=/(!?)\[([^\]\n]{1,160})\]\((https?:\/\/[^\s)]+|blob:[^\s)]+|(?:\/)?(?:static|assets)\/[^\s)]+)\)/g;
+    const value=String(text??''),card=decodeLinkCard(value);if(card){appendLinkCard(container,card);return}
+    const pattern=/(!?)\[([^\]\n]{1,160})\]\((https?:\/\/[^\s)]+|blob:[^\s)]+|(?:\/)?(?:static|assets)\/[^\s)]+)\)/g;
     let last=0,match;
     while((match=pattern.exec(value))){
       container.appendChild(document.createTextNode(value.slice(last,match.index)));
