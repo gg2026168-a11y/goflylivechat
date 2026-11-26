@@ -30,14 +30,6 @@ func SendMessageV2(c *gin.Context) {
 		})
 		return
 	}
-	//限流
-	if !tools.LimitFreqSingle("sendmessage:"+c.ClientIP(), 1, 2) {
-		c.JSON(200, gin.H{
-			"code": 400,
-			"msg":  c.ClientIP() + "发送频率过快",
-		})
-		return
-	}
 	var kefuInfo models.User
 	var vistorInfo models.Visitor
 	if cType == "kefu" {
@@ -58,6 +50,19 @@ func SendMessageV2(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"code": 400,
 			"msg":  "用户不存在",
+		})
+		return
+	}
+
+	//限流：按会话身份计数，避免同一网络下客服与访客共用额度互相影响
+	limitKey := "sendmessage:visitor:" + vistorInfo.VisitorId
+	if cType == "kefu" {
+		limitKey = "sendmessage:kefu:" + kefuInfo.Name
+	}
+	if !tools.LimitFreqSingle(limitKey, 10, 3) {
+		c.JSON(200, gin.H{
+			"code": 400,
+			"msg":  "发送过于频繁，请稍后再试",
 		})
 		return
 	}
@@ -145,10 +150,10 @@ func SendKefuMessage(c *gin.Context) {
 		return
 	}
 	//限流
-	if !tools.LimitFreqSingle("sendmessage:"+c.ClientIP(), 1, 2) {
+	if !tools.LimitFreqSingle("sendmessage:kefu:"+fromId.(string), 10, 3) {
 		c.JSON(200, gin.H{
 			"code": 400,
-			"msg":  c.ClientIP() + "发送频率过快",
+			"msg":  "发送过于频繁，请稍后再试",
 		})
 		return
 	}
