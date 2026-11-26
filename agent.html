@@ -251,16 +251,53 @@ function setInternalAgentStatus(state){
   $('internalAgentDot').classList.toggle('offline',state!=='online');
   $('internalAgentState').classList.toggle('online',state==='online');
 }
-function connect(){
-  if(!token||location.protocol==='file:'){$('connectionStatus').textContent='本地联调';setInternalAgentStatus('local');return}
-  const scheme=location.protocol==='https:'?'wss':'ws';$('connectionStatus').textContent='连接中';setInternalAgentStatus('connecting');
-  socket=new WebSocket(scheme+'://'+location.host+'/ws_kefu?token='+encodeURIComponent(token));
-  socket.onopen=()=>{$('connectionStatus').textContent='服务在线';$('statusDot').classList.remove('offline');setInternalAgentStatus('online')};
-  socket.onmessage=event=>{try{handleMessage(JSON.parse(event.data))}catch(error){console.warn('无法解析客服消息',error)}};
-  socket.onclose=()=>{$('connectionStatus').textContent='连接断开';$('statusDot').classList.add('offline');setInternalAgentStatus('offline')};
-  socket.onerror=()=>{$('connectionStatus').textContent='连接异常';$('statusDot').classList.add('offline');setInternalAgentStatus('offline')};
-  setInterval(()=>{if(socket&&socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({type:'ping',data:'kefu'}))},20000);
+let socketRetryTimer=null,socketRetryDelay=1000,lastPongAt=0,resyncPending=false,reconnectSuppressed=false;
+function setConnectionState(text,state,offline){
+  $('connectionStatus').textContent=text;
+  $('statusDot').classList.toggle('offline',Boolean(offline));
+  setInternalAgentStatus(state);
 }
+function scheduleReconnect(){
+  if(reconnectSuppressed||socketRetryTimer||!token||location.protocol==='file:')return;
+  socketRetryTimer=setTimeout(()=>{socketRetryTimer=null;connect()},socketRetryDelay);
+  socketRetryDelay=Math.min(socketRetryDelay*2,15000);
+}
+function connect(){
+  if(!token||location.protocol==='file:'){setConnectionState('本地联调','local');return}
+  if(reconnectSuppressed)return;
+  if(socketRetryTimer){clearTimeout(socketRetryTimer);socketRetryTimer=null}
+  if(socket&&(socket.readyState===WebSocket.OPEN||socket.readyState===WebSocket.CONNECTING))return;
+  const scheme=location.protocol==='https:'?'wss':'ws',url=scheme+'://'+location.host+'/ws_kefu?token='+encodeURIComponent(token);
+  setConnectionState('连接中','connecting');
+  let ws;try{ws=new WebSocket(url)}catch(error){scheduleReconnect();return}
+  socket=ws;
+  ws.onopen=()=>{socketRetryDelay=1000;lastPongAt=Date.now();setConnectionState('服务在线','online');if(resyncPending){resyncPending=false;resyncAfterReconnect()}};
+  ws.onmessage=event=>{
+    let message;try{message=JSON.parse(event.data)}catch(error){return}
+    lastPongAt=Date.now();
+    if(message&&message.type==='pong')return;
+    if(message&&message.type==='close'){reconnectSuppressed=true;setConnectionState('已被新窗口接管','offline',true);try{ws.close()}catch(error){}return}
+    try{handleMessage(message)}catch(error){console.warn('无法解析客服消息',error)}
+  };
+  ws.onclose=()=>{if(socket===ws)socket=null;setConnectionState('连接断开','offline',true);resyncPending=true;scheduleReconnect()};
+  ws.onerror=()=>{setConnectionState('连接异常','offline',true)};
+}
+async function resyncAfterReconnect(){
+  try{await loadVisitorLists()}catch(error){}
+  const id=activeId;if(!id)return;
+  const s=sessions.get(id);if(!s)return;
+  s.historyLoaded=false;await selectSession(id);
+}
+setInterval(()=>{
+  if(!socket||socket.readyState!==WebSocket.OPEN)return;
+  if(lastPongAt&&Date.now()-lastPongAt>45000){try{socket.close()}catch(error){}return}
+  try{socket.send(JSON.stringify({type:'ping',data:'kefu'}))}catch(error){}
+},20000);
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!token||location.protocol==='file:'||reconnectSuppressed)return;
+  if(!socket||socket.readyState===WebSocket.CLOSED||socket.readyState===WebSocket.CLOSING){resyncPending=true;connect()}
+});
+window.addEventListener('online',()=>{if(!token||reconnectSuppressed)return;if(!socket||socket.readyState!==WebSocket.OPEN){resyncPending=true;connect()}});
 function cleanLinkLabel(value,fallback='查看链接'){return String(value||fallback).replace(/[\[\]()\r\n]/g,'_').slice(0,120)||fallback}
 function markdownUrl(value){return String(value).replace(/\(/g,'%28').replace(/\)/g,'%29')}
 function normalizeHyperlink(value){
@@ -415,7 +452,7 @@ $('transferBtn').addEventListener('click',openTransferDialog);
 $('transferCancel').addEventListener('click',()=>{$('transferModal').hidden=true});
 $('transferModal').addEventListener('click',event=>{if(event.target===$('transferModal'))$('transferModal').hidden=true});
 $('transferConfirm').addEventListener('click',confirmTransfer);
-$('closeBtn').addEventListener('click',async()=>{const s=activeSession();if(!s)return;if(!confirm('确认结束当前访客会话？'))return;if(token&&location.protocol!=='file:'){try{await fetch('/2/close_conn?token='+encodeURIComponent(token)+'&visitor_id='+encodeURIComponent(s.id))}catch(error){}}s.status='closed';s.typing=null;addTimeline(s,'客服结束会话');s.messages.push({role:'system',content:'会话已结束',time:nowTime()});renderChat()});
+$('closeBtn').addEventListener('click',async()=>{const s=activeSession();if(!s)return;if(!confirm('确认结束当前访客会话？'))return;if(token&&location.protocol!=='file:'){try{await fetch('/2/message_close?visitor_id='+encodeURIComponent(s.id))}catch(error){}}s.status='closed';s.typing=null;addTimeline(s,'客服结束会话');s.messages.push({role:'system',content:'会话已结束',time:nowTime()});renderChat();loadVisitorLists()});
 if(channel)channel.onmessage=event=>{if(event.data&&event.data.type)handleMessage(event.data)};
 $('otherAgentsDetails').addEventListener('toggle',event=>{if(event.currentTarget.open)loadOtherAgents()});
 setInterval(()=>{if($('otherAgentsDetails').open)loadOtherAgents()},30000);

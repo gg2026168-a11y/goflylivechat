@@ -103,24 +103,45 @@
       fetch('/2/message',{method:'POST',body}).then(response=>response.json()).then(result=>{if(result.code!==200)throw new Error(result.msg||'发送失败')}).catch(()=>{if(typingChannel)typingChannel.postMessage({type:'chat_message',from:visitorInfo.visitor_id,content})});
     }else if(typingChannel){typingChannel.postMessage({type:'chat_message',from:visitorInfo.visitor_id||'local',content})}
   }
+  let visitorCacheKey='visitor_admin',visitorRetryTimer=null,visitorRetryDelay=1000,visitorSessionEnded=false;
+  function scheduleVisitorReconnect(){
+    if(visitorSessionEnded||visitorRetryTimer||location.protocol==='file:'||!visitorInfo.visitor_id)return;
+    visitorRetryTimer=setTimeout(()=>{visitorRetryTimer=null;connectVisitorSocket()},visitorRetryDelay);
+    visitorRetryDelay=Math.min(visitorRetryDelay*2,15000);
+  }
+  function connectVisitorSocket(){
+    if(visitorSessionEnded||location.protocol==='file:'||!visitorInfo.visitor_id)return;
+    if(visitorSocket&&(visitorSocket.readyState===WebSocket.OPEN||visitorSocket.readyState===WebSocket.CONNECTING))return;
+    const scheme=location.protocol==='https:'?'wss':'ws';
+    let ws;try{ws=new WebSocket(scheme+'://'+location.host+'/ws_visitor?visitor_id='+encodeURIComponent(visitorInfo.visitor_id))}catch(error){scheduleVisitorReconnect();return}
+    visitorSocket=ws;
+    ws.onopen=()=>{visitorRetryDelay=1000;sendVisitorEnvironment();sendTyping()};
+    ws.onerror=()=>{};
+    ws.onclose=()=>{if(visitorSocket===ws)visitorSocket=null;scheduleVisitorReconnect()};
+    ws.onmessage=event=>{
+      try{
+        const message=JSON.parse(event.data);
+        if(message.type==='kfOnline'){visitorInfo.to_id=message.data.id;localStorage.setItem(visitorCacheKey,JSON.stringify(visitorInfo))}
+        if(message.type==='transfer'){visitorInfo.to_id=message.data;localStorage.setItem(visitorCacheKey,JSON.stringify(visitorInfo))}
+        if(message.type==='force_close'||message.type==='auto_close'){visitorSessionEnded=true;try{ws.close()}catch(error){};appendMessage('本次会话已结束，如需继续咨询请刷新页面','agent');return}
+        if(message.type==='message'&&message.data.is_kefu==='yes')appendMessage(message.data.content,'agent');
+      }catch(error){}
+    };
+  }
   async function initRealtimeTyping(){
     sendVisitorEnvironment();if(location.protocol==='file:')return;
-    const userId=new URLSearchParams(location.search).get('user_id')||'admin',cacheKey='visitor_'+userId;
+    const userId=new URLSearchParams(location.search).get('user_id')||'admin';visitorCacheKey='visitor_'+userId;
     try{
-      try{visitorInfo=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(error){visitorInfo={}}
+      try{visitorInfo=JSON.parse(localStorage.getItem(visitorCacheKey)||'{}')}catch(error){visitorInfo={}}
       const body=new URLSearchParams({visitor_id:visitorInfo.visitor_id||'',to_id:userId,refer:document.referrer||location.href});
       const response=await fetch('/visitor_login',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body});
       const result=await response.json();if(result.code!==200)throw new Error(result.msg||'visitor login failed');
-      visitorInfo=result.result;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo));
-      const scheme=location.protocol==='https:'?'wss':'ws';
-      visitorSocket=new WebSocket(scheme+'://'+location.host+'/ws_visitor?visitor_id='+encodeURIComponent(visitorInfo.visitor_id));
-      visitorSocket.onopen=()=>{sendVisitorEnvironment();sendTyping()};
-      visitorSocket.onerror=sendVisitorEnvironment;
-      visitorSocket.onmessage=event=>{
-        try{const message=JSON.parse(event.data);if(message.type==='kfOnline'){visitorInfo.to_id=message.data.id;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo))}if(message.type==='transfer'){visitorInfo.to_id=message.data;localStorage.setItem(cacheKey,JSON.stringify(visitorInfo))}if(message.type==='message'&&message.data.is_kefu==='yes')appendMessage(message.data.content,'agent')}catch(error){}
-      };
+      visitorInfo=result.result;localStorage.setItem(visitorCacheKey,JSON.stringify(visitorInfo));
+      connectVisitorSocket();
     }catch(error){sendVisitorEnvironment();console.warn('实时输入服务未连接，将使用同浏览器联调通道。',error)}
   }
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!visitorSessionEnded&&visitorInfo.visitor_id&&(!visitorSocket||visitorSocket.readyState>WebSocket.OPEN))connectVisitorSocket()});
+  window.addEventListener('online',()=>{if(!visitorSessionEnded&&visitorInfo.visitor_id&&(!visitorSocket||visitorSocket.readyState!==WebSocket.OPEN))connectVisitorSocket()});
   window.addEventListener('resize',()=>{clearTimeout(environmentTimer);environmentTimer=setTimeout(sendVisitorEnvironment,300)});
   if(typingChannel)typingChannel.onmessage=event=>{const message=event.data;if(message&&message.type==='chat_message'&&message.from==='agent'&&(!message.to||message.to===visitorInfo.visitor_id||message.to==='local'))appendMessage(message.content,'agent')};
   function applyAvatar(element){
