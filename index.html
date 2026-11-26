@@ -466,10 +466,9 @@
       </article>
       <button class="staff-query-again" id="memberQueryAgain" type="button">返回查询</button>
     </div>
-    <p class="office-safe staff-privacy" id="memberQueryHint">请准确输入会员姓名与手机号</p>
+    <p class="office-safe staff-privacy" id="memberQueryHint" hidden></p>
   </section>
 </div>
-<script src="assets/auth.js"></script>
 <script src="assets/staff-credentials.js"></script>
 <script>
 (()=>{
@@ -617,12 +616,12 @@
   let queryTimer,queryVersion=0;
   const resetState=()=>{
     queryVersion+=1;clearTimeout(queryTimer);form.hidden=false;loading.hidden=true;agreement.hidden=true;
-    submitButton.disabled=false;submitButton.textContent='查询信息';hint.style.color='';
-    description.textContent='请输入会员姓名和手机号查询信息';hint.textContent='请准确输入会员姓名与手机号';
+    submitButton.disabled=false;submitButton.textContent='查询信息';hint.style.color='';hint.hidden=true;
+    description.textContent='请输入会员姓名和手机号查询信息';hint.textContent='';
   };
   const showError=message=>{
     form.hidden=false;loading.hidden=true;agreement.hidden=true;submitButton.disabled=false;submitButton.textContent='查询信息';
-    description.textContent='查询未完成';hint.textContent=message;hint.style.color='#a45d6c';
+    description.textContent='查询未完成';hint.hidden=false;hint.textContent=message;hint.style.color='#a45d6c';
   };
   const validateMobile=value=>{
     const mobile=value.trim();
@@ -646,7 +645,7 @@
     if(!validation.valid){showError('号码错误：'+validation.message);mobileInput.focus();return}
     const mobile=validation.mobile,requestId=++queryVersion;clearTimeout(queryTimer);
     submitButton.disabled=true;submitButton.textContent='查询中…';form.hidden=true;agreement.hidden=true;loading.hidden=false;
-    description.textContent='手机号校验通过';hint.style.color='';hint.textContent='正在生成抖音直播会员协议，请稍候';
+    description.textContent='手机号校验通过';hint.hidden=true;hint.style.color='';hint.textContent='';
     queryTimer=setTimeout(()=>{
       if(requestId!==queryVersion)return;
       document.getElementById('memberAgreementName').textContent=name;
