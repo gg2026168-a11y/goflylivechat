@@ -43,3 +43,14 @@ func JwtApiMiddleware(c *gin.Context) {
 	c.Set("kefu_name", userinfo["kefu_name"])
 
 }
+
+func SuperUserOnly(c *gin.Context) {
+	kefuName, _ := c.Get("kefu_name")
+	if kefuName != "admin" {
+		c.JSON(200, gin.H{
+			"code": 403,
+			"msg":  "仅超级管理员可执行此操作",
+		})
+		c.Abort()
+	}
+}

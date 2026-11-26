@@ -32,8 +32,8 @@ func InitApiRouter(engine *gin.Engine) {
 	engine.GET("/person_verify_export", middleware.JwtApiMiddleware, controller.GetPersonVerificationExport)
 
 	engine.GET("/userinfo", middleware.JwtApiMiddleware, controller.GetKefuInfoAll)
-	engine.POST("/register", middleware.JwtApiMiddleware, middleware.RbacAuth, middleware.Ipblack, controller.PostKefuRegister)
-	engine.POST("/install", middleware.JwtApiMiddleware, middleware.RbacAuth, controller.PostInstall)
+	engine.POST("/register", middleware.JwtApiMiddleware, middleware.SuperUserOnly, middleware.Ipblack, controller.PostKefuRegister)
+	engine.POST("/install", middleware.JwtApiMiddleware, middleware.SuperUserOnly, controller.PostInstall)
 	//前后聊天
 	engine.GET("/ws_kefu", middleware.JwtApiMiddleware, ws.NewKefuServer)
 	engine.GET("/ws_visitor", middleware.Ipblack, ws.NewVisitorServer)
@@ -66,7 +66,7 @@ func InitApiRouter(engine *gin.Engine) {
 
 	engine.GET("/visitors_online", middleware.JwtApiMiddleware, controller.GetVisitorOnlines)
 	engine.GET("/visitors_kefu_online", middleware.JwtApiMiddleware, controller.GetKefusVisitorOnlines)
-	engine.GET("/clear_online_tcp", middleware.JwtApiMiddleware, middleware.RbacAuth, controller.DeleteOnlineTcp)
+	engine.GET("/clear_online_tcp", middleware.JwtApiMiddleware, middleware.SuperUserOnly, controller.DeleteOnlineTcp)
 	engine.POST("/visitor_login", middleware.Ipblack, controller.PostVisitorLogin)
 	//engine.POST("/visitor", controller.PostVisitor)
 	engine.GET("/visitor", middleware.JwtApiMiddleware, controller.GetVisitor)
