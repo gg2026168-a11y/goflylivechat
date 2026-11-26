@@ -156,6 +156,13 @@ func SendKefuMessage(c *gin.Context) {
 		})
 		return
 	}
+	if !vistorInfo.Claimed || vistorInfo.ToId != fromId.(string) {
+		c.JSON(200, gin.H{
+			"code": 409,
+			"msg":  "请先接入该访客，已接入访客只能由归属客服回复",
+		})
+		return
+	}
 
 	models.CreateMessage(kefuInfo.Name, vistorInfo.VisitorId, content, cType)
 	//var msg TypeMessage

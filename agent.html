@@ -13,17 +13,18 @@ html,body{height:100%;margin:0}body{font-family:"PingFang SC","Microsoft YaHei",
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:250px minmax(0,1fr) 310px;gap:12px;padding:12px}.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px #0f172a0a;display:flex;flex-direction:column;overflow:hidden;min-width:0;min-height:0}.side-head{padding:14px 14px 10px;border-bottom:1px solid var(--line)}.side-head h2{margin:0 0 10px;font-size:13px;display:flex;align-items:center;gap:7px}.internal-agent-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 0 10px;color:var(--muted);font-size:11px}.internal-agent-status strong{display:flex;align-items:center;gap:6px;font-weight:500;color:#9a7b45}.internal-agent-status strong.online{color:#0f8a4d}.other-agents{margin:0 0 10px;border:1px solid var(--line);border-radius:9px;background:#f8fafd}.other-agents summary{display:flex;align-items:center;gap:7px;padding:8px 10px;cursor:pointer;list-style:none;color:var(--muted);font-size:11px;user-select:none}.other-agents summary::-webkit-details-marker{display:none}.other-agents summary::after{content:'›';font-size:15px;line-height:1;transition:transform .18s}.other-agents[open] summary::after{transform:rotate(90deg)}.other-agents-count{margin-left:auto;padding:1px 6px;border-radius:10px;background:#eaf0fb;color:#61708a;font-size:10px}.other-agents-list{max-height:150px;overflow:auto;padding:4px 10px;border-top:1px solid var(--line)}.other-agent{display:flex;align-items:center;gap:7px;padding:6px 0;font-size:11px}.other-agent-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3d4960}.other-agent-state{color:var(--muted)}.other-agent-state.online{color:#0f8a4d}.other-agents-empty{padding:12px 0;text-align:center;color:#94a3b8;font-size:11px;line-height:1.6}.visitor-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin-bottom:10px;padding:3px;border-radius:10px;background:#f1f4f9}.visitor-tab{min-width:0;padding:7px 2px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:11px;white-space:nowrap;cursor:pointer}.visitor-tab:hover{color:var(--brand)}.visitor-tab.active{background:#fff;color:var(--brand);font-weight:600;box-shadow:0 1px 5px #0f172a12}.badge{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--brand-soft);color:#2f5fd0}.search{width:100%;height:34px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:#f7f9fd;font-size:12px;outline:none}.search:focus{border-color:#b9cdff;box-shadow:0 0 0 3px #2f6bff1a}.list{flex:1;overflow:auto;padding:8px}.empty{padding:36px 12px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8}.conv{width:100%;border:0;background:transparent;display:flex;gap:10px;padding:10px;border-radius:11px;cursor:pointer;text-align:left;color:inherit}.conv:hover{background:#f4f7fd}.conv.active{background:var(--brand-soft)}.conv-main{flex:1;min-width:0}.conv-top{display:flex;justify-content:space-between;gap:6px}.conv-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.conv-time{font-size:10px;color:#9aa8bd}.conv-tag{font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.avatar{width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff;background:linear-gradient(135deg,#5b8def,#7c5cf0)}.avatar.sm{width:32px;height:32px;border-radius:10px}.unread{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:#ff5a5f;color:#fff;font-size:10px;margin-top:4px}
 .chat-head{flex:none;display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line)}.chat-name{font-size:13px;font-weight:600}.chat-sub{font-size:11px;color:var(--muted);margin-top:2px}.chat-actions{margin-left:auto;display:flex;gap:7px}.ghost-btn,.mini-btn{font-size:11px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:#46536b;cursor:pointer}.ghost-btn:hover,.mini-btn:hover{border-color:#b9cdff;color:var(--brand)}.typing-preview{margin:10px 16px 0;padding:9px 12px;border:1px dashed #e5a1b7;border-radius:10px;background:#fff4f7;color:#b45d79;font-size:12px;word-break:break-all}.messages{flex:1;min-height:0;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(#f8fafd,#f3f6fb)}.msg{display:flex;flex-direction:column;max-width:78%}.msg.agent{align-self:flex-end;align-items:flex-end}.msg.visitor{align-self:flex-start}.msg.system{align-self:center;max-width:100%}.bubble{padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.62;white-space:pre-wrap;word-break:break-word}.msg.agent .bubble{color:#fff;border-bottom-right-radius:4px;background:linear-gradient(135deg,#3b7bff,#2f6bff)}.msg.visitor .bubble{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}.msg.system .bubble{background:#94a3b821;color:#64748b;font-size:11px;padding:5px 12px;border-radius:20px}.meta{font-size:10px;color:#9aa8bd;margin-top:5px}.composer{flex:none;border-top:1px solid var(--line);padding:10px 14px 12px;background:#fff}.composer textarea{width:100%;height:58px;border:0;outline:none;resize:none;font-size:13px;line-height:1.6;color:var(--text)}.composer-bar{display:flex;align-items:center;gap:8px;margin-top:6px}.quick{display:flex;gap:6px;flex-wrap:wrap;flex:1}.quick-panel{flex:none;width:100%!important;height:auto!important;padding:10px 14px;background:#fff}.quick-panel button{width:auto!important;height:auto!important;transform:none!important}.composer-bar .send-btn{margin-left:auto}.quick button{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);background:#f8fafd;color:#55627a;cursor:pointer}.send-btn{border:0;border-radius:9px;padding:8px 20px;color:#fff;background:linear-gradient(135deg,#3b7bff,#2f6bff);cursor:pointer}.send-btn:disabled{opacity:.45;cursor:not-allowed}.message-link{color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-all}.msg.visitor .message-link{color:var(--brand)}.message-image{display:block;max-width:min(260px,100%);max-height:280px;object-fit:cover;border-radius:10px;background:#fff}.quick-panel .attachment-action{border-color:#d7e2ff;background:var(--brand-soft);color:var(--brand)}
 .visitor{overflow:auto;padding:14px;gap:12px}.panel-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}.live{font-size:10px;padding:2px 8px;border-radius:20px;color:#0f8a4d;background:#e6f9ef}.visitor-hero{display:flex;align-items:center;gap:11px}.vname{font-size:13px;font-weight:600}.vsub{font-size:11px;color:var(--muted);margin-top:3px}.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.card-label{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.card-actions{display:flex;align-items:center;gap:5px}.mini-btn.danger{color:#d5475a;border-color:#f1cbd2}.mini-btn.danger:hover{color:#b83246;border-color:#e5a1b7;background:#fff7f8}.mini-btn:disabled{opacity:.45;cursor:not-allowed}.ip-text{font-family:ui-monospace,monospace;font-size:18px;font-weight:700;word-break:break-all}.loc{font-size:12px;color:var(--muted);margin-top:6px}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tag{font-size:10px;padding:3px 9px;border-radius:20px;background:var(--brand-soft);color:#2f5fd0}.rows{display:flex;flex-direction:column;gap:9px}.row{display:flex;justify-content:space-between;gap:10px;font-size:12px}.row>span{color:var(--muted);flex:none}.row>b{font-weight:600;text-align:right;word-break:break-all}.ua-box{margin-top:10px}.ua-box summary{font-size:11px;color:var(--muted);cursor:pointer}.ua-text{margin-top:8px;font-size:10px;line-height:1.6;color:#64748b;background:#f7f9fd;border:1px solid var(--line);border-radius:8px;padding:8px;word-break:break-all;font-family:ui-monospace,monospace}.timeline{display:flex;flex-direction:column}.tl-item{display:flex;gap:10px;font-size:11px;padding-bottom:12px}.tl-dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:4px;background:var(--brand)}.tl-text{flex:1;color:#46536b}.tl-time{font-size:10px;color:#9aa8bd;margin-top:2px}.toast{position:fixed;left:50%;bottom:24px;z-index:99;transform:translate(-50%,12px);background:#0f172aee;color:#fff;padding:9px 16px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.topbar-agent-avatar{width:30px;height:30px;border-radius:9px;object-fit:cover;background:#fff}.other-agent-avatar{width:22px;height:22px;flex:0 0 auto;border-radius:7px;object-fit:cover;background:#eef2f8}.conv-owner-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:5px}.conv-owner{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8a96aa;font-size:10px}.conv-owner.claimed{color:#4773c8}.claim-btn{flex:0 0 auto;padding:3px 9px;border:1px solid #c7d7fb;border-radius:7px;background:#edf3ff;color:#2f6bff;font-size:10px;cursor:pointer}.claim-btn:hover{background:#2f6bff;color:#fff}.claim-btn:disabled{opacity:.5;cursor:not-allowed}.ghost-btn.claim-ready{border-color:#b9cdff;background:#edf3ff;color:#2f6bff}
 @media(max-width:1050px){.workspace{grid-template-columns:230px minmax(0,1fr)}.visitor{display:none}}@media(max-width:680px){.workspace{grid-template-columns:1fr;padding:8px}.sidebar{display:none}.topbar-right .clock{display:none}.quick{display:none}}
 </style>
 </head>
 <body class="auth-locked">
-<header class="topbar"><div class="brand"><div class="logo">CS</div><div><h1>在线客服工作台</h1><p>CUSTOMER SERVICE CONSOLE</p></div></div><div class="topbar-right"><div class="status-chip"><span class="dot offline" id="statusDot"></span><span id="connectionStatus">本地联调</span></div><span class="auth-user" id="authAccountName">客服账号</span><button class="auth-logout" id="authLogout" type="button">退出登录</button><div class="clock" id="clock">03:32:13</div></div></header>
+<header class="topbar"><div class="brand"><div class="logo">CS</div><div><h1>在线客服工作台</h1><p>CUSTOMER SERVICE CONSOLE</p></div></div><div class="topbar-right"><div class="status-chip"><span class="dot offline" id="statusDot"></span><span id="connectionStatus">本地联调</span></div><img class="topbar-agent-avatar" src="/assets/default-agent-avatar.png" alt="客服头像"><span class="auth-user" id="authAccountName">客服账号</span><button class="auth-logout" id="authLogout" type="button">退出登录</button><div class="clock" id="clock">03:32:13</div></div></header>
 <div class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-labelledby="authHeading">
   <section class="auth-card"><div class="auth-brand"><div class="auth-logo">CS</div><div><strong>在线客服工作台</strong><small>CUSTOMER SERVICE</small></div></div><h2 id="authHeading">客服账号登录</h2><p class="auth-intro">登录后接待访客、查看消息及管理会话。</p><form id="authForm"><label class="auth-field"><span>客服账号</span><input id="authUsername" name="username" autocomplete="username" maxlength="50" placeholder="请输入客服账号" required></label><label class="auth-field"><span>登录密码</span><input id="authPassword" name="password" type="password" autocomplete="current-password" maxlength="128" placeholder="请输入登录密码" required></label><button class="auth-submit" id="authSubmit" type="submit">登 录</button><p class="auth-status" id="authStatus" role="status">请输入客服账号和密码</p></form></section>
 </div>
 <div class="workspace">
-<aside class="panel sidebar"><div class="side-head"><h2>会话列表 <span class="badge" id="convCount">0</span></h2><div class="internal-agent-status"><span>内部客服在线状态</span><strong id="internalAgentState" aria-live="polite"><span class="dot offline" id="internalAgentDot"></span><span id="internalAgentStatus">本地联调</span></strong></div><details class="other-agents" id="otherAgentsDetails"><summary><span>其它客服在线状态</span><span class="other-agents-count" id="otherAgentsCount">未加载</span></summary><div class="other-agents-list" id="otherAgentsList"><div class="other-agents-empty">展开后加载客服状态</div></div></details><div class="visitor-tabs" role="tablist" aria-label="访客分类"><button class="visitor-tab active" type="button" role="tab" aria-selected="true" data-visitor-view="online">在线访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="history">历史访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="mine">我的访客</button></div><input class="search" id="searchInput" placeholder="搜索访客 / IP / 关键词" aria-label="搜索会话"></div><div class="list" id="convList" role="tabpanel"><div class="empty">暂无在线访客<br>等待访客从会员中心接入</div></div></aside>
-<section class="panel chat"><div class="chat-head"><div class="avatar sm" id="chatAvatar">访</div><div><div class="chat-name" id="chatName">暂无会话</div><div class="chat-sub" id="chatSub">等待访客接入</div></div><div class="chat-actions"><button class="ghost-btn" id="transferBtn">转接</button><button class="ghost-btn" id="closeBtn">结束会话</button></div></div><div class="typing-preview" id="typingPreview" role="status" aria-live="polite" hidden=""></div><div class="messages" id="messages"><div class="empty">接入访客后，可在这里查看和回复消息</div></div><div class="quick quick-panel"><button data-template="您好，很高兴为您服务，请问有什么可以帮您？">问候</button><button data-template="请稍等，正在为您查询。">查询中</button><button data-template="您可以在办公应用弹窗中选择 Android 或 iOS 下载。">应用下载</button><button data-template="还有其他可以帮到您的吗？">结束语</button><button class="attachment-action" id="agentPhotoBtn" type="button">照片</button><button class="attachment-action" id="agentFileBtn" type="button">文件</button><button class="attachment-action" id="agentLinkBtn" type="button">超级链接</button></div><div class="composer"><textarea id="input" maxlength="2000" placeholder="输入消息，Enter 发送，Shift + Enter 换行…" disabled=""></textarea><div class="composer-bar"><button class="send-btn" id="sendBtn" disabled="">发送</button></div></div></section>
+<aside class="panel sidebar"><div class="side-head"><h2>会话列表 <span class="badge" id="convCount">0</span></h2><div class="internal-agent-status"><span>内部客服在线状态</span><strong id="internalAgentState" aria-live="polite"><span class="dot offline" id="internalAgentDot"></span><span id="internalAgentStatus">本地联调</span></strong></div><details class="other-agents" id="otherAgentsDetails"><summary><span>其它客服在线状态</span><span class="other-agents-count" id="otherAgentsCount">未加载</span></summary><div class="other-agents-list" id="otherAgentsList"><div class="other-agents-empty">展开后加载客服状态</div></div></details><div class="visitor-tabs" role="tablist" aria-label="访客分类"><button class="visitor-tab active" type="button" role="tab" aria-selected="true" data-visitor-view="online">在线访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="history">历史访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="mine">我的会话</button></div><input class="search" id="searchInput" placeholder="搜索访客 / IP / 关键词" aria-label="搜索会话"></div><div class="list" id="convList" role="tabpanel"><div class="empty">暂无在线访客<br>等待访客从会员中心接入</div></div></aside>
+<section class="panel chat"><div class="chat-head"><div class="avatar sm" id="chatAvatar">访</div><div><div class="chat-name" id="chatName">暂无会话</div><div class="chat-sub" id="chatSub">等待访客接入</div></div><div class="chat-actions"><button class="ghost-btn" id="claimBtn" type="button" hidden>接入会话</button><button class="ghost-btn" id="transferBtn">转接</button><button class="ghost-btn" id="closeBtn">结束会话</button></div></div><div class="typing-preview" id="typingPreview" role="status" aria-live="polite" hidden=""></div><div class="messages" id="messages"><div class="empty">接入访客后，可在这里查看和回复消息</div></div><div class="quick quick-panel"><button data-template="您好，很高兴为您服务，请问有什么可以帮您？">问候</button><button data-template="请稍等，正在为您查询。">查询中</button><button data-template="您可以在办公应用弹窗中选择 Android 或 iOS 下载。">应用下载</button><button data-template="还有其他可以帮到您的吗？">结束语</button><button class="attachment-action" id="agentPhotoBtn" type="button">照片</button><button class="attachment-action" id="agentFileBtn" type="button">文件</button><button class="attachment-action" id="agentLinkBtn" type="button">超级链接</button></div><div class="composer"><textarea id="input" maxlength="2000" placeholder="输入消息，Enter 发送，Shift + Enter 换行…" disabled=""></textarea><div class="composer-bar"><button class="send-btn" id="sendBtn" disabled="">发送</button></div></div></section>
 <aside class="panel visitor">
   <div class="panel-title">访客信息<span class="live">实时</span><button class="mini-btn" id="refreshBtn" style="margin-left:auto">刷新</button></div>
   <div class="visitor-hero"><div class="avatar" id="avatar">访</div><div><div class="vname" id="visitorName">暂无访客</div><div class="vsub" id="heroSub">等待访客接入</div></div></div>
@@ -40,6 +41,9 @@ html,body{height:100%;margin:0}body{font-family:"PingFang SC","Microsoft YaHei",
 const $=id=>document.getElementById(id),sessions=new Map();
 let activeId='',socket=null,visitorView='online';
 const token=localStorage.getItem('token')||'';
+const currentKefuId=localStorage.getItem('auth_username')||'';
+const defaultAgentAvatar='/assets/default-agent-avatar.png';
+const claimingSessions=new Set();
 const channel='BroadcastChannel' in window?new BroadcastChannel('douyin.service.typing'):null;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const nowTime=()=>new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
@@ -50,25 +54,40 @@ function visitorTime(value){
 }
 function toast(text){const el=$('toast');el.textContent=text;el.classList.add('show');clearTimeout(el._timer);el._timer=setTimeout(()=>el.classList.remove('show'),1800)}
 function activeSession(){return sessions.get(activeId)}
+function currentKefuName(){const name=$('authAccountName').textContent.trim();return name&&name!=='客服账号'&&name!=='未登录'?name:currentKefuId||'当前客服'}
+function isMine(session){return Boolean(session&&session.claimed&&session.ownerId===currentKefuId)}
+function sessionOwnerName(session){return session&&(session.ownerName||(session.ownerId===currentKefuId?currentKefuName():session.ownerId))||'客服'}
 function ensureSession(id,data={}){
   if(!id)return null;
+  const claimed=data.claimed===true||data.claimed===1||data.claimed==='1';
+  const ownerId=data.owner_id!==undefined?data.owner_id:(claimed?data.to_id||'':'');
   let session=sessions.get(id);
-  if(!session){session={id,name:data.name||data.username||'访客 '+id.slice(-6),avatar:data.avator||data.avatar||'',ip:data.client_ip||'',city:data.city||'',refer:data.refer||'',lastMessage:data.last_message||'',time:visitorTime(data.updated_at),unread:0,status:data.status===0||data.status==='0'?'offline':'online',messages:[],typing:null,environment:null,historyLoaded:false,timeline:[{text:'访客进入会话',time:nowTime()}]};sessions.set(id,session);if(!activeId&&session.status==='online')activeId=id}
+  if(!session){session={id,name:data.name||data.username||'访客 '+id.slice(-6),avatar:data.avator||data.avatar||'',ip:data.client_ip||'',city:data.city||'',refer:data.refer||'',lastMessage:data.last_message||'',time:visitorTime(data.updated_at),unread:0,status:data.status===0||data.status==='0'?'offline':'online',claimed,ownerId:ownerId||'',ownerName:data.owner_name||'',ownerAvatar:data.owner_avatar||defaultAgentAvatar,messages:[],typing:null,environment:null,historyLoaded:false,timeline:[{text:'访客进入会话',time:nowTime()}]};sessions.set(id,session);if(!activeId&&session.status==='online')activeId=id}
   if(data.name||data.username)session.name=data.name||data.username;
   if(data.avator||data.avatar)session.avatar=data.avator||data.avatar;
   if(data.last_message)session.lastMessage=data.last_message;
   if(data.updated_at)session.time=visitorTime(data.updated_at);
   if(data.status!==undefined)session.status=data.status===1||data.status==='1'?'online':'offline';
+  if(data.claimed!==undefined)session.claimed=claimed;
+  if(data.owner_id!==undefined)session.ownerId=data.owner_id||'';
+  else if(data.to_id!==undefined&&session.claimed)session.ownerId=data.to_id;
+  if(data.owner_name!==undefined)session.ownerName=data.owner_name;
+  if(data.owner_avatar)session.ownerAvatar=data.owner_avatar;
+  if(!session.claimed){session.ownerId='';session.ownerName='';session.ownerAvatar=defaultAgentAvatar}
   if(data.client_ip)session.ip=data.client_ip;if(data.city)session.city=data.city;if(data.refer)session.refer=data.refer;
   return session;
 }
 function renderSessions(){
   const keyword=$('searchInput').value.trim().toLowerCase();
-  const viewList=[...sessions.values()].filter(s=>visitorView==='online'?s.status==='online':visitorView==='history'?s.status!=='online':true);
-  const list=viewList.filter(s=>!keyword||(s.name+' '+s.id+' '+s.ip+' '+s.lastMessage).toLowerCase().includes(keyword)).sort((a,b)=>Number(b.id===activeId)-Number(a.id===activeId));
-  const emptyText=visitorView==='online'?'暂无在线访客<br>等待访客从会员中心接入':visitorView==='history'?'暂无历史访客<br>离线访客记录会显示在这里':'暂无我的访客<br>访客接入后会自动显示';
+  const viewList=[...sessions.values()].filter(s=>visitorView==='online'?s.status==='online':visitorView==='history'?s.status!=='online'&&isMine(s):isMine(s));
+  const list=viewList.filter(s=>!keyword||(s.name+' '+s.id+' '+s.ip+' '+s.lastMessage+' '+sessionOwnerName(s)).toLowerCase().includes(keyword)).sort((a,b)=>Number(b.id===activeId)-Number(a.id===activeId));
+  const emptyText=visitorView==='online'?'暂无在线访客<br>等待访客从会员中心接入':visitorView==='history'?'暂无历史会话<br>我接入的离线会话会显示在这里':'暂无我的会话<br>请从在线访客中接入会话';
   $('convCount').textContent=viewList.length;
-  $('convList').innerHTML=list.map(s=>'<button class="conv '+(s.id===activeId?'active':'')+'" data-session="'+escapeHtml(s.id)+'"><span class="avatar">'+escapeHtml(s.name.charAt(0))+'</span><span class="conv-main"><span class="conv-top"><span class="conv-name">'+escapeHtml(s.name)+'</span><time class="conv-time">'+escapeHtml(s.time)+'</time></span><span class="conv-tag">'+escapeHtml(s.lastMessage||s.ip||(s.status==='online'?'在线':'历史访客'))+'</span></span>'+(s.unread?'<span class="unread">'+s.unread+'</span>':'')+'</button>').join('')||'<div class="empty">'+emptyText+'</div>';
+  $('convList').innerHTML=list.map(s=>{
+    const owner=s.claimed?'由 '+sessionOwnerName(s)+' 接入':'待客服接入';
+    const claim=visitorView==='online'&&!s.claimed?'<button class="claim-btn" type="button" data-claim="'+escapeHtml(s.id)+'" '+(claimingSessions.has(s.id)?'disabled':'')+'>'+(claimingSessions.has(s.id)?'接入中':'接入')+'</button>':'';
+    return '<div class="conv '+(s.id===activeId?'active':'')+'" data-session="'+escapeHtml(s.id)+'" role="button" tabindex="0"><span class="avatar">'+escapeHtml(s.name.charAt(0))+'</span><span class="conv-main"><span class="conv-top"><span class="conv-name">'+escapeHtml(s.name)+'</span><time class="conv-time">'+escapeHtml(s.time)+'</time></span><span class="conv-tag">'+escapeHtml(s.lastMessage||s.ip||(s.status==='online'?'在线':'历史访客'))+'</span><span class="conv-owner-row"><span class="conv-owner'+(s.claimed?' claimed':'')+'">'+escapeHtml(owner)+'</span>'+claim+'</span></span>'+(s.unread?'<span class="unread">'+s.unread+'</span>':'')+'</div>'
+  }).join('')||'<div class="empty">'+emptyText+'</div>';
 }
 async function requestVisitors(url){
   const response=await fetch(url,{headers:{token}}),result=await response.json();
@@ -111,8 +130,9 @@ function renderMessages(session){
 }
 function renderVisitor(session){
   const env=session&&session.environment||{};
+  const ownership=session?(session.claimed?' · 由 '+sessionOwnerName(session)+' 接入':' · 待接入'):'';
   $('visitorName').textContent=session?session.name:'暂无访客';$('avatar').textContent=session?session.name.charAt(0):'访';
-  $('heroSub').textContent=session?(session.city||'地区待识别'):'等待访客接入';$('ipText').textContent=session&&session.ip||'—';$('locText').textContent=session&&session.city||'—';
+  $('heroSub').textContent=session?(session.city||'地区待识别')+ownership:'等待访客接入';$('ipText').textContent=session&&session.ip||'—';$('locText').textContent=session&&session.city||'—';
   $('geoTags').innerHTML=session?[session.city,session.refer].filter(Boolean).map(v=>'<span class="tag">'+escapeHtml(v)+'</span>').join(''):'';
   const values={dType:env.deviceType,dOs:env.os,dBrowser:env.browser,eLang:env.language,eTz:env.timezone,eNet:env.network,eRef:session&&session.refer||env.referrer};
   Object.entries(values).forEach(([id,value])=>$(id).textContent=value||'—');
@@ -120,10 +140,13 @@ function renderVisitor(session){
   $('timeline').innerHTML=session?session.timeline.map(item=>'<div class="tl-item"><span class="tl-dot"></span><div class="tl-text">'+escapeHtml(item.text)+'<div class="tl-time">'+escapeHtml(item.time)+'</div></div></div>').join(''):'<div class="empty">暂无会话轨迹</div>';
 }
 function renderChat(){
-  const s=activeSession();renderSessions();
-  $('chatName').textContent=s?s.name:'暂无会话';$('chatAvatar').textContent=s?s.name.charAt(0):'访';$('chatSub').textContent=s?(s.status==='online'?'在线 · 正在接待':'会话已结束或访客离线'):'等待访客接入';
+  const s=activeSession(),mine=isMine(s),claiming=Boolean(s&&claimingSessions.has(s.id));renderSessions();
+  $('chatName').textContent=s?s.name:'暂无会话';$('chatAvatar').textContent=s?s.name.charAt(0):'访';
+  $('chatSub').textContent=s?(s.status==='online'?'在线':'离线')+(s.claimed?' · 由 '+sessionOwnerName(s)+' 接入':' · 待接入'):'等待访客接入';
+  const claimBtn=$('claimBtn');claimBtn.hidden=!s||mine;claimBtn.disabled=!s||s.claimed||claiming;claimBtn.textContent=s&&s.claimed?'已接入':claiming?'接入中…':'接入会话';claimBtn.classList.toggle('claim-ready',Boolean(s&&!s.claimed));
   $('typingPreview').hidden=!s||s.typing===null;if(s&&s.typing!==null)$('typingPreview').textContent='访客正在输入：'+(s.typing||'（空）');
-  $('input').disabled=!s;$('sendBtn').disabled=!s||!$('input').value.trim();renderMessages(s);renderVisitor(s);
+  $('input').disabled=!mine;$('input').placeholder=mine?'输入消息，Enter 发送，Shift + Enter 换行…':s?(s.claimed?'该访客已由 '+sessionOwnerName(s)+' 接入':'请先接入该访客后回复'):'请选择会话';
+  $('sendBtn').disabled=!mine||!$('input').value.trim();renderMessages(s);renderVisitor(s);
 }
 async function selectSession(id){
   const s=sessions.get(id);if(!s)return;
@@ -141,9 +164,29 @@ function addMessage(id,role,content,time){
   const s=ensureSession(id);if(!s)return;s.messages.push({role,content,time:time||nowTime()});s.lastMessage=content;s.time=nowTime();if(role==='visitor'){s.typing=null;if(id!==activeId)s.unread++}renderChat();
 }
 function addTimeline(session,text){session.timeline.push({text,time:nowTime()})}
+function applyClaim(data){
+  const id=data&&(data.uid||data.visitor_id);if(!id)return null;
+  const existing=sessions.get(id),wasClaimed=Boolean(existing&&existing.claimed),s=ensureSession(id,data);
+  if(!wasClaimed&&s.claimed)addTimeline(s,'由 '+sessionOwnerName(s)+' 接入会话');
+  renderChat();return s;
+}
+async function claimSession(id){
+  const s=sessions.get(id);if(!s||claimingSessions.has(id))return;
+  if(s.claimed){toast('该访客已由 '+sessionOwnerName(s)+' 接入');return}
+  activeId=id;s.unread=0;claimingSessions.add(id);renderChat();
+  try{
+    if(token&&location.protocol!=='file:'){
+      const response=await fetch('/visitor_claim',{method:'POST',headers:{token,'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({visitor_id:id})}),result=await response.json();
+      if(result.result)applyClaim(result.result);
+      if(result.code!==200)throw new Error(result.msg||'接入失败');
+    }else{applyClaim({uid:id,claimed:true,owner_id:currentKefuId,owner_name:'本地客服',owner_avatar:defaultAgentAvatar})}
+    toast('接入成功，已显示在我的会话');
+  }catch(error){toast(error.message||'会话接入失败')}finally{claimingSessions.delete(id);renderChat()}
+}
 function handleMessage(message){
   const data=message.data;
   if(message.type==='userOnline'){const s=ensureSession(data.uid,data);s.status='online';renderChat();return}
+  if(message.type==='visitorClaimed'){applyClaim(data);return}
   if(message.type==='userOffline'){const s=sessions.get(typeof data==='string'?data:data.uid||data.id);if(s){s.status='offline';addTimeline(s,'访客离线');renderChat()}return}
   if(message.type==='visitor_typing'||message.type==='inputing'){const s=ensureSession(data.from||'local');showTyping(s.id,data.content||'');return}
   if(message.type==='visitor_environment'){const s=ensureSession(data.from||'local',data),isNew=!s.environment;s.environment=data.environment||{};if(isNew)addTimeline(s,'访客设备与环境信息已更新');renderChat();return}
@@ -166,7 +209,7 @@ async function loadOtherAgents(){
     count.textContent=onlineCount+' / '+agents.length+' 在线';
     list.innerHTML=agents.length?agents.map(agent=>{
       const online=agent.status==='online',name=agent.nickname||agent.name||'未命名客服';
-      return '<div class="other-agent"><span class="dot'+(online?'':' offline')+'"></span><span class="other-agent-name" title="'+escapeHtml(name)+'">'+escapeHtml(name)+'</span><span class="other-agent-state'+(online?' online':'')+'">'+(online?'在线':'离线')+'</span></div>'
+      return '<div class="other-agent"><img class="other-agent-avatar" src="'+escapeHtml(agent.avator||defaultAgentAvatar)+'" alt=""><span class="dot'+(online?'':' offline')+'"></span><span class="other-agent-name" title="'+escapeHtml(name)+'">'+escapeHtml(name)+'</span><span class="other-agent-state'+(online?' online':'')+'">'+(online?'在线':'离线')+'</span></div>'
     }).join(''):'<div class="other-agents-empty">暂无其它客服</div>';
   }catch(error){
     count.textContent='加载失败';
@@ -204,10 +247,11 @@ function setComposerContent(value){
   const input=$('input'),start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length,end=Number.isInteger(input.selectionEnd)?input.selectionEnd:start;
   const before=input.value.slice(0,start),after=input.value.slice(end),prefix=before&&!/\s$/.test(before)?' ':'',suffix=after&&!/^\s/.test(after)?' ':'';
   const next=before+prefix+value+suffix+after;if(next.length>2000){toast('消息内容不能超过 2000 个字符');return}
-  input.value=next;const caret=(before+prefix+value).length;$('sendBtn').disabled=!activeSession()||!input.value.trim();input.focus();input.setSelectionRange(caret,caret);
+  input.value=next;const caret=(before+prefix+value).length;$('sendBtn').disabled=!isMine(activeSession())||!input.value.trim();input.focus();input.setSelectionRange(caret,caret);
 }
 async function prepareAttachment(file,isImage){
-  if(!file||!activeSession())return;
+  if(!file)return;
+  if(!isMine(activeSession())){toast('请先接入该访客');return}
   if(isImage&&!/\.(png|jpe?g|gif)$/i.test(file.name)){toast('仅支持 PNG、JPG、JPEG、GIF 图片');return}
   if(file.size>=90*1024*1024){toast('附件不能超过 90 MB');return}
   const button=$(isImage?'agentPhotoBtn':'agentFileBtn');button.disabled=true;
@@ -225,7 +269,7 @@ async function prepareAttachment(file,isImage){
   }catch(error){toast(error.message||'上传失败')}finally{button.disabled=false;$(isImage?'agentPhotoInput':'agentFileInput').value=''}
 }
 function addHyperlink(){
-  if(!activeSession()){toast('请先选择访客');return}
+  if(!isMine(activeSession())){toast('请先接入该访客');return}
   const value=prompt('请输入超级链接，可省略 https://','https://');if(value===null)return;
   let url;try{url=normalizeHyperlink(value)}catch(error){toast(error.message||'请输入有效的链接地址');return}
   const title=prompt('请输入链接显示文字，留空则使用域名',url.hostname);if(title===null)return;
@@ -234,6 +278,7 @@ function addHyperlink(){
 }
 async function sendMessage(){
   const s=activeSession(),input=$('input'),content=input.value.trim();if(!s||!content)return;
+  if(!isMine(s)){toast(s.claimed?'该访客已由 '+sessionOwnerName(s)+' 接入':'请先接入该访客');return}
   $('sendBtn').disabled=true;
   try{
     if(token&&location.protocol!=='file:'){
@@ -241,19 +286,21 @@ async function sendMessage(){
       if(!socket||socket.readyState!==WebSocket.OPEN)addMessage(s.id,'agent',content);
     }else{addMessage(s.id,'agent',content);if(channel)channel.postMessage({type:'chat_message',from:'agent',to:s.id,content})}
     input.value='';input.focus();
-  }catch(error){toast(error.message||'发送失败')}finally{$('sendBtn').disabled=!activeSession()||!input.value.trim()}
+  }catch(error){toast(error.message||'发送失败')}finally{$('sendBtn').disabled=!isMine(activeSession())||!input.value.trim()}
 }
-$('convList').addEventListener('click',event=>{const button=event.target.closest('[data-session]');if(button)selectSession(button.dataset.session)});
+$('convList').addEventListener('click',event=>{const claim=event.target.closest('[data-claim]');if(claim){event.preventDefault();event.stopPropagation();claimSession(claim.dataset.claim);return}const button=event.target.closest('[data-session]');if(button)selectSession(button.dataset.session)});
+$('convList').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('[data-session]')){event.preventDefault();selectSession(event.target.dataset.session)}});
+$('claimBtn').addEventListener('click',()=>{if(activeId)claimSession(activeId)});
 document.querySelectorAll('[data-visitor-view]').forEach(button=>button.addEventListener('click',()=>{
   visitorView=button.dataset.visitorView;
   document.querySelectorAll('[data-visitor-view]').forEach(tab=>{const selected=tab===button;tab.classList.toggle('active',selected);tab.setAttribute('aria-selected',String(selected))});
   renderSessions();loadVisitorLists();
 }));
-$('searchInput').addEventListener('input',renderSessions);$('input').addEventListener('input',()=>$('sendBtn').disabled=!activeSession()||!$('input').value.trim());
+$('searchInput').addEventListener('input',renderSessions);$('input').addEventListener('input',()=>$('sendBtn').disabled=!isMine(activeSession())||!$('input').value.trim());
 $('input').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}});$('sendBtn').addEventListener('click',sendMessage);
-document.querySelectorAll('[data-template]').forEach(button=>button.addEventListener('click',()=>{$('input').value=button.dataset.template;$('sendBtn').disabled=!activeSession();$('input').focus()}));
-$('agentPhotoBtn').addEventListener('click',()=>{if(!activeSession()){toast('请先选择访客');return}$('agentPhotoInput').click()});
-$('agentFileBtn').addEventListener('click',()=>{if(!activeSession()){toast('请先选择访客');return}$('agentFileInput').click()});
+document.querySelectorAll('[data-template]').forEach(button=>button.addEventListener('click',()=>{if(!isMine(activeSession())){toast('请先接入该访客');return}$('input').value=button.dataset.template;$('sendBtn').disabled=false;$('input').focus()}));
+$('agentPhotoBtn').addEventListener('click',()=>{if(!isMine(activeSession())){toast('请先接入该访客');return}$('agentPhotoInput').click()});
+$('agentFileBtn').addEventListener('click',()=>{if(!isMine(activeSession())){toast('请先接入该访客');return}$('agentFileInput').click()});
 $('agentLinkBtn').addEventListener('click',addHyperlink);
 $('agentPhotoInput').addEventListener('change',event=>prepareAttachment(event.target.files[0],true));
 $('agentFileInput').addEventListener('change',event=>prepareAttachment(event.target.files[0],false));

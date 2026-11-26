@@ -43,7 +43,7 @@
 (()=>{
   const $=selector=>document.querySelector(selector);
   const CONFIG_KEY='douyin.customerService.config.v1';
-  const defaultServiceConfig={name:'客服小助手',avatar:'',quick:[
+  const defaultServiceConfig={name:'客服小助手',avatar:'/assets/default-agent-avatar.png',quick:[
     {question:'会员权益咨询',reply:'您好，您可以在会员中心查看当前等级对应的全部会员权益。'},
     {question:'积分如何兑换？',reply:'进入会员中心的积分页面，选择可兑换权益后按页面提示操作即可。'},
     {question:'办公应用如何下载？',reply:'返回会员中心，点击办公应用，然后选择 Android 或 iOS 版本下载。'}
@@ -123,7 +123,7 @@
   window.addEventListener('resize',()=>{clearTimeout(environmentTimer);environmentTimer=setTimeout(sendVisitorEnvironment,300)});
   if(typingChannel)typingChannel.onmessage=event=>{const message=event.data;if(message&&message.type==='chat_message'&&message.from==='agent'&&(!message.to||message.to===visitorInfo.visitor_id||message.to==='local'))appendMessage(message.content,'agent')};
   function applyAvatar(element){
-    const avatar=serviceConfig.avatar||'';
+    const avatar=serviceConfig.avatar||'/assets/default-agent-avatar.png';
     element.style.backgroundImage=avatar?'url('+avatar+')':'';
     element.style.backgroundSize='cover';element.style.backgroundPosition='center';
     const icon=element.querySelector('svg');if(icon)icon.style.display=avatar?'none':'';

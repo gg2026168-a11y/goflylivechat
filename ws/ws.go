@@ -20,6 +20,7 @@ type User struct {
 	Id         string
 	Avator     string
 	To_id      string
+	Claimed    bool
 	Role_id    string
 	Mux        sync.Mutex
 	UpdateTime time.Time
@@ -189,5 +190,13 @@ func UpdateVisitorUser(visitorId string, toId string) {
 	guest, ok := ClientList[visitorId]
 	if ok {
 		guest.To_id = toId
+	}
+}
+
+func ClaimVisitorUser(visitorId string, toId string) {
+	guest, ok := ClientList[visitorId]
+	if ok {
+		guest.To_id = toId
+		guest.Claimed = true
 	}
 }

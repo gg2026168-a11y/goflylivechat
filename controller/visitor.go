@@ -116,6 +116,9 @@ func PostVisitorLogin(c *gin.Context) {
 	visitor := models.FindVisitorByVistorId(id)
 	if visitor.Name != "" {
 		avator = visitor.Avator
+		if visitor.Claimed {
+			toId = visitor.ToId
+		}
 		//更新状态上线
 		models.UpdateVisitor(name, visitor.Avator, id, 1, c.ClientIP(), c.ClientIP(), refer, extra, toId)
 	} else {
@@ -267,6 +270,16 @@ func GetKefusVisitorOnlines(c *gin.Context) {
 		userInfo.Uid = uid
 		userInfo.Username = visitor.Name
 		userInfo.Avator = visitor.Avator
+		userInfo.Claimed = visitor.Claimed
+		if visitor.Claimed {
+			owner := models.FindUser(visitor.To_id)
+			userInfo.OwnerId = visitor.To_id
+			userInfo.OwnerName = owner.Nickname
+			if userInfo.OwnerName == "" {
+				userInfo.OwnerName = visitor.To_id
+			}
+			userInfo.OwnerAvatar = owner.Avator
+		}
 		users = append(users, userInfo)
 		visitorIds = append(visitorIds, visitor.Id)
 	}
@@ -293,4 +306,69 @@ func GetKefusVisitorOnlines(c *gin.Context) {
 		"msg":    "ok",
 		"result": users,
 	})
+}
+
+func visitorClaimResult(visitor models.Visitor) gin.H {
+	owner := models.FindUser(visitor.ToId)
+	ownerName := owner.Nickname
+	if ownerName == "" {
+		ownerName = visitor.ToId
+	}
+	return gin.H{
+		"uid":          visitor.VisitorId,
+		"visitor_id":   visitor.VisitorId,
+		"claimed":      visitor.Claimed,
+		"owner_id":     visitor.ToId,
+		"owner_name":   ownerName,
+		"owner_avatar": owner.Avator,
+	}
+}
+
+// PostVisitorClaim 将未接入访客原子分配给当前客服，并同步给所有工作台。
+func PostVisitorClaim(c *gin.Context) {
+	visitorId := c.PostForm("visitor_id")
+	if visitorId == "" {
+		visitorId = c.Query("visitor_id")
+	}
+	if visitorId == "" {
+		c.JSON(200, gin.H{"code": 400, "msg": "visitor_id不能为空"})
+		return
+	}
+	kefuName, _ := c.Get("kefu_name")
+	kefuId := kefuName.(string)
+	kefuInfo := models.FindUser(kefuId)
+	visitor := models.FindVisitorByVistorId(visitorId)
+	if kefuInfo.ID == 0 || visitor.ID == 0 {
+		c.JSON(200, gin.H{"code": 400, "msg": "访客或客服不存在"})
+		return
+	}
+	if visitor.Claimed {
+		if visitor.ToId != kefuId {
+			c.JSON(200, gin.H{
+				"code":   409,
+				"msg":    "该访客已由其他客服接入",
+				"result": visitorClaimResult(visitor),
+			})
+			return
+		}
+		c.JSON(200, gin.H{"code": 200, "msg": "接入成功", "result": visitorClaimResult(visitor)})
+		return
+	}
+	if !models.ClaimVisitor(visitorId, kefuId) {
+		latest := models.FindVisitorByVistorId(visitorId)
+		if latest.Claimed {
+			c.JSON(200, gin.H{
+				"code":   409,
+				"msg":    "该访客已由其他客服接入",
+				"result": visitorClaimResult(latest),
+			})
+			return
+		}
+		c.JSON(200, gin.H{"code": 500, "msg": "接入失败，请稍后重试"})
+		return
+	}
+	visitor = models.FindVisitorByVistorId(visitorId)
+	ws.ClaimVisitorUser(visitorId, kefuId)
+	ws.VisitorClaimed(visitor, kefuInfo)
+	c.JSON(200, gin.H{"code": 200, "msg": "接入成功", "result": visitorClaimResult(visitor)})
 }

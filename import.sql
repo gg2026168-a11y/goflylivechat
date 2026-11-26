@@ -13,7 +13,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 TRUNCATE TABLE `user`;
 INSERT INTO `user` (`id`, `name`, `password`, `nickname`, `created_at`, `updated_at`, `deleted_at`, `avator`) VALUE
-(1, 'agent', 'b33aed8f3134996703dc39f9a7c95783', 'Open Source LiveChat Support', '2020-06-27 19:32:41', '2020-07-04 09:32:20', NULL, '/static/images/4.jpg');
+(1, 'agent', 'b33aed8f3134996703dc39f9a7c95783', 'Open Source LiveChat Support', '2020-06-27 19:32:41', '2020-07-04 09:32:20', NULL, '/assets/default-agent-avatar.png');
 
 DROP TABLE IF EXISTS `visitor`;
 CREATE TABLE `visitor` (
@@ -22,6 +22,7 @@ CREATE TABLE `visitor` (
  `avator` varchar(500) NOT NULL DEFAULT '',
  `source_ip` varchar(50) NOT NULL DEFAULT '',
  `to_id` varchar(50) NOT NULL DEFAULT '',
+ `claimed` tinyint(1) NOT NULL DEFAULT '0',
  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
  `updated_at` timestamp NULL DEFAULT NULL,
  `deleted_at` timestamp NULL DEFAULT NULL,

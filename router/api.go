@@ -71,6 +71,7 @@ func InitApiRouter(engine *gin.Engine) {
 	//engine.POST("/visitor", controller.PostVisitor)
 	engine.GET("/visitor", middleware.JwtApiMiddleware, controller.GetVisitor)
 	engine.GET("/visitors", middleware.JwtApiMiddleware, controller.GetVisitors)
+	engine.POST("/visitor_claim", middleware.JwtApiMiddleware, controller.PostVisitorClaim)
 	engine.GET("/statistics", middleware.JwtApiMiddleware, controller.GetStatistics)
 	//前台接口
 	engine.GET("/about", controller.GetAbout)

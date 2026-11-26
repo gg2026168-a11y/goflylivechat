@@ -161,7 +161,7 @@ func PostKefuRegister(c *gin.Context) {
 	name := c.PostForm("username")
 	password := c.PostForm("password")
 	nickname := c.PostForm("nickname")
-	avatar := "/static/images/4.jpg"
+	avatar := "/assets/default-agent-avatar.png"
 
 	if name == "" || password == "" {
 		c.JSON(http.StatusOK, gin.H{

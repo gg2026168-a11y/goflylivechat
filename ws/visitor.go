@@ -32,6 +32,7 @@ func NewVisitorServer(c *gin.Context) {
 		Avator:     vistorInfo.Avator,
 		Id:         vistorInfo.VisitorId,
 		To_id:      vistorInfo.ToId,
+		Claimed:    vistorInfo.Claimed,
 		UpdateTime: time.Now(),
 	}
 	go models.UpdateVisitorStatus(vistorInfo.VisitorId, 1)
@@ -63,6 +64,23 @@ func NewVisitorServer(c *gin.Context) {
 		}
 	}
 }
+func addVisitorOwnership(userInfo map[string]interface{}, toId string, claimed bool) {
+	userInfo["claimed"] = claimed
+	userInfo["owner_id"] = ""
+	userInfo["owner_name"] = ""
+	userInfo["owner_avatar"] = ""
+	if !claimed {
+		return
+	}
+	owner := models.FindUser(toId)
+	userInfo["owner_id"] = toId
+	userInfo["owner_name"] = owner.Nickname
+	if owner.Nickname == "" {
+		userInfo["owner_name"] = toId
+	}
+	userInfo["owner_avatar"] = owner.Avator
+}
+
 func AddVisitorToList(user *User) {
 	//用户id对应的连接
 	oldUser, ok := ClientList[user.Id]
@@ -80,10 +98,11 @@ func AddVisitorToList(user *User) {
 	}
 	ClientList[user.Id] = user
 	lastMessage := models.FindLastMessageByVisitorId(user.Id)
-	userInfo := make(map[string]string)
+	userInfo := make(map[string]interface{})
 	userInfo["uid"] = user.Id
 	userInfo["username"] = user.Name
 	userInfo["avator"] = user.Avator
+	addVisitorOwnership(userInfo, user.To_id, user.Claimed)
 	userInfo["last_message"] = lastMessage.Content
 	if userInfo["last_message"] == "" {
 		userInfo["last_message"] = "new visitor"
@@ -99,10 +118,11 @@ func AddVisitorToList(user *User) {
 }
 func VisitorOnline(kefuId string, visitor models.Visitor) {
 	lastMessage := models.FindLastMessageByVisitorId(visitor.VisitorId)
-	userInfo := make(map[string]string)
+	userInfo := make(map[string]interface{})
 	userInfo["uid"] = visitor.VisitorId
 	userInfo["username"] = visitor.Name
 	userInfo["avator"] = visitor.Avator
+	addVisitorOwnership(userInfo, visitor.ToId, visitor.Claimed)
 	userInfo["last_message"] = lastMessage.Content
 	userInfo["client_ip"] = visitor.ClientIp
 	userInfo["city"] = visitor.City
@@ -117,10 +137,39 @@ func VisitorOnline(kefuId string, visitor models.Visitor) {
 	str, _ := json.Marshal(msg)
 	AllKefuMessage(str)
 }
+
+// VisitorClaimed 同步会话归属给全部客服，并通知访客更新消息路由。
+func VisitorClaimed(visitor models.Visitor, kefuInfo models.User) {
+	lastMessage := models.FindLastMessageByVisitorId(visitor.VisitorId)
+	userInfo := make(map[string]interface{})
+	userInfo["uid"] = visitor.VisitorId
+	userInfo["username"] = visitor.Name
+	userInfo["avator"] = visitor.Avator
+	userInfo["last_message"] = lastMessage.Content
+	addVisitorOwnership(userInfo, visitor.ToId, true)
+	str, _ := json.Marshal(TypeMessage{Type: "visitorClaimed", Data: userInfo})
+	AllKefuMessage(str)
+
+	guest, ok := ClientList[visitor.VisitorId]
+	if !ok || guest == nil || guest.Conn == nil {
+		return
+	}
+	ownerName := kefuInfo.Nickname
+	if ownerName == "" {
+		ownerName = kefuInfo.Name
+	}
+	transfer, _ := json.Marshal(TypeMessage{Type: "transfer", Data: kefuInfo.Name})
+	notice, _ := json.Marshal(TypeMessage{Type: "notice", Data: "会话已由" + ownerName + "接入"})
+	guest.Mux.Lock()
+	defer guest.Mux.Unlock()
+	guest.Conn.WriteMessage(websocket.TextMessage, transfer)
+	guest.Conn.WriteMessage(websocket.TextMessage, notice)
+}
+
 func VisitorOffline(kefuId string, visitorId string, visitorName string) {
 
 	models.UpdateVisitorStatus(visitorId, 0)
-	userInfo := make(map[string]string)
+	userInfo := make(map[string]interface{})
 	userInfo["uid"] = visitorId
 	userInfo["name"] = visitorName
 	msg := TypeMessage{
