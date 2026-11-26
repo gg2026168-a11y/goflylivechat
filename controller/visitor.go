@@ -98,7 +98,7 @@ func PostVisitorLogin(c *gin.Context) {
 		}
 	}
 	//log.Println(name,avator,c.ClientIP(),toId,id,refer,city,client_ip)
-	if name == "" || avator == "" || toId == "" || id == "" || refer == "" || client_ip == "" {
+	if name == "" || avator == "" || id == "" || refer == "" || client_ip == "" {
 		c.JSON(200, gin.H{
 			"code": 400,
 			"msg":  "error",
@@ -107,11 +107,16 @@ func PostVisitorLogin(c *gin.Context) {
 	}
 	kefuInfo := models.FindUser(toId)
 	if kefuInfo.ID == 0 {
-		c.JSON(200, gin.H{
-			"code": 400,
-			"msg":  "The customer service account does not exist",
-		})
-		return
+		// 兼容旧链接或已下线账号：自动分配到可用客服，避免访客无法上线。
+		kefuInfo = models.FindDefaultKefu()
+		if kefuInfo.ID == 0 {
+			c.JSON(200, gin.H{
+				"code": 400,
+				"msg":  "The customer service account does not exist",
+			})
+			return
+		}
+		toId = kefuInfo.Name
 	}
 	visitor := models.FindVisitorByVistorId(id)
 	if visitor.Name != "" {

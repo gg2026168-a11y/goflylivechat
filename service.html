@@ -105,7 +105,7 @@
   }
   async function initRealtimeTyping(){
     sendVisitorEnvironment();if(location.protocol==='file:')return;
-    const userId=new URLSearchParams(location.search).get('user_id')||'agent',cacheKey='visitor_'+userId;
+    const userId=new URLSearchParams(location.search).get('user_id')||'admin',cacheKey='visitor_'+userId;
     try{
       try{visitorInfo=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(error){visitorInfo={}}
       const body=new URLSearchParams({visitor_id:visitorInfo.visitor_id||'',to_id:userId,refer:document.referrer||location.href});
