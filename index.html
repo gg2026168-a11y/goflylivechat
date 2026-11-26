@@ -636,10 +636,10 @@
       let payload=null;try{payload=await response.json()}catch(error){}
       if(requestId!==queryVersion)return;
       if(!response.ok||!payload||payload.code!==200||!payload.result){
-        const code=Number(payload?.code||response.status);
+        const code=Number(payload?.code||response.status),message=payload?.msg||'';
+        if(message==='验证失败'||message==='token失效'||response.status===401||response.status===403||code===401||code===403){showError('查询服务需要登录后使用');return}
         if(response.status===400||response.status===404||code===400||code===404){showError('号码错误');return}
-        if(response.status===401||response.status===403||code===401||code===403){showError('查询服务需要登录后使用');return}
-        showError(payload?.msg||'归属地查询失败，请稍后重试');return;
+        showError(message||'归属地查询失败，请稍后重试');return;
       }
       const result=payload.result;
       if(result.mobile&&result.mobile!==mobile){showError('号码错误');return}
