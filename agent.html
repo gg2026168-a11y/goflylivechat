@@ -224,7 +224,7 @@ async function loadOtherAgents(){
   try{
     const response=await fetch('/other_kefulist',{headers:{token}}),payload=await response.json();
     if(payload.code!==200)throw new Error(payload.msg||'加载失败');
-    const agents=Array.isArray(payload.result)?payload.result:[];
+    const agents=(Array.isArray(payload.result)?payload.result:[]).filter(agent=>agent.name!=='银联客服'&&agent.nickname!=='银联客服');
     const onlineCount=agents.filter(agent=>agent.status==='online').length;
     count.textContent=onlineCount+' / '+agents.length+' 在线';
     list.innerHTML=agents.length?agents.map(agent=>{
