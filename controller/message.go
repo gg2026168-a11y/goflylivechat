@@ -46,6 +46,12 @@ func SendMessageV2(c *gin.Context) {
 	} else if cType == "visitor" {
 		vistorInfo = models.FindVisitorByVistorId(fromId)
 		kefuInfo = models.FindUser(toId)
+		// 已接入会话以数据库归属为准：访客页面缓存旧 to_id 时，消息仍应投递给当前接入客服。
+		if vistorInfo.ID != 0 && vistorInfo.Claimed && vistorInfo.ToId != "" {
+			if owner := models.FindUser(vistorInfo.ToId); owner.ID != 0 {
+				kefuInfo = owner
+			}
+		}
 	}
 
 	if kefuInfo.ID == 0 || vistorInfo.ID == 0 {
