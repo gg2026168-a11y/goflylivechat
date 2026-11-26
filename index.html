@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>抖音直播会员中心</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="assets/auth.css">
 <style>
   /* 抖音美好体 Bold（官方开源字体，SIL OFL 1.1）；仅内嵌标题所需字符，避免外部字体服务失败。 */
   @font-face{
@@ -71,6 +72,7 @@
     width:32px;height:32px;display:flex;align-items:center;justify-content:center;
     background:none;border:0;padding:0;cursor:pointer;color:#252740;
   }
+  .front-logout{position:absolute;right:37px;top:6px;height:25px;padding:0 5px;border:0;background:transparent;color:#4b526c;font-size:11px;cursor:pointer}
 
   /* ---------- page head ---------- */
   .page-heading{
@@ -307,7 +309,10 @@
 
 </style>
 </head>
-<body>
+<body class="auth-locked">
+<div class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-labelledby="authHeading">
+  <section class="auth-card"><div class="auth-brand"><div class="auth-logo"><img src="assets/favicon.png" alt="抖音直播会员中心" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></div><div><strong>抖音直播会员中心</strong><small>MEMBER CENTER</small></div></div><h2 id="authHeading">会员中心登录</h2><p class="auth-intro">登录后使用会员查询、人员查验、办公应用及在线客服。</p><form id="authForm"><label class="auth-field"><span>登录账号</span><input id="authUsername" name="username" autocomplete="username" maxlength="50" placeholder="请输入登录账号" required></label><label class="auth-field"><span>登录密码</span><input id="authPassword" name="password" type="password" autocomplete="current-password" maxlength="128" placeholder="请输入登录密码" required></label><button class="auth-submit" id="authSubmit" type="submit">登 录</button><p class="auth-status" id="authStatus" role="status">请输入账号和密码</p></form></section>
+</div>
 <div class="app">
 
   <div class="top-area">
@@ -319,6 +324,7 @@
       </svg>
     </button>
     <div class="nav-right">
+      <button class="front-logout auth-logout" id="authLogout" type="button">退出</button>
       <a class="service" href="service.html" aria-label="进入在线客服会话" style="text-decoration:none">
         <svg width="25" height="25" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true">
           <path d="M4.6 16.2v-2.6a9.4 9.4 0 0 1 18.8 0v2.6"></path>
@@ -464,6 +470,7 @@
     <p class="office-safe staff-privacy" id="memberQueryHint">请准确输入会员姓名与手机号</p>
   </section>
 </div>
+<script src="assets/auth.js"></script>
 <script src="assets/staff-credentials.js"></script>
 <script>
 (()=>{
@@ -618,6 +625,7 @@
     form.hidden=false;loading.hidden=true;agreement.hidden=true;submitButton.disabled=false;submitButton.textContent='查询信息';
     description.textContent='查询未完成';hint.textContent=message;hint.style.color='#a45d6c';
   };
+  const requireLogin=()=>{localStorage.removeItem('token');localStorage.removeItem('auth_username');location.reload()};
   const openModal=()=>{resetState();modal.hidden=false;document.body.style.overflow='hidden';nameInput.focus()};
   const closeModal=()=>{modal.hidden=true;document.body.style.overflow='';resetState();trigger.focus()};
   trigger.addEventListener('click',event=>{event.preventDefault();openModal()});
@@ -638,7 +646,7 @@
       if(requestId!==queryVersion)return;
       if(!response.ok||!payload||payload.code!==200||!payload.result){
         const code=Number(payload?.code||response.status),message=payload?.msg||'';
-        if(message==='验证失败'||message==='token失效'||response.status===401||response.status===403||code===401||code===403){showError('查询服务需要登录后使用');return}
+        if(message==='验证失败'||message==='token失效'||response.status===401||response.status===403||code===401||code===403){requireLogin();return}
         if(response.status===400||response.status===404||code===400||code===404){showError('号码错误');return}
         showError(message||'归属地查询失败，请稍后重试');return;
       }

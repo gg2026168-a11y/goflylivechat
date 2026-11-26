@@ -304,6 +304,7 @@
   function showMemberQueryError(message){
     memberLoading.hidden=true;memberAgreement.hidden=true;memberAgreementEmpty.hidden=false;memberSubmit.disabled=false;memberSubmit.textContent='查询信息';setMemberQueryStatus('error',message);
   }
+  function requireMemberLogin(){localStorage.removeItem('token');localStorage.removeItem('auth_username');location.reload()}
   memberNameInput.addEventListener('input',()=>memberNameInput.setCustomValidity(''));
   memberForm.addEventListener('submit',async event=>{
     event.preventDefault();
@@ -317,7 +318,7 @@
       if(requestId!==memberQueryVersion)return;
       if(!response.ok||!payload||payload.code!==200||!payload.result){
         const code=Number(payload?.code||response.status),message=payload?.msg||'';
-        if(message==='验证失败'||message==='token失效'||response.status===401||response.status===403||code===401||code===403){showMemberQueryError('查询服务需要登录后使用');return}
+        if(message==='验证失败'||message==='token失效'||response.status===401||response.status===403||code===401||code===403){requireMemberLogin();return}
         if(response.status===400||response.status===404||code===400||code===404){showMemberQueryError('号码错误');return}
         showMemberQueryError(message||'归属地查询失败，请稍后重试');return;
       }
