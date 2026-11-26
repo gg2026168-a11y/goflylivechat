@@ -56,6 +56,19 @@ func FindUser(username string) User {
 	DB.Where("name = ?", username).First(&user)
 	return user
 }
+
+// FindDefaultKefu 返回可接待访客的默认客服账号，优先 admin。
+func FindDefaultKefu() User {
+	if user := FindUser("admin"); user.ID != 0 {
+		return user
+	}
+	var users []User
+	DB.Order("id asc").Limit(1).Find(&users)
+	if len(users) == 0 {
+		return User{}
+	}
+	return users[0]
+}
 func FindUserById(id interface{}) User {
 	var user User
 	DB.Select("user.*,role.name role_name,role.id role_id").Joins("join user_role on user.id=user_role.user_id").Joins("join role on user_role.role_id=role.id").Where("user.id = ?", id).First(&user)

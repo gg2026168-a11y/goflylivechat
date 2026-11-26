@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>在线客服工作台 · 访客信息识别</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="assets/auth.css">
+<style>
+*{box-sizing:border-box} :root{--bg:#eef2f8;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e6ebf2;--brand:#2f6bff;--brand-soft:#eaf0ff}
+html,body{height:100%;margin:0}body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;overflow:hidden;font-size:14px}button,input,textarea{font:inherit}[hidden]{display:none!important}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:#cdd8e8;border-radius:8px}
+.topbar{flex:none;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;color:#fff;background:linear-gradient(100deg,#0f1a33,#1c2f57 55%,#274a86)}.brand{display:flex;align-items:center;gap:11px}.logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:13px;font-weight:700;color:#06224d;background:linear-gradient(135deg,#4f8bff,#6ee7ff)}.brand h1{margin:0;font-size:15px}.brand p{margin:2px 0 0;font-size:10px;color:#93a8cc;letter-spacing:.8px}.topbar-right{display:flex;align-items:center;gap:12px;font-size:12px}.status-chip{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;background:#ffffff12;border:1px solid #ffffff24}.dot{width:7px;height:7px;border-radius:50%;background:#34d399}.dot.offline{background:#f59e0b}.clock{font-variant-numeric:tabular-nums;color:#c6d4ec;letter-spacing:1px}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:250px minmax(0,1fr) 310px;gap:12px;padding:12px}.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px #0f172a0a;display:flex;flex-direction:column;overflow:hidden;min-width:0;min-height:0}.side-head{padding:14px 14px 10px;border-bottom:1px solid var(--line)}.side-head h2{margin:0 0 10px;font-size:13px;display:flex;align-items:center;gap:7px}.internal-agent-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 0 10px;color:var(--muted);font-size:11px}.internal-agent-status strong{display:flex;align-items:center;gap:6px;font-weight:500;color:#9a7b45}.internal-agent-status strong.online{color:#0f8a4d}.other-agents{margin:0 0 10px;border:1px solid var(--line);border-radius:9px;background:#f8fafd}.other-agents summary{display:flex;align-items:center;gap:7px;padding:8px 10px;cursor:pointer;list-style:none;color:var(--muted);font-size:11px;user-select:none}.other-agents summary::-webkit-details-marker{display:none}.other-agents summary::after{content:'›';font-size:15px;line-height:1;transition:transform .18s}.other-agents[open] summary::after{transform:rotate(90deg)}.other-agents-count{margin-left:auto;padding:1px 6px;border-radius:10px;background:#eaf0fb;color:#61708a;font-size:10px}.other-agents-list{max-height:150px;overflow:auto;padding:4px 10px;border-top:1px solid var(--line)}.other-agent{display:flex;align-items:center;gap:7px;padding:6px 0;font-size:11px}.other-agent-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3d4960}.other-agent-state{color:var(--muted)}.other-agent-state.online{color:#0f8a4d}.other-agents-empty{padding:12px 0;text-align:center;color:#94a3b8;font-size:11px;line-height:1.6}.visitor-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin-bottom:10px;padding:3px;border-radius:10px;background:#f1f4f9}.visitor-tab{min-width:0;padding:7px 2px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:11px;white-space:nowrap;cursor:pointer}.visitor-tab:hover{color:var(--brand)}.visitor-tab.active{background:#fff;color:var(--brand);font-weight:600;box-shadow:0 1px 5px #0f172a12}.badge{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--brand-soft);color:#2f5fd0}.search{width:100%;height:34px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:#f7f9fd;font-size:12px;outline:none}.search:focus{border-color:#b9cdff;box-shadow:0 0 0 3px #2f6bff1a}.list{flex:1;overflow:auto;padding:8px}.empty{padding:36px 12px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8}.conv{width:100%;border:0;background:transparent;display:flex;gap:10px;padding:10px;border-radius:11px;cursor:pointer;text-align:left;color:inherit}.conv:hover{background:#f4f7fd}.conv.active{background:var(--brand-soft)}.conv-main{flex:1;min-width:0}.conv-top{display:flex;justify-content:space-between;gap:6px}.conv-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.conv-time{font-size:10px;color:#9aa8bd}.conv-tag{font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.avatar{width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff;background:linear-gradient(135deg,#5b8def,#7c5cf0)}.avatar.sm{width:32px;height:32px;border-radius:10px}.unread{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:#ff5a5f;color:#fff;font-size:10px;margin-top:4px}
+.chat-head{flex:none;display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line)}.chat-name{font-size:13px;font-weight:600}.chat-sub{font-size:11px;color:var(--muted);margin-top:2px}.chat-actions{margin-left:auto;display:flex;gap:7px}.ghost-btn,.mini-btn{font-size:11px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;color:#46536b;cursor:pointer}.ghost-btn:hover,.mini-btn:hover{border-color:#b9cdff;color:var(--brand)}.typing-preview{margin:10px 16px 0;padding:9px 12px;border:1px dashed #e5a1b7;border-radius:10px;background:#fff4f7;color:#b45d79;font-size:12px;word-break:break-all}.messages{flex:1;min-height:0;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(#f8fafd,#f3f6fb)}.msg{display:flex;flex-direction:column;max-width:78%}.msg.agent{align-self:flex-end;align-items:flex-end}.msg.visitor{align-self:flex-start}.msg.system{align-self:center;max-width:100%}.bubble{padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.62;white-space:pre-wrap;word-break:break-word}.msg.agent .bubble{color:#fff;border-bottom-right-radius:4px;background:linear-gradient(135deg,#3b7bff,#2f6bff)}.msg.visitor .bubble{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}.msg.system .bubble{background:#94a3b821;color:#64748b;font-size:11px;padding:5px 12px;border-radius:20px}.meta{font-size:10px;color:#9aa8bd;margin-top:5px}.composer{flex:none;border-top:1px solid var(--line);padding:10px 14px 12px;background:#fff}.composer textarea{width:100%;height:58px;border:0;outline:none;resize:none;font-size:13px;line-height:1.6;color:var(--text)}.composer-bar{display:flex;align-items:center;gap:8px;margin-top:6px}.quick{display:flex;gap:6px;flex-wrap:wrap;flex:1}.quick-panel{flex:none;width:100%!important;height:auto!important;padding:10px 14px;background:#fff}.quick-panel button{width:auto!important;height:auto!important;transform:none!important}.composer-bar .send-btn{margin-left:auto}.quick button{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);background:#f8fafd;color:#55627a;cursor:pointer}.send-btn{border:0;border-radius:9px;padding:8px 20px;color:#fff;background:linear-gradient(135deg,#3b7bff,#2f6bff);cursor:pointer}.send-btn:disabled{opacity:.45;cursor:not-allowed}.message-link{color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-all}.msg.visitor .message-link{color:var(--brand)}.message-image{display:block;max-width:min(260px,100%);max-height:280px;object-fit:cover;border-radius:10px;background:#fff}.quick-panel .attachment-action{border-color:#d7e2ff;background:var(--brand-soft);color:var(--brand)}
+.visitor{overflow:auto;padding:14px;gap:12px}.panel-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}.live{font-size:10px;padding:2px 8px;border-radius:20px;color:#0f8a4d;background:#e6f9ef}.visitor-hero{display:flex;align-items:center;gap:11px}.vname{font-size:13px;font-weight:600}.vsub{font-size:11px;color:var(--muted);margin-top:3px}.card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.card-label{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.card-actions{display:flex;align-items:center;gap:5px}.mini-btn.danger{color:#d5475a;border-color:#f1cbd2}.mini-btn.danger:hover{color:#b83246;border-color:#e5a1b7;background:#fff7f8}.mini-btn:disabled{opacity:.45;cursor:not-allowed}.ip-text{font-family:ui-monospace,monospace;font-size:18px;font-weight:700;word-break:break-all}.loc{font-size:12px;color:var(--muted);margin-top:6px}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tag{font-size:10px;padding:3px 9px;border-radius:20px;background:var(--brand-soft);color:#2f5fd0}.rows{display:flex;flex-direction:column;gap:9px}.row{display:flex;justify-content:space-between;gap:10px;font-size:12px}.row>span{color:var(--muted);flex:none}.row>b{font-weight:600;text-align:right;word-break:break-all}.ua-box{margin-top:10px}.ua-box summary{font-size:11px;color:var(--muted);cursor:pointer}.ua-text{margin-top:8px;font-size:10px;line-height:1.6;color:#64748b;background:#f7f9fd;border:1px solid var(--line);border-radius:8px;padding:8px;word-break:break-all;font-family:ui-monospace,monospace}.timeline{display:flex;flex-direction:column}.tl-item{display:flex;gap:10px;font-size:11px;padding-bottom:12px}.tl-dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:4px;background:var(--brand)}.tl-text{flex:1;color:#46536b}.tl-time{font-size:10px;color:#9aa8bd;margin-top:2px}.toast{position:fixed;left:50%;bottom:24px;z-index:99;transform:translate(-50%,12px);background:#0f172aee;color:#fff;padding:9px 16px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.topbar-agent-avatar{width:30px;height:30px;border-radius:9px;object-fit:cover;background:#fff}.other-agent-avatar{width:22px;height:22px;flex:0 0 auto;border-radius:7px;object-fit:cover;background:#eef2f8}.conv-owner-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:5px}.conv-owner{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8a96aa;font-size:10px}.conv-owner.claimed{color:#4773c8}.claim-btn{flex:0 0 auto;padding:3px 9px;border:1px solid #c7d7fb;border-radius:7px;background:#edf3ff;color:#2f6bff;font-size:10px;cursor:pointer}.claim-btn:hover{background:#2f6bff;color:#fff}.claim-btn:disabled{opacity:.5;cursor:not-allowed}.ghost-btn.claim-ready{border-color:#b9cdff;background:#edf3ff;color:#2f6bff}
+.link-card-message{display:flex;align-items:flex-start;gap:10px;width:min(250px,100%);min-width:195px;padding:12px;border:1px solid rgba(214,223,239,.95);border-radius:13px;background:rgba(255,255,255,.96);box-shadow:0 7px 18px rgba(41,65,112,.09);color:#2f466c;text-decoration:none;white-space:normal;word-break:break-word}.link-card-message:hover{border-color:#b9cdff;box-shadow:0 8px 22px rgba(47,107,255,.14)}.link-card-icon{width:30px;height:30px;display:grid;place-items:center;flex:0 0 auto;border-radius:9px;background:#eaf0ff;color:#2f6bff}.link-card-copy{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}.link-card-copy strong{color:#2b4165;font-size:13px;line-height:1.45}.link-card-subtitle{color:#8490a6;font-size:11px;line-height:1.55}.link-card-subtitle-image{display:block;width:100%;max-width:190px;max-height:120px;margin-top:4px;object-fit:cover;border-radius:9px;background:#f2f5fa}.link-card-arrow{flex:0 0 auto;color:#91a0b8;font-size:14px}.link-card-modal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(26,37,65,.24);backdrop-filter:blur(6px)}.link-card-dialog{position:relative;width:min(100%,350px);max-height:calc(100vh - 40px);overflow:auto;padding:23px;border:1px solid rgba(255,255,255,.85);border-radius:21px;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(244,248,255,.80));box-shadow:0 25px 70px rgba(30,43,80,.24);backdrop-filter:blur(22px)}.link-card-dialog h2{margin:0;color:#1c3154;font-size:18px}.link-card-dialog>p{margin:5px 0 18px;color:#8793aa;font-size:11px}.link-card-close{position:absolute;top:13px;right:13px;width:28px;height:28px;border:1px solid #e2e8f3;border-radius:50%;background:#ffffffa8;color:#73829b;cursor:pointer}.link-card-form{display:grid;gap:13px}.link-card-field{display:grid;gap:6px;color:#586983;font-size:11px}.link-card-field input{height:39px;padding:0 11px;border:1px solid #dfe6f1;border-radius:9px;background:#ffffffc7;color:#243a5c;outline:none;font-size:12px}.link-card-field input:focus{border-color:#9db9f5;box-shadow:0 0 0 3px #2f6bff12}.link-card-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.link-card-mode{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 3px;border:1px solid #e0e7f2;border-radius:9px;background:#ffffff8c;color:#718099;font-size:11px;cursor:pointer}.link-card-mode:has(input:checked){border-color:#aac3f8;background:#eaf0ff;color:#2f6bff}.link-card-mode input{accent-color:#2f6bff}.link-card-image-picker{display:flex;align-items:center;gap:9px}.link-card-image-button{height:34px;padding:0 11px;border:1px solid #cfdcf1;border-radius:8px;background:#f5f8ff;color:#5271a7;font-size:11px;cursor:pointer}.link-card-image-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8b96aa;font-size:10px}.link-card-image-preview{display:block;width:76px;height:56px;margin-top:8px;object-fit:cover;border-radius:9px;border:1px solid #e2e8f2}.link-card-error{margin:0;color:#c44c62;font-size:11px;line-height:1.5}.link-card-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:3px}.link-card-actions button{height:36px;padding:0 14px;border-radius:9px;font-size:12px;cursor:pointer}.link-card-cancel{border:1px solid #dfe6f1;background:#fff;color:#687892}.link-card-submit{border:0;background:linear-gradient(135deg,#3b7bff,#2f6bff);color:#fff}.link-card-submit:disabled{opacity:.5;cursor:not-allowed}.transfer-modal{position:fixed;inset:0;z-index:130;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(26,37,65,.24);backdrop-filter:blur(6px)}.transfer-dialog{width:min(100%,320px);padding:20px;border:1px solid rgba(255,255,255,.85);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(244,248,255,.86));box-shadow:0 22px 60px rgba(30,43,80,.22);backdrop-filter:blur(20px)}.transfer-dialog h3{margin:0 0 4px;color:#1c3154;font-size:16px}.transfer-dialog p{margin:0 0 12px;color:#8793aa;font-size:11px}.transfer-dialog select{width:100%;height:38px;padding:0 10px;border:1px solid #dfe6f1;border-radius:9px;background:#fff;color:#243a5c;font-size:12px}.transfer-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}.transfer-actions button{height:34px;padding:0 14px;border-radius:9px;font-size:12px;cursor:pointer}.transfer-cancel{border:1px solid #dfe6f1;background:#fff;color:#687892}.transfer-confirm{border:0;background:#3b7bff;color:#fff}.transfer-confirm:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:1050px){.workspace{grid-template-columns:230px minmax(0,1fr)}.visitor{display:none}}@media(max-width:680px){.workspace{grid-template-columns:1fr;padding:8px}.sidebar{display:none}.topbar-right .clock{display:none}.quick{display:none}}
+</style>
+</head>
+<body class="auth-locked">
+<header class="topbar"><div class="brand"><div class="logo">CS</div><div><h1>在线客服工作台</h1><p>CUSTOMER SERVICE CONSOLE</p></div></div><div class="topbar-right"><div class="status-chip"><span class="dot offline" id="statusDot"></span><span id="connectionStatus">本地联调</span></div><img class="topbar-agent-avatar" src="/assets/default-agent-avatar.png" alt="客服头像"><span class="auth-user" id="authAccountName">客服账号</span><button class="auth-logout" id="authLogout" type="button">退出登录</button><div class="clock" id="clock">03:32:13</div></div></header>
+<div class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-labelledby="authHeading">
+  <section class="auth-card"><div class="auth-brand"><div class="auth-logo">CS</div><div><strong>在线客服工作台</strong><small>CUSTOMER SERVICE</small></div></div><h2 id="authHeading">客服账号登录</h2><p class="auth-intro">登录后接待访客、查看消息及管理会话。</p><form id="authForm"><label class="auth-field"><span>客服账号</span><input id="authUsername" name="username" autocomplete="username" maxlength="50" placeholder="请输入客服账号" required></label><label class="auth-field"><span>登录密码</span><input id="authPassword" name="password" type="password" autocomplete="current-password" maxlength="128" placeholder="请输入登录密码" required></label><button class="auth-submit" id="authSubmit" type="submit">登 录</button><p class="auth-status" id="authStatus" role="status">请输入客服账号和密码</p></form></section>
+</div>
+<div class="workspace">
+<aside class="panel sidebar"><div class="side-head"><h2>会话列表 <span class="badge" id="convCount">0</span></h2><div class="internal-agent-status"><span>内部客服在线状态</span><strong id="internalAgentState" aria-live="polite"><span class="dot offline" id="internalAgentDot"></span><span id="internalAgentStatus">本地联调</span></strong></div><details class="other-agents" id="otherAgentsDetails"><summary><span>其它客服在线状态</span><span class="other-agents-count" id="otherAgentsCount">未加载</span></summary><div class="other-agents-list" id="otherAgentsList"><div class="other-agents-empty">展开后加载客服状态</div></div></details><div class="visitor-tabs" role="tablist" aria-label="访客分类"><button class="visitor-tab active" type="button" role="tab" aria-selected="true" data-visitor-view="online">在线访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="history">历史访客</button><button class="visitor-tab" type="button" role="tab" aria-selected="false" data-visitor-view="mine">我的会话</button></div><input class="search" id="searchInput" placeholder="搜索访客 / IP / 关键词" aria-label="搜索会话"></div><div class="list" id="convList" role="tabpanel"><div class="empty">暂无在线访客<br>等待访客从会员中心接入</div></div></aside>
+<section class="panel chat"><div class="chat-head"><div class="avatar sm" id="chatAvatar">访</div><div><div class="chat-name" id="chatName">暂无会话</div><div class="chat-sub" id="chatSub">等待访客接入</div></div><div class="chat-actions"><button class="ghost-btn" id="claimBtn" type="button" hidden>接入会话</button><button class="ghost-btn" id="transferBtn">转接</button><button class="ghost-btn" id="closeBtn">结束会话</button></div></div><div class="typing-preview" id="typingPreview" role="status" aria-live="polite" hidden=""></div><div class="messages" id="messages"><div class="empty">接入访客后，可在这里查看和回复消息</div></div><div class="quick quick-panel"><button data-template="您好，很高兴为您服务，请问有什么可以帮您？">问候</button><button data-template="请稍等，正在为您查询。">查询中</button><button data-template="您可以在办公应用弹窗中选择 Android 或 iOS 下载。">应用下载</button><button data-template="还有其他可以帮到您的吗？">结束语</button><button class="attachment-action" id="agentPhotoBtn" type="button">照片</button><button class="attachment-action" id="agentFileBtn" type="button">文件</button><button class="attachment-action" id="agentLinkBtn" type="button">超级链接</button></div><div class="composer"><textarea id="input" maxlength="2000" placeholder="输入消息，Enter 发送，Shift + Enter 换行…" disabled=""></textarea><div class="composer-bar"><button class="send-btn" id="sendBtn" disabled="">发送</button></div></div></section>
+<aside class="panel visitor">
+  <div class="panel-title">访客信息<span class="live">实时</span><button class="mini-btn" id="refreshBtn" style="margin-left:auto">刷新</button></div>
+  <div class="visitor-hero"><div class="avatar" id="avatar">访</div><div><div class="vname" id="visitorName">暂无访客</div><div class="vsub" id="heroSub">等待访客接入</div></div></div>
+  <div class="card"><div class="card-label">IP 地址<span class="card-actions"><button class="mini-btn" id="copyIp">复制</button><button class="mini-btn danger" id="blacklistBtn" disabled="">加入黑名单</button></span></div><div class="ip-text" id="ipText">—</div><div class="loc" id="locText">—</div><div class="tags" id="geoTags"></div></div>
+  <div class="card"><div class="card-label">设备与系统</div><div class="rows"><div class="row"><span>设备类型</span><b id="dType">—</b></div><div class="row"><span>操作系统</span><b id="dOs">—</b></div><div class="row"><span>浏览器</span><b id="dBrowser">—</b></div></div></div>
+  <div class="card"><div class="card-label">环境与网络</div><div class="rows"><div class="row"><span>语言</span><b id="eLang">—</b></div><div class="row"><span>时区</span><b id="eTz">—</b></div><div class="row"><span>网络状态</span><b id="eNet">—</b></div><div class="row"><span>访问来源</span><b id="eRef">—</b></div></div></div>
+  <div class="card"><div class="card-label">会话轨迹</div><div class="timeline" id="timeline"><div class="empty">暂无会话轨迹</div></div></div>
+</aside>
+</div>
+<input id="agentPhotoInput" type="file" accept="image/png,image/jpeg,image/gif,.png,.jpg,.jpeg,.gif" hidden><input id="agentFileInput" type="file" hidden>
+<div class="link-card-modal" id="linkCardModal" hidden><section class="link-card-dialog" role="dialog" aria-modal="true" aria-labelledby="linkCardHeading"><button class="link-card-close" id="linkCardClose" type="button" aria-label="关闭超级链接卡片">×</button><h2 id="linkCardHeading">超级链接卡片</h2><p>设置链接与标题，副标题可留空、使用文字或图片。</p><form class="link-card-form" id="linkCardForm"><label class="link-card-field"><span>链接地址</span><input id="linkCardUrl" type="text" inputmode="url" maxlength="2048" placeholder="https://example.com" required></label><label class="link-card-field"><span>卡片标题</span><input id="linkCardTitle" type="text" maxlength="80" placeholder="留空则使用链接域名"></label><div class="link-card-field"><span>副标题显示方式</span><div class="link-card-modes"><label class="link-card-mode"><input type="radio" name="linkCardSubtitleMode" value="none" checked>无副标题</label><label class="link-card-mode"><input type="radio" name="linkCardSubtitleMode" value="text">文字</label><label class="link-card-mode"><input type="radio" name="linkCardSubtitleMode" value="image">图片</label></div></div><label class="link-card-field" id="linkCardTextWrap" hidden><span>自定义副标题文字</span><input id="linkCardSubtitleText" type="text" maxlength="120" placeholder="请输入副标题文字"></label><div class="link-card-field" id="linkCardImageWrap" hidden><span>自定义副标题图片</span><div class="link-card-image-picker"><button class="link-card-image-button" id="linkCardImageButton" type="button">选择图片</button><span class="link-card-image-name" id="linkCardImageName">未选择图片</span></div><input id="linkCardImageInput" type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden><img class="link-card-image-preview" id="linkCardImagePreview" alt="副标题图片预览" hidden></div><p class="link-card-error" id="linkCardError" role="alert" hidden></p><div class="link-card-actions"><button class="link-card-cancel" id="linkCardCancel" type="button">取消</button><button class="link-card-submit" id="linkCardSubmit" type="submit">发送卡片</button></div></form></section></div>
+<div class="transfer-modal" id="transferModal" hidden><section class="transfer-dialog" role="dialog" aria-modal="true" aria-labelledby="transferHeading"><h3 id="transferHeading">转接会话</h3><p>仅可将自己已接入的会话转给其他在线客服。</p><select id="transferSelect"></select><div class="transfer-actions"><button class="transfer-cancel" id="transferCancel" type="button">取消</button><button class="transfer-confirm" id="transferConfirm" type="button">确认转接</button></div></section></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="assets/auth.js"></script>
+<script>
+const $=id=>document.getElementById(id),sessions=new Map();
+let activeId='',socket=null,visitorView='online';
+const token=localStorage.getItem('token')||'';
+const currentKefuId=localStorage.getItem('auth_username')||'';
+const defaultAgentAvatar='/assets/default-agent-avatar.png';
+const claimingSessions=new Set();
+const channel='BroadcastChannel' in window?new BroadcastChannel('douyin.service.typing'):null;
+const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const nowTime=()=>new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
+function visitorTime(value){
+  if(!value)return nowTime();
+  const date=new Date(value);
+  return Number.isNaN(date.getTime())?nowTime():date.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+}
+function toast(text){const el=$('toast');el.textContent=text;el.classList.add('show');clearTimeout(el._timer);el._timer=setTimeout(()=>el.classList.remove('show'),1800)}
+function activeSession(){return sessions.get(activeId)}
+function currentKefuName(){const name=$('authAccountName').textContent.trim();return name&&name!=='客服账号'&&name!=='未登录'?name:currentKefuId||'当前客服'}
+function isMine(session){return Boolean(session&&session.claimed&&session.ownerId===currentKefuId)}
+function sessionOwnerName(session){return session&&(session.ownerName||(session.ownerId===currentKefuId?currentKefuName():session.ownerId))||'客服'}
+function ensureSession(id,data={}){
+  if(!id)return null;
+  const claimed=data.claimed===true||data.claimed===1||data.claimed==='1';
+  const ownerId=data.owner_id!==undefined?data.owner_id:(claimed?data.to_id||'':'');
+  let session=sessions.get(id);
+  if(!session){session={id,name:data.name||data.username||'访客 '+id.slice(-6),avatar:data.avator||data.avatar||'',ip:data.client_ip||'',city:data.city||'',refer:data.refer||'',lastMessage:messagePreview(data.last_message||''),time:visitorTime(data.updated_at),unread:0,status:data.status===0||data.status==='0'?'offline':'online',claimed,ownerId:ownerId||'',ownerName:data.owner_name||'',ownerAvatar:data.owner_avatar||defaultAgentAvatar,messages:[],typing:null,environment:null,historyLoaded:false,timeline:[{text:'访客进入会话',time:nowTime()}]};sessions.set(id,session);if(!activeId&&session.status==='online')activeId=id}
+  if(data.name||data.username)session.name=data.name||data.username;
+  if(data.avator||data.avatar)session.avatar=data.avator||data.avatar;
+  if(data.last_message)session.lastMessage=messagePreview(data.last_message);
+  if(data.updated_at)session.time=visitorTime(data.updated_at);
+  if(data.status!==undefined)session.status=data.status===1||data.status==='1'?'online':'offline';
+  if(data.claimed!==undefined)session.claimed=claimed;
+  if(data.owner_id!==undefined)session.ownerId=data.owner_id||'';
+  else if(data.to_id!==undefined&&session.claimed)session.ownerId=data.to_id;
+  if(data.owner_name!==undefined)session.ownerName=data.owner_name;
+  if(data.owner_avatar)session.ownerAvatar=data.owner_avatar;
+  if(!session.claimed){session.ownerId='';session.ownerName='';session.ownerAvatar=defaultAgentAvatar}
+  if(data.client_ip)session.ip=data.client_ip;if(data.city)session.city=data.city;if(data.refer)session.refer=data.refer;
+  return session;
+}
+function renderSessions(){
+  const keyword=$('searchInput').value.trim().toLowerCase();
+  const viewList=[...sessions.values()].filter(s=>visitorView==='online'?s.status==='online':visitorView==='history'?s.status!=='online'&&isMine(s):isMine(s));
+  const list=viewList.filter(s=>!keyword||(s.name+' '+s.id+' '+s.ip+' '+s.lastMessage+' '+sessionOwnerName(s)).toLowerCase().includes(keyword)).sort((a,b)=>Number(b.id===activeId)-Number(a.id===activeId));
+  const emptyText=visitorView==='online'?'暂无在线访客<br>等待访客从会员中心接入':visitorView==='history'?'暂无历史会话<br>我接入的离线会话会显示在这里':'暂无我的会话<br>请从在线访客中接入会话';
+  $('convCount').textContent=viewList.length;
+  $('convList').innerHTML=list.map(s=>{
+    const owner=s.claimed?'由 '+sessionOwnerName(s)+' 接入':'待客服接入';
+    const claim=visitorView==='online'&&!s.claimed?'<button class="claim-btn" type="button" data-claim="'+escapeHtml(s.id)+'" '+(claimingSessions.has(s.id)?'disabled':'')+'>'+(claimingSessions.has(s.id)?'接入中':'接入')+'</button>':'';
+    return '<div class="conv '+(s.id===activeId?'active':'')+'" data-session="'+escapeHtml(s.id)+'" role="button" tabindex="0"><span class="avatar">'+escapeHtml(s.name.charAt(0))+'</span><span class="conv-main"><span class="conv-top"><span class="conv-name">'+escapeHtml(s.name)+'</span><time class="conv-time">'+escapeHtml(s.time)+'</time></span><span class="conv-tag">'+escapeHtml(s.lastMessage||s.ip||(s.status==='online'?'在线':'历史访客'))+'</span><span class="conv-owner-row"><span class="conv-owner'+(s.claimed?' claimed':'')+'">'+escapeHtml(owner)+'</span>'+claim+'</span></span>'+(s.unread?'<span class="unread">'+s.unread+'</span>':'')+'</div>'
+  }).join('')||'<div class="empty">'+emptyText+'</div>';
+}
+async function requestVisitors(url){
+  const response=await fetch(url,{headers:{token}}),result=await response.json();
+  if(result.code!==200)throw new Error(result.msg||'访客列表加载失败');
+  return result.result;
+}
+async function loadVisitorLists(){
+  if(!token||location.protocol==='file:'){renderSessions();return}
+  try{
+    const [online,mine]=await Promise.all([requestVisitors('/visitors_kefu_online'),requestVisitors('/visitors?page=1&pagesize=100')]);
+    ((mine&&mine.list)||[]).forEach(item=>ensureSession(item.visitor_id,item));
+    (online||[]).forEach(item=>ensureSession(item.uid,{...item,status:1}));
+    const onlineIds=new Set((online||[]).map(item=>item.uid));
+    [...sessions.values()].forEach(item=>{if(item.status==='online'&&!onlineIds.has(item.id))item.status='offline'});
+    renderChat();
+  }catch(error){console.warn('访客列表加载失败',error);renderSessions()}
+}
+function decodeLinkCard(value){
+  const text=String(value??'');if(!text.startsWith('link-card:'))return null;
+  try{
+    const data=JSON.parse(text.slice(10)),url=new URL(data.u);if(!['http:','https:'].includes(url.protocol))return null;
+    const image=String(data.i||''),safeImage=/^(https?:\/\/|blob:|(?:\/)?(?:static|assets)\/)/i.test(image)?image:'';
+    return {url:url.href,title:String(data.t||url.hostname).slice(0,80),subtitle:String(data.s||'').slice(0,120),image:safeImage};
+  }catch(error){return null}
+}
+function messagePreview(value){const card=decodeLinkCard(value);return card?'[链接卡片] '+card.title:String(value??'')}
+function appendLinkCard(container,card){
+  const link=document.createElement('a');link.className='link-card-message';link.href=card.url;link.target='_blank';link.rel='noopener noreferrer';
+  const icon=document.createElement('span');icon.className='link-card-icon';icon.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/></svg>';
+  const copy=document.createElement('span');copy.className='link-card-copy';const title=document.createElement('strong');title.textContent=card.title;copy.appendChild(title);
+  if(card.subtitle){const subtitle=document.createElement('span');subtitle.className='link-card-subtitle';subtitle.textContent=card.subtitle;copy.appendChild(subtitle)}
+  if(card.image){const image=document.createElement('img');image.className='link-card-subtitle-image';image.src=card.image;image.alt='自定义副标题图片';image.loading='lazy';image.onload=()=>{$('messages').scrollTop=$('messages').scrollHeight};copy.appendChild(image)}
+  const arrow=document.createElement('span');arrow.className='link-card-arrow';arrow.textContent='↗';link.append(icon,copy,arrow);container.appendChild(link);
+}
+function appendRichContent(container,text){
+  const value=String(text??''),card=decodeLinkCard(value);if(card){appendLinkCard(container,card);return}
+  const pattern=/(!?)\[([^\]\n]{1,160})\]\((https?:\/\/[^\s)]+|blob:[^\s)]+|(?:\/)?(?:static|assets)\/[^\s)]+)\)/g;
+  let last=0,match;
+  while((match=pattern.exec(value))){
+    container.appendChild(document.createTextNode(value.slice(last,match.index)));
+    if(match[1]){
+      const image=document.createElement('img');image.className='message-image';image.src=match[3];image.alt=match[2];image.loading='lazy';image.onload=()=>{$('messages').scrollTop=$('messages').scrollHeight};container.appendChild(image);
+    }else{
+      const link=document.createElement('a');link.className='message-link';link.href=match[3];link.target='_blank';link.rel='noopener noreferrer';link.textContent=match[2];container.appendChild(link);
+    }
+    last=pattern.lastIndex;
+  }
+  container.appendChild(document.createTextNode(value.slice(last)));
+}
+function renderMessages(session){
+  const box=$('messages');box.innerHTML='';
+  if(!session){box.innerHTML='<div class="empty">接入访客后，可在这里查看和回复消息</div>';return}
+  session.messages.forEach(message=>{
+    const row=document.createElement('div');row.className='msg '+message.role;
+    const bubble=document.createElement('div');bubble.className='bubble';appendRichContent(bubble,message.content);row.appendChild(bubble);
+    if(message.role!=='system'){const meta=document.createElement('div');meta.className='meta';meta.textContent=message.time;row.appendChild(meta)}
+    box.appendChild(row);
+  });
+  box.scrollTop=box.scrollHeight;
+}
+function renderVisitor(session){
+  const env=session&&session.environment||{};
+  const ownership=session?(session.claimed?' · 由 '+sessionOwnerName(session)+' 接入':' · 待接入'):'';
+  $('visitorName').textContent=session?session.name:'暂无访客';$('avatar').textContent=session?session.name.charAt(0):'访';
+  $('heroSub').textContent=session?(session.city||'地区待识别')+ownership:'等待访客接入';$('ipText').textContent=session&&session.ip||'—';$('locText').textContent=session&&session.city||'—';
+  $('geoTags').innerHTML=session?[session.city,session.refer].filter(Boolean).map(v=>'<span class="tag">'+escapeHtml(v)+'</span>').join(''):'';
+  const values={dType:env.deviceType,dOs:env.os,dBrowser:env.browser,eLang:env.language,eTz:env.timezone,eNet:env.network,eRef:session&&session.refer||env.referrer};
+  Object.entries(values).forEach(([id,value])=>$(id).textContent=value||'—');
+  const blacklistBtn=$('blacklistBtn');blacklistBtn.disabled=!session||!session.ip||Boolean(session.blacklisted);blacklistBtn.textContent=session&&session.blacklisted?'已加入黑名单':'加入黑名单';
+  $('timeline').innerHTML=session?session.timeline.map(item=>'<div class="tl-item"><span class="tl-dot"></span><div class="tl-text">'+escapeHtml(item.text)+'<div class="tl-time">'+escapeHtml(item.time)+'</div></div></div>').join(''):'<div class="empty">暂无会话轨迹</div>';
+}
+function renderChat(){
+  const s=activeSession(),mine=isMine(s),claiming=Boolean(s&&claimingSessions.has(s.id));renderSessions();
+  $('chatName').textContent=s?s.name:'暂无会话';$('chatAvatar').textContent=s?s.name.charAt(0):'访';
+  $('chatSub').textContent=s?(s.status==='online'?'在线':'离线')+(s.claimed?' · 由 '+sessionOwnerName(s)+' 接入':' · 待接入'):'等待访客接入';
+  const claimBtn=$('claimBtn');claimBtn.hidden=!s||mine;claimBtn.disabled=!s||s.claimed||claiming;claimBtn.textContent=s&&s.claimed?'已接入':claiming?'接入中…':'接入会话';claimBtn.classList.toggle('claim-ready',Boolean(s&&!s.claimed));
+  $('typingPreview').hidden=!s||s.typing===null;if(s&&s.typing!==null)$('typingPreview').textContent='访客正在输入：'+(s.typing||'（空）');
+  $('input').disabled=!mine;$('input').placeholder=mine?'输入消息，Enter 发送，Shift + Enter 换行…':s?(s.claimed?'该访客已由 '+sessionOwnerName(s)+' 接入':'请先接入该访客后回复'):'请选择会话';
+  $('sendBtn').disabled=!mine||!$('input').value.trim();renderMessages(s);renderVisitor(s);
+}
+async function selectSession(id){
+  const s=sessions.get(id);if(!s)return;
+  activeId=id;s.unread=0;renderChat();
+  if(!token||location.protocol==='file:'||s.historyLoaded)return;
+  s.historyLoaded=true;
+  try{
+    const response=await fetch('/messages?visitorId='+encodeURIComponent(id),{headers:{token}}),result=await response.json();
+    if(result.code!==200)throw new Error(result.msg||'聊天记录加载失败');
+    s.messages=(result.result||[]).map(item=>({role:item.mes_type==='kefu'?'agent':'visitor',content:item.content,time:item.time}));
+    if(activeId===id)renderChat();
+  }catch(error){s.historyLoaded=false;toast(error.message||'聊天记录加载失败')}
+}
+function addMessage(id,role,content,time){
+  const s=ensureSession(id);if(!s)return;s.messages.push({role,content,time:time||nowTime()});s.lastMessage=messagePreview(content);s.time=nowTime();if(role==='visitor'){s.typing=null;if(id!==activeId)s.unread++}renderChat();
+}
+function addTimeline(session,text){session.timeline.push({text,time:nowTime()})}
+function applyClaim(data){
+  const id=data&&(data.uid||data.visitor_id);if(!id)return null;
+  const existing=sessions.get(id),wasClaimed=Boolean(existing&&existing.claimed),s=ensureSession(id,data);
+  if(!wasClaimed&&s.claimed)addTimeline(s,'由 '+sessionOwnerName(s)+' 接入会话');
+  renderChat();return s;
+}
+async function claimSession(id){
+  const s=sessions.get(id);if(!s||claimingSessions.has(id))return;
+  if(s.claimed){
+    if(isMine(s)){renderChat();toast('该会话已接入，可在“我的会话”中查看');return}
+    toast('该访客已由 '+sessionOwnerName(s)+' 接入');return
+  }
+  activeId=id;s.unread=0;claimingSessions.add(id);renderChat();
+  try{
+    if(token&&location.protocol!=='file:'){
+      const response=await fetch('/visitor_claim',{method:'POST',headers:{token,'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({visitor_id:id})}),result=await response.json();
+      if(result.result)applyClaim(result.result);
+      if(result.code!==200){
+        if(result.code===400){sessions.delete(id);if(activeId===id)activeId='';loadVisitorLists()}
+        throw new Error(result.msg||'接入失败');
+      }
+    }else{applyClaim({uid:id,claimed:true,owner_id:currentKefuId,owner_name:'本地客服',owner_avatar:defaultAgentAvatar})}
+    toast('接入成功，已显示在我的会话');
+  }catch(error){toast(error.message||'会话接入失败')}finally{claimingSessions.delete(id);renderChat()}
+}
+function handleMessage(message){
+  const data=message.data;
+  if(message.type==='userOnline'){const s=ensureSession(data.uid,data);s.status='online';renderChat();return}
+  if(message.type==='visitorClaimed'){applyClaim(data);return}
+  if(message.type==='userOffline'){const s=sessions.get(typeof data==='string'?data:data.uid||data.id);if(s){s.status='offline';addTimeline(s,'访客离线');renderChat()}return}
+  if(message.type==='visitor_typing'||message.type==='inputing'){const s=ensureSession(data.from||'local');showTyping(s.id,data.content||'');return}
+  if(message.type==='visitor_environment'){const s=ensureSession(data.from||'local',data),isNew=!s.environment;s.environment=data.environment||{};if(isNew)addTimeline(s,'访客设备与环境信息已更新');renderChat();return}
+  if(message.type==='message'||message.type==='chat_message'){const id=data.from==='agent'?(data.to||activeId):(data.from||data.id);if(!id)return;addMessage(id,data.is_kefu==='yes'||data.from==='agent'?'agent':'visitor',data.content,data.time);return}
+}
+function showTyping(id,content){const s=ensureSession(id);if(!s)return;s.typing=String(content??'');if(id===activeId){$('typingPreview').hidden=false;$('typingPreview').textContent='访客正在输入：'+(s.typing||'（空）')}renderSessions()}
+async function loadOtherAgents(){
+  const list=$('otherAgentsList'),count=$('otherAgentsCount');
+  if(!token||location.protocol==='file:'){
+    count.textContent='本地联调';
+    list.innerHTML='<div class="other-agents-empty">登录客服账号后可查看其它客服状态</div>';
+    return;
+  }
+  count.textContent='加载中';
+  try{
+    const response=await fetch('/other_kefulist',{headers:{token}}),payload=await response.json();
+    if(payload.code!==200)throw new Error(payload.msg||'加载失败');
+    const agents=(Array.isArray(payload.result)?payload.result:[]).filter(agent=>agent.name!=='银联客服'&&agent.nickname!=='银联客服');
+    const onlineCount=agents.filter(agent=>agent.status==='online').length;
+    count.textContent=onlineCount+' / '+agents.length+' 在线';
+    list.innerHTML=agents.length?agents.map(agent=>{
+      const online=agent.status==='online',name=agent.nickname||agent.name||'未命名客服';
+      return '<div class="other-agent"><img class="other-agent-avatar" src="'+escapeHtml(agent.avator||defaultAgentAvatar)+'" alt=""><span class="dot'+(online?'':' offline')+'"></span><span class="other-agent-name" title="'+escapeHtml(name)+'">'+escapeHtml(name)+'</span><span class="other-agent-state'+(online?' online':'')+'">'+(online?'在线':'离线')+'</span></div>'
+    }).join(''):'<div class="other-agents-empty">暂无其它客服</div>';
+  }catch(error){
+    count.textContent='加载失败';
+    list.innerHTML='<div class="other-agents-empty">客服状态加载失败，请稍后重试</div>';
+  }
+}
+function setInternalAgentStatus(state){
+  const labels={online:'在线',connecting:'连接中',offline:'离线',local:'本地联调'};
+  $('internalAgentStatus').textContent=labels[state]||labels.offline;
+  $('internalAgentDot').classList.toggle('offline',state!=='online');
+  $('internalAgentState').classList.toggle('online',state==='online');
+}
+let socketRetryTimer=null,socketRetryDelay=1000,lastPongAt=0,resyncPending=false,reconnectSuppressed=false;
+function setConnectionState(text,state,offline){
+  $('connectionStatus').textContent=text;
+  $('statusDot').classList.toggle('offline',Boolean(offline));
+  setInternalAgentStatus(state);
+}
+function scheduleReconnect(){
+  if(reconnectSuppressed||socketRetryTimer||!token||location.protocol==='file:')return;
+  socketRetryTimer=setTimeout(()=>{socketRetryTimer=null;connect()},socketRetryDelay);
+  socketRetryDelay=Math.min(socketRetryDelay*2,15000);
+}
+function connect(){
+  if(!token||location.protocol==='file:'){setConnectionState('本地联调','local');return}
+  if(reconnectSuppressed)return;
+  if(socketRetryTimer){clearTimeout(socketRetryTimer);socketRetryTimer=null}
+  if(socket&&(socket.readyState===WebSocket.OPEN||socket.readyState===WebSocket.CONNECTING))return;
+  const scheme=location.protocol==='https:'?'wss':'ws',url=scheme+'://'+location.host+'/ws_kefu?token='+encodeURIComponent(token);
+  setConnectionState('连接中','connecting');
+  let ws;try{ws=new WebSocket(url)}catch(error){scheduleReconnect();return}
+  socket=ws;
+  ws.onopen=()=>{socketRetryDelay=1000;lastPongAt=Date.now();setConnectionState('服务在线','online');if(resyncPending){resyncPending=false;resyncAfterReconnect()}};
+  ws.onmessage=event=>{
+    let message;try{message=JSON.parse(event.data)}catch(error){return}
+    lastPongAt=Date.now();
+    if(message&&message.type==='pong')return;
+    if(message&&message.type==='close'){reconnectSuppressed=true;setConnectionState('已被新窗口接管','offline',true);try{ws.close()}catch(error){}return}
+    try{handleMessage(message)}catch(error){console.warn('无法解析客服消息',error)}
+  };
+  ws.onclose=()=>{if(socket===ws)socket=null;setConnectionState('连接断开','offline',true);resyncPending=true;scheduleReconnect()};
+  ws.onerror=()=>{setConnectionState('连接异常','offline',true)};
+}
+async function resyncAfterReconnect(){
+  try{await loadVisitorLists()}catch(error){}
+  const id=activeId;if(!id)return;
+  const s=sessions.get(id);if(!s)return;
+  s.historyLoaded=false;await selectSession(id);
+}
+setInterval(()=>{
+  if(!socket||socket.readyState!==WebSocket.OPEN)return;
+  if(lastPongAt&&Date.now()-lastPongAt>45000){try{socket.close()}catch(error){}return}
+  try{socket.send(JSON.stringify({type:'ping',data:'kefu'}))}catch(error){}
+},20000);
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!token||location.protocol==='file:'||reconnectSuppressed)return;
+  if(!socket||socket.readyState===WebSocket.CLOSED||socket.readyState===WebSocket.CLOSING){resyncPending=true;connect()}
+});
+window.addEventListener('online',()=>{if(!token||reconnectSuppressed)return;if(!socket||socket.readyState!==WebSocket.OPEN){resyncPending=true;connect()}});
+function cleanLinkLabel(value,fallback='查看链接'){return String(value||fallback).replace(/[\[\]()\r\n]/g,'_').slice(0,120)||fallback}
+function markdownUrl(value){return String(value).replace(/\(/g,'%28').replace(/\)/g,'%29')}
+function normalizeHyperlink(value){
+  let raw=String(value||'').trim();if(!raw)throw new Error('请输入链接地址');
+  if(!/^https?:\/\//i.test(raw))raw='https://'+raw;
+  const url=new URL(raw);
+  if(!['http:','https:'].includes(url.protocol)||!url.hostname)throw new Error('仅支持有效的 http:// 或 https:// 链接');
+  if(url.username||url.password)throw new Error('链接中不能包含账号或密码');
+  if(url.href.length>2048)throw new Error('链接地址不能超过 2048 个字符');
+  return url;
+}
+function setComposerContent(value){
+  const input=$('input'),start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length,end=Number.isInteger(input.selectionEnd)?input.selectionEnd:start;
+  const before=input.value.slice(0,start),after=input.value.slice(end),prefix=before&&!/\s$/.test(before)?' ':'',suffix=after&&!/^\s/.test(after)?' ':'';
+  const next=before+prefix+value+suffix+after;if(next.length>2000){toast('消息内容不能超过 2000 个字符');return}
+  input.value=next;const caret=(before+prefix+value).length;$('sendBtn').disabled=!isMine(activeSession())||!input.value.trim();input.focus();input.setSelectionRange(caret,caret);
+}
+async function prepareAttachment(file,isImage){
+  if(!file)return;
+  if(!isMine(activeSession())){toast('请先接入该访客');return}
+  if(isImage&&!/\.(png|jpe?g|gif)$/i.test(file.name)){toast('仅支持 PNG、JPG、JPEG、GIF 图片');return}
+  if(file.size>=90*1024*1024){toast('附件不能超过 90 MB');return}
+  const button=$(isImage?'agentPhotoBtn':'agentFileBtn');button.disabled=true;
+  try{
+    let url='';
+    if(token&&location.protocol!=='file:'){
+      const body=new FormData();body.append(isImage?'imgfile':'realfile',file);
+      const response=await fetch(isImage?'/uploadimg':'/uploadfile',{method:'POST',body}),result=await response.json();
+      if(result.code!==200||!result.result||!result.result.path)throw new Error(result.msg||'上传失败');
+      url=result.result.path;
+    }else{url=URL.createObjectURL(file)}
+    const label=cleanLinkLabel(file.name,isImage?'照片':'文件');
+    setComposerContent(isImage?'!['+label+']('+markdownUrl(url)+')':'[文件：'+label+']('+markdownUrl(url)+')');
+    toast((isImage?'照片':'文件')+'已添加，点击发送');
+  }catch(error){toast(error.message||'上传失败')}finally{button.disabled=false;$(isImage?'agentPhotoInput':'agentFileInput').value=''}
+}
+let linkCardImageFile=null;
+function showLinkCardError(message=''){$('linkCardError').textContent=message;$('linkCardError').hidden=!message}
+function updateLinkCardSubtitleMode(){
+  const mode=document.querySelector('input[name="linkCardSubtitleMode"]:checked').value;
+  $('linkCardTextWrap').hidden=mode!=='text';$('linkCardImageWrap').hidden=mode!=='image';showLinkCardError();
+}
+function closeLinkCardDialog(){$('linkCardModal').hidden=true;$('agentLinkBtn').focus()}
+function addHyperlink(){
+  if(!isMine(activeSession())){toast('请先接入该访客');return}
+  $('linkCardForm').reset();linkCardImageFile=null;$('linkCardImageName').textContent='未选择图片';$('linkCardImagePreview').hidden=true;$('linkCardImagePreview').removeAttribute('src');
+  updateLinkCardSubtitleMode();$('linkCardModal').hidden=false;$('linkCardUrl').focus();
+}
+async function uploadLinkCardImage(file){
+  if(token&&location.protocol!=='file:'){
+    const body=new FormData();body.append('imgfile',file);const response=await fetch('/uploadimg',{method:'POST',body}),result=await response.json();
+    if(result.code!==200||!result.result||!result.result.path)throw new Error(result.msg||'副标题图片上传失败');return result.result.path;
+  }
+  return URL.createObjectURL(file);
+}
+async function deliverAgentMessage(content,s){
+  if(!isMine(s))throw new Error(s&&s.claimed?'该访客已由 '+sessionOwnerName(s)+' 接入':'请先接入该访客');
+  if(token&&location.protocol!=='file:'){
+    const body=new URLSearchParams({type:'kefu',to_id:s.id,content}),response=await fetch('/kefu/message',{method:'POST',headers:{token,'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body}),result=await response.json();if(result.code!==200)throw new Error(result.msg||'发送失败');
+    if(!socket||socket.readyState!==WebSocket.OPEN)addMessage(s.id,'agent',content);
+  }else{addMessage(s.id,'agent',content);if(channel)channel.postMessage({type:'chat_message',from:'agent',to:s.id,content})}
+}
+async function submitLinkCard(event){
+  event.preventDefault();const session=activeSession();if(!isMine(session)){showLinkCardError('请先接入该访客');return}
+  let url;try{url=normalizeHyperlink($('linkCardUrl').value)}catch(error){showLinkCardError(error.message||'请输入有效的链接地址');return}
+  const mode=document.querySelector('input[name="linkCardSubtitleMode"]:checked').value,card={u:url.href,t:cleanLinkLabel($('linkCardTitle').value.trim()||url.hostname,url.hostname)};
+  if(mode==='text'){const subtitle=$('linkCardSubtitleText').value.trim();if(!subtitle){showLinkCardError('请输入副标题文字，或选择无副标题');return}card.s=subtitle}
+  if(mode==='image'&&!linkCardImageFile){showLinkCardError('请选择副标题图片，或选择无副标题');return}
+  $('linkCardSubmit').disabled=true;$('linkCardSubmit').textContent='发送中…';showLinkCardError();
+  try{
+    if(mode==='image')card.i=await uploadLinkCardImage(linkCardImageFile);
+    const content='link-card:'+JSON.stringify(card);if(content.length>2000)throw new Error('链接与卡片文字总长度不能超过 2000 个字符');
+    await deliverAgentMessage(content,session);closeLinkCardDialog();toast('链接卡片已发送');
+  }catch(error){showLinkCardError(error.message||'链接卡片发送失败')}finally{$('linkCardSubmit').disabled=false;$('linkCardSubmit').textContent='发送卡片'}
+}
+async function sendMessage(){
+  const s=activeSession(),input=$('input'),content=input.value.trim();if(!s||!content)return;
+  if(!isMine(s)){toast(s.claimed?'该访客已由 '+sessionOwnerName(s)+' 接入':'请先接入该访客');return}
+  $('sendBtn').disabled=true;
+  try{await deliverAgentMessage(content,s);input.value='';input.focus()}
+  catch(error){toast(error.message||'发送失败')}finally{$('sendBtn').disabled=!isMine(activeSession())||!input.value.trim()}
+}
+$('linkCardForm').addEventListener('submit',submitLinkCard);
+$('linkCardClose').addEventListener('click',closeLinkCardDialog);$('linkCardCancel').addEventListener('click',closeLinkCardDialog);
+$('linkCardModal').addEventListener('click',event=>{if(event.target===$('linkCardModal'))closeLinkCardDialog()});
+document.querySelectorAll('input[name="linkCardSubtitleMode"]').forEach(input=>input.addEventListener('change',updateLinkCardSubtitleMode));
+$('linkCardImageButton').addEventListener('click',()=>$('linkCardImageInput').click());
+$('linkCardImageInput').addEventListener('change',event=>{
+  const file=event.target.files[0];linkCardImageFile=null;
+  if(!file){$('linkCardImageName').textContent='未选择图片';$('linkCardImagePreview').hidden=true;return}
+  if(!/^image\/(png|jpeg|gif|webp)$/i.test(file.type)){showLinkCardError('仅支持 PNG、JPG、GIF、WebP 图片');event.target.value='';return}
+  if(file.size>10*1024*1024){showLinkCardError('副标题图片不能超过 10 MB');event.target.value='';return}
+  linkCardImageFile=file;$('linkCardImageName').textContent=file.name;$('linkCardImagePreview').src=URL.createObjectURL(file);$('linkCardImagePreview').hidden=false;showLinkCardError();
+});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('linkCardModal').hidden)closeLinkCardDialog()});
+$('convList').addEventListener('click',event=>{const claim=event.target.closest('[data-claim]');if(claim){event.preventDefault();event.stopPropagation();claimSession(claim.dataset.claim);return}const button=event.target.closest('[data-session]');if(button)selectSession(button.dataset.session)});
+$('convList').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.matches('[data-session]')){event.preventDefault();selectSession(event.target.dataset.session)}});
+$('claimBtn').addEventListener('click',()=>{if(activeId)claimSession(activeId)});
+document.querySelectorAll('[data-visitor-view]').forEach(button=>button.addEventListener('click',()=>{
+  visitorView=button.dataset.visitorView;
+  document.querySelectorAll('[data-visitor-view]').forEach(tab=>{const selected=tab===button;tab.classList.toggle('active',selected);tab.setAttribute('aria-selected',String(selected))});
+  renderSessions();loadVisitorLists();
+}));
+$('searchInput').addEventListener('input',renderSessions);$('input').addEventListener('input',()=>$('sendBtn').disabled=!isMine(activeSession())||!$('input').value.trim());
+$('input').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}});$('sendBtn').addEventListener('click',sendMessage);
+document.querySelectorAll('[data-template]').forEach(button=>button.addEventListener('click',()=>{if(!isMine(activeSession())){toast('请先接入该访客');return}$('input').value=button.dataset.template;$('sendBtn').disabled=false;$('input').focus()}));
+$('agentPhotoBtn').addEventListener('click',()=>{if(!isMine(activeSession())){toast('请先接入该访客');return}$('agentPhotoInput').click()});
+$('agentFileBtn').addEventListener('click',()=>{if(!isMine(activeSession())){toast('请先接入该访客');return}$('agentFileInput').click()});
+$('agentLinkBtn').addEventListener('click',addHyperlink);
+$('agentPhotoInput').addEventListener('change',event=>prepareAttachment(event.target.files[0],true));
+$('agentFileInput').addEventListener('change',event=>prepareAttachment(event.target.files[0],false));
+$('refreshBtn').addEventListener('click',()=>{renderVisitor(activeSession());toast('访客信息已刷新')});
+$('copyIp').addEventListener('click',async()=>{const s=activeSession();if(!s||!s.ip){toast('暂无可复制的 IP');return}try{await navigator.clipboard.writeText(s.ip);toast('IP 已复制')}catch(error){toast('复制失败')}});
+$('blacklistBtn').addEventListener('click',async()=>{
+  const s=activeSession();if(!s||!s.ip){toast('暂无可加入黑名单的 IP');return}
+  if(!token||location.protocol==='file:'){toast('请先登录客服账号');return}
+  if(s.blacklisted){toast('该 IP 已在黑名单中');return}
+  if(!confirm('确认将 IP '+s.ip+' 加入黑名单？'))return;
+  $('blacklistBtn').disabled=true;
+  try{
+    const response=await fetch('/ipblack',{method:'POST',headers:{token,'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:new URLSearchParams({ip:s.ip})}),result=await response.json();
+    if(result.code!==200)throw new Error(result.msg||'加入黑名单失败');
+    s.blacklisted=true;addTimeline(s,'IP 已加入黑名单');toast(result.msg||'加入黑名单成功');
+  }catch(error){toast(error.message||'加入黑名单失败')}finally{renderVisitor(activeSession())}
+});
+async function openTransferDialog(){
+  const s=activeSession();
+  if(!s){toast('请先选择要转接的会话');return}
+  if(!isMine(s)){toast(s.claimed?'只能转接自己接入的会话':'请先接入该访客');return}
+  try{
+    const response=await fetch('/other_kefulist',{headers:{token}}),payload=await response.json();
+    if(payload.code!==200)throw new Error(payload.msg||'加载客服列表失败');
+    const agents=(Array.isArray(payload.result)?payload.result:[]).filter(agent=>agent.name&&agent.name!==currentKefuId&&agent.status==='online');
+    if(!agents.length){toast('暂无可转接的在线客服');return}
+    $('transferSelect').innerHTML=agents.map(agent=>'<option value="'+escapeHtml(agent.name)+'">'+escapeHtml(agent.nickname||agent.name)+'</option>').join('');
+    $('transferModal').hidden=false;
+  }catch(error){toast(error.message||'加载客服列表失败')}
+}
+async function confirmTransfer(){
+  const s=activeSession(),target=$('transferSelect').value;
+  if(!s||!target)return;
+  const button=$('transferConfirm');button.disabled=true;button.textContent='转接中…';
+  try{
+    const response=await fetch('/trans_kefu?kefu_id='+encodeURIComponent(target)+'&visitor_id='+encodeURIComponent(s.id),{headers:{token}}),result=await response.json();
+    if(result.code!==200)throw new Error(result.msg||'转接失败');
+    if(result.result)applyClaim(result.result);
+    s.claimed=false;s.ownerId='';s.ownerName='';addTimeline(s,'会话已转接给 '+target);
+    $('transferModal').hidden=true;toast('已转接给 '+target);loadVisitorLists();renderChat();
+  }catch(error){toast(error.message||'转接失败')}finally{button.disabled=false;button.textContent='确认转接'}
+}
+$('transferBtn').addEventListener('click',openTransferDialog);
+$('transferCancel').addEventListener('click',()=>{$('transferModal').hidden=true});
+$('transferModal').addEventListener('click',event=>{if(event.target===$('transferModal'))$('transferModal').hidden=true});
+$('transferConfirm').addEventListener('click',confirmTransfer);
+$('closeBtn').addEventListener('click',async()=>{const s=activeSession();if(!s)return;if(!confirm('确认结束当前访客会话？'))return;if(token&&location.protocol!=='file:'){try{await fetch('/2/message_close?visitor_id='+encodeURIComponent(s.id))}catch(error){}}s.status='closed';s.typing=null;addTimeline(s,'客服结束会话');s.messages.push({role:'system',content:'会话已结束',time:nowTime()});renderChat();loadVisitorLists()});
+if(channel)channel.onmessage=event=>{if(event.data&&event.data.type)handleMessage(event.data)};
+$('otherAgentsDetails').addEventListener('toggle',event=>{if(event.currentTarget.open)loadOtherAgents()});
+setInterval(()=>{if($('otherAgentsDetails').open)loadOtherAgents()},30000);
+setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString('zh-CN',{hour12:false}),1000);
+renderChat();connect();loadVisitorLists();
+setInterval(()=>{if(!document.hidden&&token&&!claimingSessions.size)loadVisitorLists()},15000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&token)loadVisitorLists()});
+</script>
+
+
+</body></html>

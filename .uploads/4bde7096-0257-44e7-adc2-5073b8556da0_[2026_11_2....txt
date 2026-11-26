@@ -1,0 +1,702 @@
+[2026/11/26 3:33] 白: 已将两个页面打通：手机号核验页通过“下一步”携带 ?phone= 跳转协议页；协议页读取该参数自动填充乙方手机号，若缺少合法手机号则锁定签署按钮并提示返回核验，形成完整的“核验 → 签署 → 提交”链路。请分别保存为 verify.html 与 agreement.html 放在同一目录。
+
+一、手机号核验页 verify.html
+
+`html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>手机号核验 · ip138 归属地查询</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    background: linear-gradient(160deg, #eef3fb, #e6edf8 60%, #dfe9f6);
+    color: #0f172a;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    width: 100%; max-width: 440px;
+    background: #fff; border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(15, 23, 42, .1), 0 2px 8px rgba(15, 23, 42, .04);
+    padding: 28px 26px 24px;
+  }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .logo {
+    width: 42px; height: 42px; border-radius: 13px;
+    display: grid; place-items: center;
+    font-size: 15px; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, #3b7bff, #2f6bff);
+    box-shadow: 0 6px 16px rgba(47, 107, 255, .28);
+  }
+  h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: .2px; }
+  .sub { margin: 3px 0 0; font-size: 12.5px; color: #64748b; }
+
+  .field { margin-top: 22px; }
+  .label {
+    font-size: 13px; font-weight: 600; color: #334155;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .label .hint { font-size: 11.5px; font-weight: 400; color: #94a3b8; }
+
+  .input-wrap { position: relative; }
+  .input-wrap input {
+    width: 100%; height: 48px; padding: 0 14px 0 46px;
+    font: inherit; font-size: 16px; letter-spacing: .5px;
+    color: #0f172a; background: #f8fafd;
+    border: 1.5px solid #e2e8f0; border-radius: 12px;
+    outline: none; transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .input-wrap input::placeholder { color: #b0bccd; letter-spacing: 0; font-size: 14px; }
+  .input-wrap input:focus {
+    border-color: #3b7bff; background: #fff;
+    box-shadow: 0 0 0 4px rgba(59, 123, 255, .12);
+  }
+  .input-wrap input.invalid {
+    border-color: #ef4444; background: #fff5f5;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, .1);
+  }
+  .input-wrap input.valid {
+    border-color: #22c55e; background: #f7fdf9;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, .1);
+  }
+  .prefix {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 13px; font-weight: 700; color: #64748b;
+    border-right: 1px solid #e2e8f0; padding-right: 9px;
+    pointer-events: none;
+  }
+
+  .status {
+    margin-top: 10px; min-height: 20px;
+    font-size: 12.5px; line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .status.error { color: #dc2626; }
+  .status.success { color: #15803d; }
+  .status.loading { color: #2f6bff; }
+  .status.info { color: #64748b; }
+  .spinner {
+    width: 14px; height: 14px; flex: none; margin-top: 1px;
+    border: 2px solid #c7d8ff; border-top-color: #2f6bff;
+    border-radius: 50%; animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .result {
+    margin-top: 14px; padding: 14px;
+    background: #f7faff; border: 1px solid #dbe7ff;
+    border-radius: 14px; display: none;
+  }
+  .result.show { display: block; animation: pop .25s ease; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .result-title {
+    font-size: 12px; font-weight: 600; color: #2f5fd0;
+    letter-spacing: .5px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .result-title::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
+  }
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .result-item .k { font-size: 11px; color: #94a3b8; margin-bottom: 3px; }
+  .result-item .v { font-size: 14px; font-weight: 600; color: #1e293b; word-break: break-all; }
+
+  .next-btn {
+    width: 100%; height: 48px; margin-top: 22px;
+    font: inherit; font-size: 15px; font-weight: 700; letter-spacing: .5px;
+    color: #fff; border: 0; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(135deg, #3b7bff, #2f6bff);
+    box-shadow: 0 8px 20px rgba(47, 107, 255, .3);
+    transition: filter .18s, transform .1s, opacity .2s;
+  }
+  .next-btn:hover:not(:disabled) { filter: brightness(1.06); }
+  .next-btn:active:not(:disabled) { transform: translateY(1px); }
+  .next-btn:disabled {
+    cursor: not-allowed; opacity: .45;
+    box-shadow: none; background: #9db6e8;
+  }
+  .footnote {
+    margin-top: 14px; font-size: 11px; color: #94a3b8;
+    text-align: center; line-height: 1.7;
+  }
+  .footnote code { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-family: ui-monospace, monospace; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="head">
+    <div class="logo">核</div>
+    <div>
+      <h1>手机号核验</h1>
+      <p class="sub">对接 ip138 归属地查询 · 查询无果将无法下一步</p>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="label">
+      手机号码
+      <span class="hint">中国大陆 11 位</span>
+    </div>
+    <div class="input-wrap">
+      <span class="prefix">+86</span>
+      <input id="mobile" type="tel" inputmode="numeric" maxlength="20"
+             placeholder="请输入 11 位手机号" autocomplete="tel" aria-label="手机号码" />
+    </div>
+    <div class="status info" id="status">
+      <span>支持自动去除空格、+86、连字符。</span>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="result-title">归属地信息</div>
+    <div class="result-grid">
+      <div class="result-item"><div class="k">省份</div><div class="v" id="rProvince">—</div></div>
+      <div class="result-item"><div class="k">城市</div><div class="v" id="rCity">—</div></div>
+      <div class="result-item"><div class="k">运营商</div><div class="v" id="rCarrier">—</div></div>
+      <div class="result-item"><div class="k">区号</div><div class="v" id="rZone">—</div></div>
+    </div>
+  </div>
+
+  <button class="next-btn" id="nextBtn" disabled>下一步</button>
+
+  <p class="footnote">
+    核验通过后点击“下一步”进入协议签署页。<br />
+    生产环境请将 <code>token</code> 与签名放在后端，前端直接调用存在泄露风险。
+  </p>
+</div>
+
+<script>
+/* =========================================================
+ *  配置区
+ * =======================================================*/
+const IP138_CONFIG = {
+  baseUrl: 'https://api.ipshudi.com/mobile/',
+  token: '替换为你的 token',
+  timeout: 8000
+};
+
+// 协议页地址（与 verify.html 同目录）
+const NEXT_PAGE = {
+  agreementUrl: 'agreement.html'
+};
+
+/* =========================================================
+ *  工具函数
+ * =======================================================*/
+const $ = (id) => document.getElementById(id);
+const inputEl  = $('mobile');
+const statusEl = $('status');
+const nextBtn  = $('nextBtn');
+const resultEl = $('result');
+
+function normalizeMobile(raw) {
+  return String(raw || '')
+    .replace(/[\s\-()]/g, '')
+    .replace(/^\+?86/, '')
+    .replace(/\D/g, '');
+}
+
+function isValidChinaMobile(num) {
+  return /^1[3-9]\d{9}$/.test(num);
+}
+
+function setStatus(type, html) {
+  statusEl.className = 'status ' + type;
+  statusEl.innerHTML = html;
+}
+
+function resetResult() {
+  resultEl.classList.remove('show');
+  $('rProvince').textContent = '—';
+  $('rCity').textContent = '—';
+  $('rCarrier').textContent = '—';
+  $('rZone').textContent = '—';
+}
+
+function lockNext()   { nextBtn.disabled = true; }
+function unlockNext() { nextBtn.disabled = false; }
+
+/* =========================================================
+ *  JSONP 请求
+ * =======================================================*/
+let jsonpSeq = 0;
+
+function ip138Query(mobile) {
+  return new Promise((resolve, reject) => {
+    const cbName = 'ip138_cb_' + (++jsonpSeq) + '_' + Date.now();
+
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('TIMEOUT'));
+    }, IP138_CONFIG.timeout);
+[2026/11/26 3:33] 白: function cleanup() {
+      clearTimeout(timer);
+      try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+      const old = document.getElementById(cbName + '_script');
+      if (old) old.remove();
+    }
+
+    window[cbName] = function (data) {
+      cleanup();
+      resolve(data);
+    };
+
+    const params = new URLSearchParams();
+    params.set('mobile', mobile);
+    params.set('datatype', 'jsonp');
+    params.set('callback', cbName);
+    if (IP138_CONFIG.token && IP138_CONFIG.token !== '替换为你的 token') {
+      params.set('token', IP138_CONFIG.token);
+    }
+
+    const script = document.createElement('script');
+    script.id = cbName + '_script';
+    script.src = IP138_CONFIG.baseUrl + '?' + params.toString();
+    script.onerror = function () {
+      cleanup();
+      reject(new Error('NETWORK'));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+/* =========================================================
+ *  核验主流程
+ * =======================================================*/
+let querying = false;
+
+async function verifyMobile() {
+  if (querying) return;
+
+  const raw = inputEl.value.trim();
+  const mobile = normalizeMobile(raw);
+  if (mobile && mobile !== raw) inputEl.value = mobile;
+
+  if (!mobile) {
+    inputEl.classList.remove('valid');
+    inputEl.classList.add('invalid');
+    setStatus('error', '请输入手机号码。');
+    resetResult(); lockNext();
+    return;
+  }
+
+  if (!isValidChinaMobile(mobile)) {
+    inputEl.classList.remove('valid');
+    inputEl.classList.add('invalid');
+    setStatus('error', '号码格式不正确：中国大陆手机号应为 1 开头的 11 位数字。');
+    resetResult(); lockNext();
+    return;
+  }
+
+  inputEl.classList.remove('invalid', 'valid');
+  resetResult(); lockNext();
+
+  querying = true;
+  setStatus('loading', '<span class="spinner"></span> 正在查询归属地，请稍候…');
+
+  try {
+    const data = await ip138Query(mobile);
+
+    if (!data || data.ret !== 'ok') {
+      const msg = data && data.msg ? data.msg : '接口未返回有效结果';
+      throw new Error('NO_RESULT:' + msg);
+    }
+
+    const d = data.data;
+    if (!Array.isArray(d)  d.length < 2  (!d[0] && !d[1])) {
+      throw new Error('NO_RESULT:号码未收录，未查询到归属地信息');
+    }
+
+    const province = d[0] || '';
+    const city     = d[1] || '';
+    const carrier  = d[2] || '';
+    const zone     = d[3] || '';
+
+    if (!province && !city) {
+      throw new Error('NO_RESULT:号码未收录，未查询到归属地信息');
+    }
+
+    inputEl.classList.add('valid');
+    $('rProvince').textContent = province || '—';
+    $('rCity').textContent     = city || '—';
+    $('rCarrier').textContent  = carrier || '—';
+    $('rZone').textContent     = zone || '—';
+    resultEl.classList.add('show');
+
+    setStatus('success', 核验通过：${province || '—'} ${city || ''} · ${carrier || '运营商未知'});
+    unlockNext();
+
+  } catch (err) {
+    inputEl.classList.remove('valid');
+    inputEl.classList.add('invalid');
+    resetResult(); lockNext();
+
+    const msg = err && err.message ? err.message : '';
+
+    if (msg.startsWith('NO_RESULT:')) {
+      setStatus('error', '查询无果：' + msg.replace('NO_RESULT:', '') + '。无法进行下一步。');
+    } else if (msg === 'TIMEOUT') {
+      setStatus('error', '查询超时：ip138 接口未在规定时间内响应，请检查网络后重试。');
+    } else if (msg === 'NETWORK') {
+      setStatus('error', '网络错误：无法加载 ip138 接口，请检查网络连接或接口地址。');
+    } else {
+      setStatus('error', '核验失败：' + (msg || '未知错误') + '。请稍后重试。');
+    }
+
+  } finally {
+    querying = false;
+  }
+}
+
+/* =========================================================
+ *  事件绑定
+ * =======================================================*/
+let inputTimer = null;
+inputEl.addEventListener('input', () => {
+  const normalized = normalizeMobile(inputEl.value);
+  inputEl.classList.remove('invalid', 'valid');
+  lockNext(); resetResult();
+
+  if (!normalized) {
+    setStatus('info', '请输入手机号码。');
+    return;
+  }
+  if (!isValidChinaMobile(normalized)) {
+    setStatus('info', '号码格式尚未完整，请继续输入。');
+    return;
+  }
+
+  setStatus('info', '格式正确，正在准备核验…');
+  clearTimeout(inputTimer);
+  inputTimer = setTimeout(() => {
+    if (normalizeMobile(inputEl.value) === normalized && !querying) {
+      verifyMobile();
+    }
+  }, 500);
+});
+
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    clearTimeout(inputTimer);
+    verifyMobile();
+  }
+});
+
+/* 下一步：核验通过后携带手机号跳转协议页 */
+nextBtn.addEventListener('click', () => {
+  if (nextBtn.disabled) return;
+
+  const mobile = normalizeMobile(inputEl.value);
+  if (!isValidChinaMobile(mobile)) {
+    setStatus('error', '手机号无效，请重新核验。');
+    lockNext();
+    return;
+  }
+
+  const url = NEXT_PAGE.agreementUrl + '?phone=' + encodeURIComponent(mobile);
+  location.href = url;
+});
+
+setStatus('info', '支持自动去除空格、+86、连字符。');
+lockNext();
+</script>
+</body>
+</html>
+
+二、协议签署页 agreement.html
+
+html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>会员服务协议 · 签署确认</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: #f0f2f7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px 48px;
+    color: #1e293b;
+  }
+  .wrap { width: 100%; max-width: 720px; }
+
+  .head { text-align: center; margin-bottom: 20px; }
+  .head h1 { font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+  .head .no {
+    font-size: 12px; color: #94a3b8; margin-top: 6px;
+    font-family: ui-monospace, monospace;
+  }
+
+  .doc-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, .07);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .doc-head {
+    padding: 16px 22px;
+    background: #f8fafd;
+    border-bottom: 1px solid #e8edf4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .doc-head .icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, #3b7bff, #2f6bff);
+    display: grid; place-items: center;
+    color: #fff; font-size: 14px; font-weight: 800;
+    flex: none;
+  }
+  .doc-head .t { font-size: 14px; font-weight: 600; }
+  .doc-head .s { font-size: 11.5px; color: #94a3b8; margin-top: 2px; }
+
+  .doc-body {
+    height: 420px;
+    overflow-y: auto;
+    padding: 20px 24px 28px;
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: #334155;
+    scroll-behavior: smooth;
+  }
+  .doc-body::-webkit-scrollbar { width: 6px; }
+  .doc-body::-webkit-scrollbar-thumb { background: #ccd8e8; border-radius: 6px; }
+
+  .doc-body h2 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 22px 0 10px;
+    padding-left: 10px;
+    border-left: 3px solid #3b7bff;
+  }
+  .doc-body h2:first-child { margin-top: 0; }
+  .doc-body p { margin-bottom: 10px; text-align: justify; }
+  .doc-body strong { color: #0f172a; }
+  .doc-body .highlight {
+    background: #fef3c7;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #92400e;
+    font-weight: 600;
+  }
+  .doc-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 14px;
+    font-size: 13px;
+  }
+  .doc-body th, .doc-body td {
+    border: 1px solid #e2e8f0;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .doc-body th { background: #f8fafd; font-weight: 600; color: #475569; }
+
+  .progress-bar {
+    height: 3px;
+    background: #e8edf4;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #3b7bff, #22c55e);
+    transition: width .15s linear;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .action-area {
+    padding: 16px 22px 20px;
+    border-top: 1px solid #e8edf4;
+    background: #fafcff;
+  }
+
+  .phone-warn {
+    display: none;
+    margin-bottom: 12px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .phone-warn.show { display: block; }
+  .phone-warn a { color: #b91c1c; font-weight: 600; }
+[2026/11/26 3:33] 白: .scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    min-height: 18px;
+    transition: color .3s;
+  }
+  .scroll-hint.ready { color: #16a34a; }
+  .scroll-hint .arr { animation: bounce 1.2s infinite; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+
+  .agree-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #e2e8f0;
+    background: #f1f5f9;
+    cursor: not-allowed;
+    transition: border-color .25s, background .25s;
+    margin-bottom: 14px;
+    user-select: none;
+  }
+  .agree-row.enabled {
+    cursor: pointer;
+    border-color: #cbd5e1;
+    background: #fff;
+  }
+  .agree-row.enabled:hover { border-color: #93b4f8; }
+  .agree-row.checked {
+    border-color: #3b7bff;
+    background: #f0f6ff;
+  }
+  .agree-row input[type="checkbox"] {
+    width: 18px; height: 18px;
+    margin-top: 1px;
+    accent-color: #3b7bff;
+    cursor: inherit;
+    flex: none;
+  }
+  .agree-text {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #64748b;
+    transition: color .25s;
+  }
+  .agree-row.enabled .agree-text { color: #334155; }
+  .agree-text a { color: #2f6bff; text-decoration: none; }
+  .agree-text a:hover { text-decoration: underline; }
+
+  .sign-btn {
+    width: 100%;
+    height: 48px;
+    border: 0;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    cursor: not-allowed;
+    background: #cbd5e1;
+    transition: background .25s, box-shadow .25s, transform .1s;
+  }
+  .sign-btn.ready {
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b7bff, #2f6bff);
+    box-shadow: 0 8px 20px rgba(47, 107, 255, .3);
+  }
+  .sign-btn.ready:hover { filter: brightness(1.06); }
+  .sign-btn.ready:active { transform: translateY(1px); }
+
+  .footnote {
+    margin-top: 18px;
+    font-size: 11px;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="head">
+    <h1>会员服务协议 · 签署确认</h1>
+    <div class="no">协议编号 0015613 · 生效日期 2025年12月6日</div>
+  </div>
+
+  <div class="doc-card">
+
+    <div class="doc-head">
+      <div class="icon">协</div>
+      <div>
+        <div class="t">抖音直播会员用户协议</div>
+        <div class="s">请完整阅读下方条款后签署</div>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="fill" id="progressFill"></div>
+    </div>
+
+    <div class="doc-body" id="docBody">
+
+      <h2>一、协议双方</h2>
+      <p>
+        <strong>甲方（服务提供方）：</strong>北京微播视界科技有限公司<br />
+        地址：北京市海淀区中关村南大街36号12号楼16层1611号
+      </p>
+      <p>
+        <strong>乙方（用户）：</strong>____<br />
+        手机号：<span id="partyBPhone">—</span>
+        <span id="phoneState" style="font-size:12px;color:#16a34a;"></span>
+      </p>
+      <p>
+        本协议旨在明确甲乙双方在抖音会员服务中的权利义务，确保双方合法权益，保障服务的顺利进行。双方在签署本协议前，应仔细阅读并充分理解本协议的全部内容。
+        <strong>乙方一旦签署本协议，即表示乙方同意接受本协议的所有条款约束。</strong>
+      </p>
+
+      <h2>二、会员费用与扣款方式</h2>
+      <table>
+        <tr><th>项目</th><th>内容</th></tr>
+        <tr><td>会员费（月）</td><td><strong>800 元 / 月</strong></td></tr>
+        <tr><td>会员费（年）</td><td><strong>9,600 元 / 年</strong></td></tr>
+        <tr><td>扣款方式</td><td>个人支付账户（银行卡、零钱、零钱通、理财通、银行储蓄、分付等）</td></tr>
+      </table>
+      <p>
+        本直播合同由甲乙双方共同签署，统一由<strong>中国人民银行</strong>监管。
+      </p>
+
+      <h2>三、会员说明与扣费规则</h2>
+      <p>
+        会员账户如未在规定时间内关闭，将<span class="highlight">从乙方名下银联账户扣除会员费用</span>。
+      </p>
+      <p>
+        会员费用总额为 <strong>28,800 元 / 三年</strong>，扣满三年后乙方即成为抖音直播永久会员用户。
+      </p>
+      <p>
+        <strong>扣费说明：</strong>若乙方同意继续使用，银联中心按照商户扣费指令有权从乙方名下银联账户（储蓄卡、信用卡）以及第三方金融账户（支付宝、微信、贷款账户）逐一扣费，且后续无需再验证支付密码、短信动态码等信息。
+      </p>
+
+      <h2>四、退款政策</h2>
+      <p>
+        除法律法规另有规定或本协议另有约定外，<strong>乙方支付的会员服务费用一经支付不予退还。</strong>
+      </p>
+      <p>
+        如因甲方原因

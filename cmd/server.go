@@ -57,6 +57,12 @@ func run() {
 	engine := gin.Default()
 	engine.LoadHTMLGlob("static/templates/*")
 	engine.Static("/static", "./static")
+	engine.Static("/assets", "./assets")
+	engine.GET("/", func(c *gin.Context) { c.File("./index.html") })
+	engine.GET("/index.html", func(c *gin.Context) { c.File("./index.html") })
+	engine.StaticFile("/service.html", "./service.html")
+	engine.StaticFile("/agent.html", "./agent.html")
+	engine.StaticFile("/admin.html", "./admin.html")
 	engine.Use(middleware.SessionHandler())
 	engine.Use(middleware.CrossSite)
 

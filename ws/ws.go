@@ -20,6 +20,7 @@ type User struct {
 	Id         string
 	Avator     string
 	To_id      string
+	Claimed    bool
 	Role_id    string
 	Mux        sync.Mutex
 	UpdateTime time.Time
@@ -126,6 +127,53 @@ func WsServerBackend() {
 			message.Mux.Lock()
 			defer message.Mux.Unlock()
 			conn.WriteMessage(websocket.TextMessage, str)
+		case "visitor_environment":
+			data, ok := typeMsg.Data.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			from, _ := data["from"].(string)
+			visitor, ok := ClientList[from]
+			if !ok || visitor.Conn != conn || visitor.To_id == "" {
+				continue
+			}
+			visitorInfo := models.FindVisitorByVistorId(from)
+			out, _ := json.Marshal(TypeMessage{
+				Type: "visitor_environment",
+				Data: map[string]interface{}{
+					"from":        from,
+					"environment": data["environment"],
+					"client_ip":   visitorInfo.ClientIp,
+					"city":        visitorInfo.City,
+					"refer":       visitorInfo.Refer,
+				},
+			})
+			OneKefuMessage(visitor.To_id, out)
+		case "visitor_typing":
+			data, ok := typeMsg.Data.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			from, _ := data["from"].(string)
+			content, _ := data["content"].(string)
+			sessionID, _ := data["session_id"].(string)
+			visitor, ok := ClientList[from]
+			if !ok || visitor.Conn != conn || visitor.To_id == "" {
+				continue
+			}
+			contentRunes := []rune(content)
+			if len(contentRunes) > 500 {
+				content = string(contentRunes[:500])
+			}
+			out, _ := json.Marshal(TypeMessage{
+				Type: "visitor_typing",
+				Data: map[string]string{
+					"from":       from,
+					"content":    content,
+					"session_id": sessionID,
+				},
+			})
+			OneKefuMessage(visitor.To_id, out)
 		case "inputing":
 			data := typeMsg.Data.(map[string]interface{})
 			from := data["from"].(string)
@@ -142,5 +190,13 @@ func UpdateVisitorUser(visitorId string, toId string) {
 	guest, ok := ClientList[visitorId]
 	if ok {
 		guest.To_id = toId
+	}
+}
+
+func ClaimVisitorUser(visitorId string, toId string) {
+	guest, ok := ClientList[visitorId]
+	if ok {
+		guest.To_id = toId
+		guest.Claimed = true
 	}
 }
