@@ -105,6 +105,18 @@ func ClaimVisitor(visitorId string, kefuId string) bool {
 	return result.Error == nil && result.RowsAffected > 0
 }
 
+// TransferVisitor 将已接入的访客转交给其他客服。
+func TransferVisitor(visitorId string, kefuId string) bool {
+	result := DB.Model(&Visitor{}).
+		Where("visitor_id = ?", visitorId).
+		Updates(map[string]interface{}{
+			"to_id":      kefuId,
+			"claimed":    true,
+			"updated_at": time.Now(),
+		})
+	return result.Error == nil && result.RowsAffected > 0
+}
+
 // 查询条数
 func CountVisitors() uint {
 	var count uint

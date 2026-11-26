@@ -128,21 +128,25 @@ func GetOtherKefuList(c *gin.Context) {
 func PostTransKefu(c *gin.Context) {
 	kefuId := c.Query("kefu_id")
 	visitorId := c.Query("visitor_id")
-	curKefuId, _ := c.Get("kefu_name")
 	user := models.FindUser(kefuId)
-	visitor := models.FindVisitorByVistorId(visitorId)
-	if user.Name == "" || visitor.Name == "" {
+	visitor := ensureVisitorRecord(visitorId)
+	if user.ID == 0 || visitor.ID == 0 {
 		c.JSON(200, gin.H{
 			"code": 400,
 			"msg":  "访客或客服不存在",
 		})
 		return
 	}
-	models.UpdateVisitorKefu(visitorId, kefuId)
-	ws.UpdateVisitorUser(visitorId, kefuId)
-	go ws.VisitorOnline(kefuId, visitor)
-	go ws.VisitorOffline(curKefuId.(string), visitor.VisitorId, visitor.Name)
-	go ws.VisitorNotice(visitor.VisitorId, "客服转接到"+user.Nickname)
+	if !models.TransferVisitor(visitorId, kefuId) {
+		c.JSON(200, gin.H{
+			"code": 500,
+			"msg":  "转接失败，请稍后重试",
+		})
+		return
+	}
+	visitor = models.FindVisitorByVistorId(visitorId)
+	ws.ClaimVisitorUser(visitorId, kefuId)
+	ws.VisitorClaimed(visitor, user)
 	c.JSON(200, gin.H{
 		"code": 200,
 		"msg":  "转移成功",

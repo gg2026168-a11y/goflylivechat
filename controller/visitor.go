@@ -329,6 +329,20 @@ func visitorClaimResult(visitor models.Visitor) gin.H {
 	}
 }
 
+// ensureVisitorRecord 在访客在线但数据库记录缺失时，从内存补建记录，避免无法接入。
+func ensureVisitorRecord(visitorId string) models.Visitor {
+	visitor := models.FindVisitorByVistorId(visitorId)
+	if visitor.ID != 0 {
+		return visitor
+	}
+	guest, ok := ws.ClientList[visitorId]
+	if !ok || guest == nil {
+		return visitor
+	}
+	models.CreateVisitor(guest.Name, guest.Avator, "", guest.To_id, visitorId, "", "", "", "")
+	return models.FindVisitorByVistorId(visitorId)
+}
+
 // PostVisitorClaim 将未接入访客原子分配给当前客服，并同步给所有工作台。
 func PostVisitorClaim(c *gin.Context) {
 	visitorId := c.PostForm("visitor_id")
@@ -340,11 +354,15 @@ func PostVisitorClaim(c *gin.Context) {
 		return
 	}
 	kefuName, _ := c.Get("kefu_name")
-	kefuId := kefuName.(string)
+	kefuId, _ := kefuName.(string)
 	kefuInfo := models.FindUser(kefuId)
-	visitor := models.FindVisitorByVistorId(visitorId)
-	if kefuInfo.ID == 0 || visitor.ID == 0 {
-		c.JSON(200, gin.H{"code": 400, "msg": "访客或客服不存在"})
+	if kefuInfo.ID == 0 {
+		c.JSON(200, gin.H{"code": 400, "msg": "客服账号不存在，请重新登录"})
+		return
+	}
+	visitor := ensureVisitorRecord(visitorId)
+	if visitor.ID == 0 {
+		c.JSON(200, gin.H{"code": 400, "msg": "访客已离线，请刷新在线访客列表后重试"})
 		return
 	}
 	if visitor.Claimed {
