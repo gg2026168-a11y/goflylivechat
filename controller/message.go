@@ -9,6 +9,8 @@ import (
 	"goflylivechat/models"
 	"goflylivechat/tools"
 	"goflylivechat/ws"
+	"io"
+	"net/http"
 	"os"
 	"path"
 	"strconv"
@@ -229,83 +231,87 @@ func SendCloseMessageV2(c *gin.Context) {
 		"msg":  "ok",
 	})
 }
+
+const maxUploadSize = 90 * 1024 * 1024
+
 func UploadImg(c *gin.Context) {
 	f, err := c.FormFile("imgfile")
-	if err != nil {
-		c.JSON(200, gin.H{
-			"code": 400,
-			"msg":  "上传失败!",
-		})
+	if err != nil || f.Size <= 0 || f.Size >= maxUploadSize {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!图片不能为空且必须小于90M"})
 		return
-	} else {
-
-		fileExt := strings.ToLower(path.Ext(f.Filename))
-		if fileExt != ".png" && fileExt != ".jpg" && fileExt != ".gif" && fileExt != ".jpeg" {
-			c.JSON(200, gin.H{
-				"code": 400,
-				"msg":  "上传失败!只允许png,jpg,gif,jpeg文件",
-			})
-			return
-		}
-		isMainUploadExist, _ := tools.IsFileExist(common.Upload)
-		if !isMainUploadExist {
-			os.Mkdir(common.Upload, os.ModePerm)
-		}
-		fileName := tools.Md5(fmt.Sprintf("%s%s", f.Filename, time.Now().String()))
-		fildDir := fmt.Sprintf("%s%d%s/", common.Upload, time.Now().Year(), time.Now().Month().String())
-		isExist, _ := tools.IsFileExist(fildDir)
-		if !isExist {
-			os.Mkdir(fildDir, os.ModePerm)
-		}
-		filepath := fmt.Sprintf("%s%s%s", fildDir, fileName, fileExt)
-		c.SaveUploadedFile(f, filepath)
-		c.JSON(200, gin.H{
-			"code": 200,
-			"msg":  "上传成功!",
-			"result": gin.H{
-				"path": filepath,
-			},
-		})
 	}
+	fileExt := strings.ToLower(path.Ext(f.Filename))
+	expectedTypes := map[string]string{".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp"}
+	expectedType, allowed := expectedTypes[fileExt]
+	if !allowed {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!只允许png,jpg,gif,jpeg,webp图片"})
+		return
+	}
+	src, err := f.Open()
+	if err != nil {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!无法读取图片"})
+		return
+	}
+	defer src.Close()
+	buffer := make([]byte, 512)
+	n, readErr := src.Read(buffer)
+	if readErr != nil && readErr != io.EOF {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!无法读取图片"})
+		return
+	}
+	if http.DetectContentType(buffer[:n]) != expectedType {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!图片内容与扩展名不一致"})
+		return
+	}
+	fildDir := fmt.Sprintf("%s%d%s/", common.Upload, time.Now().Year(), time.Now().Month().String())
+	if err := os.MkdirAll(fildDir, 0755); err != nil {
+		c.JSON(200, gin.H{"code": 500, "msg": "上传失败!无法创建目录"})
+		return
+	}
+	filepath := fmt.Sprintf("%s%s%s", fildDir, tools.Uuid(), fileExt)
+	if err := c.SaveUploadedFile(f, filepath); err != nil {
+		c.JSON(200, gin.H{"code": 500, "msg": "上传失败!无法保存图片"})
+		return
+	}
+	c.JSON(200, gin.H{
+		"code": 200,
+		"msg":  "上传成功!",
+		"result": gin.H{
+			"path": filepath,
+		},
+	})
 }
 func UploadFile(c *gin.Context) {
 	f, err := c.FormFile("realfile")
-	if err != nil {
-		c.JSON(200, gin.H{
-			"code": 400,
-			"msg":  "上传失败!",
-		})
+	if err != nil || f.Size <= 0 || f.Size >= maxUploadSize {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!文件不能为空且必须小于90M"})
 		return
-	} else {
-
-		fileExt := strings.ToLower(path.Ext(f.Filename))
-		if f.Size >= 90*1024*1024 {
-			c.JSON(200, gin.H{
-				"code": 400,
-				"msg":  "上传失败!不允许超过90M",
-			})
-			return
-		}
-
-		fileName := tools.Md5(fmt.Sprintf("%s%s", f.Filename, time.Now().String()))
-		fildDir := fmt.Sprintf("%s%d%s/", common.Upload, time.Now().Year(), time.Now().Month().String())
-		isExist, _ := tools.IsFileExist(fildDir)
-		if !isExist {
-			os.Mkdir(fildDir, os.ModePerm)
-		}
-		filepath := fmt.Sprintf("%s%s%s", fildDir, fileName, fileExt)
-		c.SaveUploadedFile(f, filepath)
-		c.JSON(200, gin.H{
-			"code": 200,
-			"msg":  "上传成功!",
-			"result": gin.H{
-				"path": filepath,
-				"ext":  fileExt,
-				"size": f.Size,
-				"name": f.Filename,
-			},
-		})
 	}
+	fileExt := strings.ToLower(path.Ext(f.Filename))
+	if len(fileExt) > 20 {
+		c.JSON(200, gin.H{"code": 400, "msg": "上传失败!文件扩展名过长"})
+		return
+	}
+	fildDir := fmt.Sprintf("%s%d%s/", common.Upload, time.Now().Year(), time.Now().Month().String())
+	if err := os.MkdirAll(fildDir, 0755); err != nil {
+		c.JSON(200, gin.H{"code": 500, "msg": "上传失败!无法创建目录"})
+		return
+	}
+	filepath := fmt.Sprintf("%s%s%s", fildDir, tools.Uuid(), fileExt)
+	if err := c.SaveUploadedFile(f, filepath); err != nil {
+		c.JSON(200, gin.H{"code": 500, "msg": "上传失败!无法保存文件"})
+		return
+	}
+	c.JSON(200, gin.H{
+		"code": 200,
+		"msg":  "上传成功!",
+		"result": gin.H{
+			"path": filepath,
+			"ext":  fileExt,
+			"size": f.Size,
+			"name": f.Filename,
+		},
+	})
 }
 func GetMessagesV2(c *gin.Context) {
 	visitorId := c.Query("visitor_id")
