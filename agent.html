@@ -191,7 +191,21 @@ function connect(){
 }
 function cleanLinkLabel(value,fallback='查看链接'){return String(value||fallback).replace(/[\[\]()\r\n]/g,'_').slice(0,120)||fallback}
 function markdownUrl(value){return String(value).replace(/\(/g,'%28').replace(/\)/g,'%29')}
-function setComposerContent(value){const input=$('input');input.value=value;$('sendBtn').disabled=!activeSession();input.focus();input.setSelectionRange(value.length,value.length)}
+function normalizeHyperlink(value){
+  let raw=String(value||'').trim();if(!raw)throw new Error('请输入链接地址');
+  if(!/^https?:\/\//i.test(raw))raw='https://'+raw;
+  const url=new URL(raw);
+  if(!['http:','https:'].includes(url.protocol)||!url.hostname)throw new Error('仅支持有效的 http:// 或 https:// 链接');
+  if(url.username||url.password)throw new Error('链接中不能包含账号或密码');
+  if(url.href.length>2048)throw new Error('链接地址不能超过 2048 个字符');
+  return url;
+}
+function setComposerContent(value){
+  const input=$('input'),start=Number.isInteger(input.selectionStart)?input.selectionStart:input.value.length,end=Number.isInteger(input.selectionEnd)?input.selectionEnd:start;
+  const before=input.value.slice(0,start),after=input.value.slice(end),prefix=before&&!/\s$/.test(before)?' ':'',suffix=after&&!/^\s/.test(after)?' ':'';
+  const next=before+prefix+value+suffix+after;if(next.length>2000){toast('消息内容不能超过 2000 个字符');return}
+  input.value=next;const caret=(before+prefix+value).length;$('sendBtn').disabled=!activeSession()||!input.value.trim();input.focus();input.setSelectionRange(caret,caret);
+}
 async function prepareAttachment(file,isImage){
   if(!file||!activeSession())return;
   if(isImage&&!/\.(png|jpe?g|gif)$/i.test(file.name)){toast('仅支持 PNG、JPG、JPEG、GIF 图片');return}
@@ -212,10 +226,11 @@ async function prepareAttachment(file,isImage){
 }
 function addHyperlink(){
   if(!activeSession()){toast('请先选择访客');return}
-  const value=prompt('请输入超级链接（http:// 或 https://）','https://');if(value===null)return;
-  let url;try{url=new URL(value);if(!['http:','https:'].includes(url.protocol))throw new Error()}catch(error){toast('请输入有效的 http:// 或 https:// 链接');return}
-  const title=prompt('请输入链接显示文字','查看链接');if(title===null)return;
-  setComposerContent('['+cleanLinkLabel(title)+']('+markdownUrl(url.href)+')');
+  const value=prompt('请输入超级链接，可省略 https://','https://');if(value===null)return;
+  let url;try{url=normalizeHyperlink(value)}catch(error){toast(error.message||'请输入有效的链接地址');return}
+  const title=prompt('请输入链接显示文字，留空则使用域名',url.hostname);if(title===null)return;
+  const label=cleanLinkLabel(title.trim()||url.hostname);
+  setComposerContent('['+label+']('+markdownUrl(url.href)+')');toast('超级链接已添加，点击发送');
 }
 async function sendMessage(){
   const s=activeSession(),input=$('input'),content=input.value.trim();if(!s||!content)return;
