@@ -117,7 +117,7 @@ func PostVisitorLogin(c *gin.Context) {
 	if visitor.Name != "" {
 		avator = visitor.Avator
 		//更新状态上线
-		models.UpdateVisitor(name, visitor.Avator, id, 1, c.ClientIP(), c.ClientIP(), refer, extra)
+		models.UpdateVisitor(name, visitor.Avator, id, 1, c.ClientIP(), c.ClientIP(), refer, extra, toId)
 	} else {
 		models.CreateVisitor(name, avator, c.ClientIP(), toId, id, refer, city, client_ip, extra)
 	}
@@ -254,19 +254,15 @@ func GetVisitorOnlines(c *gin.Context) {
 	})
 }
 
-// @Summary 获取客服的在线访客列表接口
+// @Summary 获取所有在线访客列表，供每位在线客服显示
 // @Produce  json
 // @Success 200 {object} controller.Response
 // @Failure 200 {object} controller.Response
 // @Router /visitors_kefu_online [get]
 func GetKefusVisitorOnlines(c *gin.Context) {
-	kefuName, _ := c.Get("kefu_name")
 	users := make([]*VisitorOnline, 0)
 	visitorIds := make([]string, 0)
 	for uid, visitor := range ws.ClientList {
-		if visitor.To_id != kefuName {
-			continue
-		}
 		userInfo := new(VisitorOnline)
 		userInfo.Uid = uid
 		userInfo.Username = visitor.Name

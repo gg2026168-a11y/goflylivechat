@@ -95,7 +95,7 @@ func AddVisitorToList(user *User) {
 	str, _ := json.Marshal(msg)
 
 	//新版
-	OneKefuMessage(user.To_id, str)
+	AllKefuMessage(str)
 }
 func VisitorOnline(kefuId string, visitor models.Visitor) {
 	lastMessage := models.FindLastMessageByVisitorId(visitor.VisitorId)
@@ -115,7 +115,7 @@ func VisitorOnline(kefuId string, visitor models.Visitor) {
 		Data: userInfo,
 	}
 	str, _ := json.Marshal(msg)
-	OneKefuMessage(kefuId, str)
+	AllKefuMessage(str)
 }
 func VisitorOffline(kefuId string, visitorId string, visitorName string) {
 
@@ -129,7 +129,7 @@ func VisitorOffline(kefuId string, visitorId string, visitorName string) {
 	}
 	str, _ := json.Marshal(msg)
 	//新版
-	OneKefuMessage(kefuId, str)
+	AllKefuMessage(str)
 }
 func VisitorNotice(visitorId string, notice string) {
 	msg := TypeMessage{

@@ -110,6 +110,14 @@ func OneKefuMessage(toId string, str []byte) {
 		tools.Logger().Println("send_kefu_message", error, string(str))
 	}
 }
+
+// AllKefuMessage 将在线访客状态同步给每位已连接客服。
+func AllKefuMessage(str []byte) {
+	for kefuId := range KefuList {
+		OneKefuMessage(kefuId, str)
+	}
+}
+
 func KefuMessage(visitorId, content string, kefuInfo models.User) {
 	msg := TypeMessage{
 		Type: "message",
