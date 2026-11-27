@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173b32">
+  <meta name="description" content="初芒是一间独立创意工作室，提供品牌策略、视觉识别与数字体验设计。让好想法，长成好品牌。">
+  <title>初芒创意 — 让好想法，长成好品牌</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    :root {
+      --paper: #f4f1e9;
+      --paper-deep: #e8e2d5;
+      --ink: #173b32;
+      --ink-soft: #52645e;
+      --lime: #dfff72;
+      --coral: #ff8266;
+      --white: #fffdf7;
+      --line: rgba(23, 59, 50, .18);
+      --radius: 24px;
+      --sans: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --serif: "Noto Serif SC", "Songti SC", STSong, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body.menu-open { overflow: hidden; }
+    ::selection { color: var(--ink); background: var(--lime); }
+    a { color: inherit; text-decoration: none; }
+    button { color: inherit; font: inherit; }
+    img, svg { display: block; max-width: 100%; }
+    h1, h2, h3, p { margin-top: 0; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 100;
+      padding: 10px 16px;
+      background: var(--lime);
+      transform: translateY(-150%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .container { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
+    .section { padding: 120px 0; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 56px;
+    }
+    .section-index { font-size: 13px; letter-spacing: .12em; }
+    .section-title {
+      max-width: 760px;
+      margin-bottom: 0;
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      border-bottom: 1px solid transparent;
+      transition: background .25s, border-color .25s;
+    }
+    .site-header.scrolled {
+      background: rgba(244, 241, 233, .9);
+      border-color: var(--line);
+      backdrop-filter: blur(16px);
+    }
+    .navbar { height: 84px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+    .logo { display: inline-flex; align-items: center; gap: 11px; font-size: 20px; font-weight: 800; letter-spacing: .08em; }
+    .logo-mark { position: relative; width: 26px; height: 26px; border: 2px solid var(--ink); border-radius: 50%; }
+    .logo-mark::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      right: -3px;
+      top: -3px;
+      border-radius: 50%;
+      background: var(--coral);
+      border: 2px solid var(--paper);
+    }
+    .nav-links { display: flex; align-items: center; gap: 34px; font-size: 14px; }
+    .nav-links > a:not(.button) { position: relative; }
+    .nav-links > a:not(.button)::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 -6px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .25s;
+    }
+    .nav-links > a:hover::after { transform: scaleX(1); transform-origin: left; }
+    .nav-toggle { display: none; border: 0; background: none; padding: 10px; cursor: pointer; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; margin: 5px 0; background: var(--ink); transition: transform .25s; }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 12px 22px;
+      border: 1px solid var(--ink);
+      border-radius: 100px;
+      background: var(--ink);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform .2s, background .2s, color .2s;
+    }
+    .button:hover { transform: translateY(-2px); background: var(--lime); color: var(--ink); }
+    .button-outline { background: transparent; color: var(--ink); }
+    .button-outline:hover { background: var(--ink); color: var(--white); }
+    .button-light { border-color: var(--lime); background: var(--lime); color: var(--ink); }
+    .button-light:hover { background: var(--white); border-color: var(--white); }
+    .button .arrow { font-size: 18px; line-height: 1; }
+
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      padding: 150px 0 80px;
+      isolation: isolate;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 520px;
+      height: 520px;
+      top: 4%;
+      right: -180px;
+      border-radius: 50%;
+      background: var(--lime);
+      opacity: .62;
+      filter: blur(1px);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 180px;
+      height: 180px;
+      left: -80px;
+      bottom: 10%;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      box-shadow: 0 0 0 36px var(--paper), 0 0 0 37px var(--line), 0 0 0 72px var(--paper), 0 0 0 73px var(--line);
+    }
+    .hero-content { position: relative; width: 100%; }
+    .hero h1 {
+      max-width: 1020px;
+      margin-bottom: 44px;
+      font-family: var(--serif);
+      font-size: clamp(58px, 9.4vw, 126px);
+      font-weight: 500;
+      line-height: 1.04;
+      letter-spacing: -.065em;
+    }
+    .hero h1 em { position: relative; z-index: 0; color: var(--ink); font-style: normal; white-space: nowrap; }
+    .hero h1 em::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 2%;
+      right: -2%;
+      bottom: 8%;
+      height: 20%;
+      background: var(--coral);
+      opacity: .78;
+      transform: rotate(-1.5deg);
+    }
+    .hero-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: end; }
+    .hero-intro { max-width: 500px; margin-bottom: 0; color: var(--ink-soft); font-size: 17px; line-height: 1.9; }
+    .hero-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+    .hero-note {
+      position: absolute;
+      right: 0;
+      top: -50px;
+      display: grid;
+      place-items: center;
+      width: 112px;
+      height: 112px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      font-family: var(--serif);
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
+      transform: rotate(9deg);
+    }
+    .hero-note::after { content: "✳"; position: absolute; top: -15px; padding: 0 8px; background: var(--paper); font-size: 24px; }
+    .disciplines { border-block: 1px solid var(--line); }
+    .disciplines-inner { display: flex; justify-content: space-between; gap: 28px; padding-block: 24px; }
+    .disciplines span { display: inline-flex; align-items: center; gap: 28px; font-size: 13px; font-weight: 650; letter-spacing: .08em; }
+    .disciplines span:not(:last-child)::after { content: "✳"; color: var(--coral); font-size: 16px; }
+
+    .work-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; }
+    .project { grid-column: span 6; }
+    .project:first-child { grid-column: span 12; }
+    .project-visual {
+      position: relative;
+      height: 420px;
+      margin-bottom: 22px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .35s, box-shadow .35s;
+    }
+    .project:first-child .project-visual { height: 540px; }
+    .project:hover .project-visual { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(23, 59, 50, .12); }
+    .project-meta { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+    .project-title { margin-bottom: 4px; font-family: var(--serif); font-size: 26px; font-weight: 600; }
+    .project-type { margin-bottom: 0; color: var(--ink-soft); font-size: 13px; }
+    .project-year { padding-top: 8px; font-size: 12px; letter-spacing: .1em; }
+
+    .visual-tea { display: grid; place-items: center; background: #bccdb3; }
+    .tea-sun { position: absolute; width: 380px; height: 380px; top: -90px; right: 5%; border-radius: 50%; background: #e9f0bd; }
+    .tea-hill { position: absolute; width: 760px; height: 360px; bottom: -220px; left: -90px; border-radius: 50%; background: #315d4b; transform: rotate(10deg); }
+    .tea-hill.two { left: auto; right: -240px; bottom: -200px; background: #567c5b; transform: rotate(-12deg); }
+    .tea-box {
+      position: relative;
+      z-index: 2;
+      width: 220px;
+      height: 310px;
+      padding: 28px;
+      background: #f5eddb;
+      box-shadow: 24px 28px 0 rgba(23, 59, 50, .12);
+      transform: rotate(-5deg);
+    }
+    .tea-box::before { content: ""; position: absolute; inset: 14px; border: 1px solid rgba(23, 59, 50, .35); }
+    .tea-box .vertical { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); font-family: var(--serif); font-size: 46px; line-height: 1.25; writing-mode: vertical-rl; letter-spacing: .18em; }
+    .tea-box small { position: absolute; bottom: 32px; left: 0; right: 0; text-align: center; font-size: 9px; letter-spacing: .28em; }
+    .tea-stamp { position: absolute; z-index: 3; right: 28px; bottom: 28px; padding: 7px; border: 2px solid #b7533e; color: #b7533e; font-family: var(--serif); line-height: 1.1; }
+
+    .visual-forest { display: grid; place-items: center; background: #28253f; }
+    .forest-glow { position: absolute; width: 300px; height: 300px; border-radius: 50%; background: #b2ffce; filter: blur(80px); opacity: .32; }
+    .forest-card {
+      position: relative;
+      width: 76%;
+      height: 72%;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, .3);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .08);
+      color: #f3f0e8;
+      backdrop-filter: blur(12px);
+      transform: rotate(4deg);
+    }
+    .forest-dots { display: flex; gap: 6px; }
+    .forest-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); }
+    .forest-dots i:nth-child(2) { background: var(--lime); }
+    .forest-dots i:nth-child(3) { background: #aca4ff; }
+    .forest-word { position: absolute; left: 24px; bottom: 18px; font-family: var(--serif); font-size: clamp(38px, 5vw, 62px); letter-spacing: .12em; }
+    .forest-orbit { position: absolute; right: 18px; top: 44px; width: 110px; height: 110px; border: 1px solid var(--lime); border-radius: 50%; }
+    .forest-orbit::before, .forest-orbit::after { content: ""; position: absolute; inset: 18px; border: 1px solid rgba(223, 255, 114, .6); border-radius: 50%; }
+    .forest-orbit::after { inset: 40px; background: var(--lime); }
+
+    .visual-paper { background: #e9a88f; }
+    .paper-sheet { position: absolute; width: 64%; height: 78%; left: 18%; top: 12%; padding: 34px; background: #fff8e9; box-shadow: 14px 14px 0 rgba(93, 48, 36, .15); transform: rotate(-7deg); }
+    .paper-sheet::before { content: "阅"; position: absolute; right: 18px; bottom: -40px; color: #e9a88f; font-family: var(--serif); font-size: 190px; line-height: 1; }
+    .paper-sheet .paper-logo { font-family: var(--serif); font-size: 26px; font-weight: 700; }
+    .paper-sheet .paper-line { width: 68%; height: 1px; margin-top: 22px; background: var(--ink); box-shadow: 0 10px 0 var(--ink), 0 20px 0 var(--ink); opacity: .35; }
+    .paper-sheet .paper-caption { position: absolute; left: 34px; bottom: 30px; max-width: 120px; font-size: 11px; letter-spacing: .16em; line-height: 1.8; }
+    .paper-tab { position: absolute; right: 10%; top: 8%; padding: 10px 16px; border-radius: 50%; background: var(--lime); font-size: 11px; transform: rotate(12deg); }
+
+    .services { background: var(--ink); color: var(--white); }
+    .services .section-index, .services .section-title { color: var(--white); }
+    .service-list { border-top: 1px solid rgba(255, 255, 255, .25); }
+    .service-item { border-bottom: 1px solid rgba(255, 255, 255, .25); }
+    .service-item summary {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 30px 0;
+      list-style: none;
+      cursor: pointer;
+    }
+    .service-item summary::-webkit-details-marker { display: none; }
+    .service-number { color: var(--lime); font-size: 12px; letter-spacing: .12em; }
+    .service-name { font-family: var(--serif); font-size: clamp(24px, 3vw, 36px); }
+    .service-plus { position: relative; width: 30px; height: 30px; }
+    .service-plus::before, .service-plus::after { content: ""; position: absolute; left: 4px; right: 4px; top: 14px; height: 1px; background: var(--white); transition: transform .25s; }
+    .service-plus::after { transform: rotate(90deg); }
+    .service-item[open] .service-plus::after { transform: rotate(0); }
+    .service-body { display: grid; grid-template-columns: 90px 1fr; gap: 24px; padding: 0 54px 32px 0; }
+    .service-body p { grid-column: 2; max-width: 670px; margin-bottom: 14px; color: #c7d3cd; }
+    .service-tags { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; }
+    .service-tags span { padding: 5px 12px; border: 1px solid rgba(255, 255, 255, .25); border-radius: 100px; color: #e8eeea; font-size: 11px; }
+
+    .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+    .process-step { position: relative; padding: 34px 28px 20px 0; }
+    .process-step:not(:last-child) { border-right: 1px solid var(--line); margin-right: 28px; }
+    .process-step .step-number { display: block; margin-bottom: 60px; color: var(--coral); font-size: 13px; }
+    .process-step h3 { margin-bottom: 14px; font-family: var(--serif); font-size: 30px; font-weight: 600; }
+    .process-step p { margin-bottom: 0; color: var(--ink-soft); font-size: 14px; }
+
+    .manifesto { padding: 60px 0 120px; }
+    .manifesto-inner { position: relative; padding: 72px; border-radius: var(--radius); background: var(--paper-deep); overflow: hidden; }
+    .manifesto-inner::after { content: "“"; position: absolute; right: 30px; top: -50px; color: rgba(23, 59, 50, .08); font-family: Georgia, serif; font-size: 320px; line-height: 1; }
+    .manifesto blockquote { position: relative; z-index: 1; max-width: 880px; margin: 0; font-family: var(--serif); font-size: clamp(32px, 4.5vw, 58px); line-height: 1.45; letter-spacing: -.03em; }
+    .manifesto blockquote em { color: #b84f3a; font-style: normal; }
+    .manifesto p { position: relative; z-index: 1; margin: 36px 0 0; color: var(--ink-soft); font-size: 13px; letter-spacing: .1em; }
+
+    .contact { padding: 100px 0; background: var(--lime); }
+    .contact-top { display: flex; justify-content: space-between; gap: 32px; align-items: start; }
+    .contact .eyebrow::before { background: var(--ink); }
+    .contact h2 { max-width: 900px; margin-bottom: 54px; font-family: var(--serif); font-size: clamp(48px, 8vw, 104px); font-weight: 500; line-height: 1.1; letter-spacing: -.06em; }
+    .contact-bottom { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding-top: 30px; border-top: 1px solid rgba(23, 59, 50, .35); }
+    .email-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .email { font-size: clamp(18px, 3vw, 30px); font-weight: 650; letter-spacing: -.03em; }
+    .copy-button { min-height: 40px; padding: 8px 16px; border-color: rgba(23, 59, 50, .5); background: transparent; color: var(--ink); font-size: 12px; }
+    .copy-button:hover { background: var(--ink); color: var(--white); }
+    .copy-status { min-height: 24px; margin: 10px 0 0; font-size: 12px; }
+
+    .site-footer { padding: 34px 0; background: var(--ink); color: #c7d3cd; font-size: 12px; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+    .footer-logo { color: var(--white); font-size: 16px; font-weight: 750; letter-spacing: .1em; }
+    .back-top { display: inline-flex; gap: 10px; align-items: center; }
+    .back-top:hover { color: var(--lime); }
+
+    .reveal { transition: opacity .7s ease, transform .7s ease; }
+    .js .reveal:not(.is-visible) { opacity: 0; transform: translateY(24px); }
+    .delay-1 { transition-delay: .1s; }
+    .delay-2 { transition-delay: .2s; }
+
+    @media (max-width: 800px) {
+      .container { width: min(100% - 32px, 1180px); }
+      .section { padding: 84px 0; }
+      .section-head { grid-template-columns: 1fr; gap: 14px; margin-bottom: 36px; }
+      .navbar { height: 72px; }
+      .nav-toggle { display: block; position: relative; z-index: 2; }
+      .nav-toggle[aria-expanded="true"] span:first-child { transform: translateY(3.5px) rotate(45deg); }
+      .nav-toggle[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+      .nav-links {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 26px;
+        background: var(--paper);
+        font-family: var(--serif);
+        font-size: 32px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-12px);
+        transition: opacity .25s, transform .25s, visibility .25s;
+      }
+      .nav-links.open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-links .button { margin-top: 18px; font-family: var(--sans); font-size: 14px; }
+      .hero { min-height: auto; padding: 140px 0 72px; }
+      .hero::before { width: 300px; height: 300px; right: -170px; top: 8%; }
+      .hero h1 { margin-bottom: 34px; font-size: clamp(52px, 15vw, 82px); line-height: 1.12; }
+      .hero h1 em { white-space: normal; }
+      .hero-bottom { grid-template-columns: 1fr; gap: 28px; }
+      .hero-intro { font-size: 15px; }
+      .hero-actions { justify-content: flex-start; }
+      .hero-note { display: none; }
+      .disciplines-inner { flex-wrap: wrap; justify-content: flex-start; gap: 12px 24px; }
+      .disciplines span { gap: 24px; }
+      .disciplines span:last-child::after { content: "✳"; color: var(--coral); }
+      .project, .project:first-child { grid-column: span 12; }
+      .project-visual, .project:first-child .project-visual { height: 390px; }
+      .tea-box { width: 180px; height: 260px; }
+      .tea-box .vertical { font-size: 38px; }
+      .service-item summary { grid-template-columns: 44px 1fr auto; gap: 12px; padding: 24px 0; }
+      .service-body { grid-template-columns: 44px 1fr; gap: 12px; padding-right: 0; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .process-step { padding: 28px 20px 28px 0; border-bottom: 1px solid var(--line); }
+      .process-step:not(:last-child) { margin-right: 0; border-right: 0; }
+      .process-step:nth-child(odd) { border-right: 1px solid var(--line); }
+      .process-step:nth-child(even) { padding-left: 20px; }
+      .process-step .step-number { margin-bottom: 36px; }
+      .manifesto { padding: 20px 0 84px; }
+      .manifesto-inner { padding: 44px 28px; }
+      .contact { padding: 76px 0; }
+      .contact-bottom { align-items: flex-start; flex-direction: column; }
+      .footer-inner { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 440px) {
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .hero-actions .button { width: 100%; }
+      .project-visual, .project:first-child .project-visual { height: 340px; }
+      .project-title { font-size: 22px; }
+      .process-grid { grid-template-columns: 1fr; }
+      .process-step:nth-child(odd) { border-right: 0; }
+      .process-step:nth-child(even) { padding-left: 0; }
+      .process-step .step-number { margin-bottom: 24px; }
+      .contact-top { display: block; }
+      .email { font-size: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .js .reveal:not(.is-visible) { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要内容</a>
+
+  <header class="site-header" id="top">
+    <div class="container navbar">
+      <a class="logo" href="#top" aria-label="初芒创意首页">
+        <span class="logo-mark" aria-hidden="true"></span>
+        初芒创意
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="打开导航菜单">
+        <span></span><span></span>
+      </button>
+      <nav class="nav-links" id="nav-links" aria-label="主导航">
+        <a href="#work">精选作品</a>
+        <a href="#services">专业服务</a>
+        <a href="#process">合作方法</a>
+        <a class="button" href="#contact">开始项目 <span class="arrow" aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-content">
+        <div class="hero-note" aria-hidden="true">让创意<br>自然生长</div>
+        <p class="eyebrow reveal">CHUMANG® 独立创意工作室</p>
+        <h1 class="reveal delay-1">让好想法，<br><em>长成好品牌。</em></h1>
+        <div class="hero-bottom reveal delay-2">
+          <p class="hero-intro">我们将策略、设计与数字体验揉在一起，为处于成长节点的品牌，创造清晰而有温度的表达。少一点套路，多一点真正属于你的东西。</p>
+          <div class="hero-actions">
+            <a class="button button-outline" href="#work">看看作品 <span class="arrow" aria-hidden="true">↓</span></a>
+            <a class="button" href="#contact">聊聊你的项目 <span class="arrow" aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="disciplines" aria-label="服务领域">
+      <div class="container disciplines-inner">
+        <span>品牌策略</span>
+        <span>视觉识别</span>
+        <span>数字体验</span>
+        <span>内容创意</span>
+      </div>
+    </div>
+
+    <section class="section" id="work">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">01 / 精选概念项目</span>
+          <h2 class="section-title">每个品牌，都有自己的<br>语气、节奏和模样。</h2>
+        </div>
+        <div class="work-grid">
+          <article class="project reveal">
+            <div class="project-visual visual-tea" aria-label="岭上茶事品牌包装概念视觉">
+              <div class="tea-sun" aria-hidden="true"></div>
+              <div class="tea-hill" aria-hidden="true"></div>
+              <div class="tea-hill two" aria-hidden="true"></div>
+              <div class="tea-box" aria-hidden="true">
+                <span class="vertical">岭上茶事</span>
+                <small>TEA FROM THE RIDGE</small>
+                <span class="tea-stamp">山<br>野</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <div><h3 class="project-title">岭上茶事</h3><p class="project-type">品牌策略 · 视觉识别 · 包装设计</p></div>
+              <span class="project-year">2026</span>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <div class="project-visual visual-forest" aria-label="漂浮森林数字体验概念视觉">
+              <div class="forest-glow" aria-hidden="true"></div>
+              <div class="forest-card" aria-hidden="true">
+                <div class="forest-dots"><i></i><i></i><i></i></div>
+                <div class="forest-orbit"></div>
+                <span class="forest-word">漂浮<br>森林</span>
+              </div>
+            </div>
+            <div class="project-meta">
+              <div><h3 class="project-title">漂浮森林</h3><p class="project-type">数字艺术 · 互动体验 · 网站设计</p></div>
+              <span class="project-year">2025</span>
+            </div>
+          </article>
+
+          <article class="project reveal delay-1">
+            <div class="project-visual visual-paper" aria-label="纸间阅读品牌概念视觉">
+              <div class="paper-sheet" aria-hidden="true">
+                <span class="paper-logo">纸间</span>
+                <div class="paper-line"></div>
+                <span class="paper-caption">在纸页之间<br>遇见更大的世界</span>
+              </div>
+              <span class="paper-tab" aria-hidden="true">独立阅读计划</span>
+            </div>
+            <div class="project-meta">
+              <div><h3 class="project-title">纸间阅读</h3><p class="project-type">品牌焕新 · 内容系统 · 会员体验</p></div>
+              <span class="project-year">2025</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section services" id="services">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">02 / 我们能做什么</span>
+          <h2 class="section-title">从一个模糊的想法，<br>到一套完整的表达。</h2>
+        </div>
+        <div class="service-list reveal">
+          <details class="service-item" open>
+            <summary><span class="service-number">01</span><span class="service-name">品牌策略与命名</span><span class="service-plus" aria-hidden="true"></span></summary>
+            <div class="service-body">
+              <p>先弄清“为什么”，再讨论“长什么样”。通过访谈、研究与共创，找到品牌的位置、性格和说话方式。</p>
+              <div class="service-tags"><span>品牌审计</span><span>受众研究</span><span>品牌定位</span><span>命名与口号</span></div>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary><span class="service-number">02</span><span class="service-name">视觉识别系统</span><span class="service-plus" aria-hidden="true"></span></summary>
+            <div class="service-body">
+              <p>不止交付一个标志，更建立一套可灵活生长的视觉语言，让品牌在每个接触点都保持一致、鲜明。</p>
+              <div class="service-tags"><span>标志设计</span><span>色彩与字体</span><span>版式系统</span><span>品牌手册</span></div>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary><span class="service-number">03</span><span class="service-name">网站与数字体验</span><span class="service-plus" aria-hidden="true"></span></summary>
+            <div class="service-body">
+              <p>把品牌个性转化为清晰、流畅的数字体验。从信息架构到交互细节，兼顾好看、好用与真实业务目标。</p>
+              <div class="service-tags"><span>体验策略</span><span>界面设计</span><span>交互原型</span><span>响应式网站</span></div>
+            </div>
+          </details>
+          <details class="service-item">
+            <summary><span class="service-number">04</span><span class="service-name">内容与上市创意</span><span class="service-plus" aria-hidden="true"></span></summary>
+            <div class="service-body">
+              <p>为新品牌、新产品或新阶段设计首次亮相。把核心信息变成有记忆点的主题、内容与传播素材。</p>
+              <div class="service-tags"><span>创意主题</span><span>上市活动</span><span>社交内容</span><span>传播物料</span></div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="section-index">03 / 合作方法</span>
+          <h2 class="section-title">过程清楚，创意才能<br>走得更远。</h2>
+        </div>
+        <div class="process-grid reveal">
+          <article class="process-step"><span class="step-number">STEP 01</span><h3>听见</h3><p>理解业务、受众与真正的问题，让彼此对目标达成共识。</p></article>
+          <article class="process-step"><span class="step-number">STEP 02</span><h3>聚焦</h3><p>梳理洞察与方向，用清晰的策略为创意划定坐标。</p></article>
+          <article class="process-step"><span class="step-number">STEP 03</span><h3>塑造</h3><p>通过概念、设计与验证，让想法逐渐成为完整的体验。</p></article>
+          <article class="process-step"><span class="step-number">STEP 04</span><h3>生长</h3><p>交付可使用的系统与工具，陪伴品牌走进真实世界。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="manifesto">
+      <div class="container manifesto-inner reveal">
+        <blockquote>不追逐短暂的风格，<br>而为品牌找到<em>可持续的表达。</em></blockquote>
+        <p>OUR BELIEF / 好设计，让意义被看见。</p>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="contact-top reveal">
+          <p class="eyebrow">04 / 开始一次对话</p>
+        </div>
+        <h2 class="reveal delay-1">下一个好故事，<br>从你的来信开始。</h2>
+        <div class="contact-bottom reveal delay-2">
+          <div>
+            <div class="email-wrap">
+              <a class="email" href="mailto:hello@chumang.studio">hello@chumang.studio</a>
+              <button class="button copy-button" id="copy-email" type="button">复制邮箱</button>
+            </div>
+            <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+          </div>
+          <a class="button" href="mailto:hello@chumang.studio?subject=%E9%A1%B9%E7%9B%AE%E5%92%A8%E8%AF%A2%20%2F%20%E5%88%9D%E8%8A%92%E5%88%9B%E6%84%8F">写封邮件 <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-logo">初芒创意</span>
+      <span>© 2026 CHUMANG STUDIO · 概念品牌网站</span>
+      <a class="back-top" href="#top">回到顶部 <span aria-hidden="true">↑</span></a>
+    </div>
+  </footer>
+
+  <script>
+    const header = document.querySelector('.site-header');
+    const menuButton = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    const updateHeader = () => header.classList.toggle('scrolled', window.scrollY > 16);
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+
+    function closeMenu() {
+      navLinks.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', '打开导航菜单');
+      document.body.classList.remove('menu-open');
+    }
+
+    menuButton.addEventListener('click', () => {
+      const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+      if (isOpen) {
+        closeMenu();
+      } else {
+        navLinks.classList.add('open');
+        menuButton.setAttribute('aria-expanded', 'true');
+        menuButton.setAttribute('aria-label', '关闭导航菜单');
+        document.body.classList.add('menu-open');
+      }
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeMenu();
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 800) closeMenu();
+    });
+
+    const revealItems = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      revealItems.forEach(item => observer.observe(item));
+    } else {
+      revealItems.forEach(item => item.classList.add('is-visible'));
+    }
+
+    const copyButton = document.getElementById('copy-email');
+    const copyStatus = document.getElementById('copy-status');
+    let statusTimer;
+    copyButton.addEventListener('click', async () => {
+      clearTimeout(statusTimer);
+      try {
+        await navigator.clipboard.writeText('hello@chumang.studio');
+        copyStatus.textContent = '邮箱已复制，期待你的来信。';
+        copyButton.textContent = '已复制';
+      } catch (error) {
+        copyStatus.textContent = '暂时无法自动复制，请选中邮箱地址复制。';
+      }
+      statusTimer = setTimeout(() => {
+        copyStatus.textContent = '';
+        copyButton.textContent = '复制邮箱';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
